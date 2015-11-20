@@ -9,11 +9,11 @@ function box:initialize(pop, parent)
     self.sizeControl = "specified"
     self.outerWidth = 300
     self.outerHeight = 250
-    self.innerWidth = self.outerWidth - self.style.borderSize
-    self.innerHeight = self.outerHeight - self.style.borderSize
+    self.innerWidth = self.outerWidth - self.skin.style.borderSize
+    self.innerHeight = self.outerHeight - self.skin.style.borderSize
 end
 
-function box:update(pop)
+function box:update()
     --
 end
 

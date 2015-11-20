@@ -1,4 +1,4 @@
-local pop = require "pop"
+local pop = require "pop" --TODO tell user that pop must be required with SLASHES
 
 function love.load()
     pop.box() -- returns the box element
@@ -15,4 +15,10 @@ end
 
 function love.mousereleased(button, x, y)
     pop.mousereleased(button, x, y)
+end
+
+function love.keypressed(key)
+    if key == "escape" then
+        love.event.quit()
+    end
 end

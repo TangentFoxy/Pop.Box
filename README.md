@@ -16,7 +16,7 @@ local pop = require "pop"
 local box = pop.box()
 ```
 
-* `box` is a box for containing things.
+* `box` is a box (class) for containing things.
 * `text` is a class for handling text.
 * Nothing else! Is alpha, just started.
 

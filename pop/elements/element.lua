@@ -1,15 +1,14 @@
 local path = string.sub(..., 1, string.len(...) - string.len(".elements.element"))
 local class = require(path .. ".lib.middleclass")
+--TODO determine if these requires can break because of slashes / subdirectories
 
-local element = class("pop.element") --NOTE are periods allowed in middleclass class names?
-
---TODO setting widths and heights need to call update()
---TODO setters and getters for just width/height, aliases for outerWidth/outerHeight
+local element = class("pop.element")
 
 function element:initialize(pop, parent)
-    self.x = 0
-    self.y = 0
-    self.alignPoint = 1 -- 1 to 9, how aligned relative to x/y, see docs
+    self.ax = 0 -- absolute locations
+    self.ay = 0
+    self.rx = 0 -- relative to parent locations
+    self.ry = 0
 
     self.sizeControl = "fromInner" -- fromInner, fromOuter, specified
     self.outerWidth = 0
@@ -17,7 +16,7 @@ function element:initialize(pop, parent)
     self.innerWidth = 0
     self.innerHeight = 0
 
-    self.style = pop.style
+    self.skin = pop.skins[pop.currentSkin]
     self.visible = true
 
     self.parent = parent
@@ -26,11 +25,20 @@ function element:initialize(pop, parent)
     parent.child[self] = self -- add ourselves to the parent's children
 end
 
-function element:getAlignPoint()
-    return self.alignPoint
+--TODO completely redefine interface based on what we should expect users to do
+-- REMEMBER the goal is minimal effort on their part
+-- THEREFORE, we should reduce this interface, they should rely on skins for borderSize (and thus, differences in outer/inner sizes)
+-- all calls should be based on sizing the outside, and update() should update inners (including children!) based on outers
+
+function element:getSize()
+    return self.outerWidth, self.outerHeight
 end
-function element:setAlignPoint(point)
-    self.alignPoint = point
+function element:setSize(width, height)
+    assert(width > 0, "width must be above 0")
+    assert(height > 0, "height must be above 0")
+    self.outerWidth = width
+    self.outerHeight = height
+    self.sizeControl = "specified"
 end
 
 function element:getOuterWidth()
@@ -39,6 +47,8 @@ end
 function element:setOuterWidth(width)
     assert(width > 0, "width must be above 0")
     self.outerWidth = width
+    self.sizeControl = "specified"
+    --TODO needs to update() to update inner size based on borderSize ???
 end
 
 function element:getOuterHeight()
@@ -47,6 +57,8 @@ end
 function element:setOuterHeight(height)
     assert(height > 0, "height must be above 0")
     self.outerHeight = height
+    self.sizeControl = "specified"
+    --TODO needs to update() to update inner size based on borderSize ???
 end
 
 function element:getInnerWidth()
@@ -55,6 +67,8 @@ end
 function element:setInnerWidth(width)
     assert(width > 0, "width must be above 0")
     self.innerWidth = width
+    self.sizeControl = "specified"
+    --TODO needs to update outerWidth ???
 end
 
 function element:getInnerHeight()
@@ -63,6 +77,8 @@ end
 function element:setInnerHeight(height)
     assert(height > 0, "height must be above 0")
     self.innerHeight = height
+    self.sizeControl = "specified"
+    --TODO needs to update outerHeight ??
 end
 
 --[[ TODO determine how to write these better (consistency motherfucker)
