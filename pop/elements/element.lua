@@ -1,121 +1,182 @@
-local path = string.sub(..., 1, string.len(...) - string.len(".elements.element"))
-local class = require(path .. ".lib.middleclass")
---TODO determine if these requires can break because of slashes / subdirectories
+local path = string.sub(..., 1, string.len(...) - string.len("/elements/element"))
+local class = require(path .. "/lib/middleclass")
 
-local element = class("pop.element")
+local element = class("pop.element") --TODO follow middleclass standards!?@@R/
 
-function element:initialize(pop, parent)
-    self.ax = 0 -- absolute locations
-    self.ay = 0
-    self.rx = 0 -- relative to parent locations
-    self.ry = 0
-
-    self.sizeControl = "fromInner" -- fromInner, fromOuter, specified
-    self.outerWidth = 0
-    self.outerHeight = 0
-    self.innerWidth = 0
-    self.innerHeight = 0
-
-    self.skin = pop.skins[pop.currentSkin]
-    self.visible = true
-
+function element:initialize(pop, parent, skin)
     self.parent = parent
     self.child = {}
 
-    parent.child[self] = self -- add ourselves to the parent's children
+    self.x = parent.x or 0
+    self.y = parent.y or 0
+    self.w = 10
+    self.h = 10
+
+    self.skin = pop.skins[skin] or pop.skins[pop.currentSkin]
+    self.alignment = "top-left"
 end
 
---TODO completely redefine interface based on what we should expect users to do
--- REMEMBER the goal is minimal effort on their part
--- THEREFORE, we should reduce this interface, they should rely on skins for borderSize (and thus, differences in outer/inner sizes)
--- all calls should be based on sizing the outside, and update() should update inners (including children!) based on outers
+function element:move(x, y)
+    self.x = self.x + x
+    self.y = self.y + y
+end
+
+function element:setPosition(x, y)
+    if self.alignment == "top-left" then
+        self.x = x
+        self.y = y
+    elseif self.alignment == "top-center" then
+        self.x = x - self.w/2
+        self.y = y
+    elseif self.alignment == "top-right" then
+        self.x = x - self.w
+        self.y = y
+    elseif self.alignment == "left-center" then
+        self.x = x
+        self.y = y - self.h/2
+    elseif self.alignment == "center" then
+        self.x = x - self.w/2
+        self.y = y - self.h/2
+    elseif self.alignment == "right-center" then
+        self.x = x - self.w
+        self.y = y - self.h/2
+    elseif self.alignment == "bottom-left" then
+        self.x = x
+        self.y = y - self.h
+    elseif self.alignment == "bottom-center" then
+        self.x = x - self.w/2
+        self.y = y
+    elseif self.alignment == "bottom-right" then
+        self.x = x - self.w
+        self.y = y - self.h
+    end
+end
+
+function element:getPosition()
+    if self.alignment == "top-left" then
+        return self.x, self.y
+    elseif self.alignment == "top-center" then
+        return self.x + self.w/2, self.y
+    elseif self.alignment == "top-right" then
+        return self.x + self.w, self.y
+    elseif self.alignment == "left-center" then
+        return self.x, self.y + self.h/2
+    elseif self.alignment == "center" then
+        return self.x + self.w/2, self.y + self.h/2
+    elseif self.alignment == "right-center" then
+        return self.x + self.w, self.y + self.h/2
+    elseif self.alignment == "bottom-left" then
+        return self.x, self.y + self.h
+    elseif self.alignment == "bottom-center" then
+        return self.x + self.w/2, self.y
+    elseif self.alignment == "bottom-right" then
+        return self.x + self.w, self.y + self.h
+    end
+end
+
+function element:setSize(w, h)
+    if self.alignment == "top-left" then
+        self.w = w
+        self.h = h
+    elseif self.alignment == "top-center" then
+        -- x minus half difference to expand horizontally
+        self.x = self.x - (w - self.w)/2
+        self.w = w
+        self.h = h
+    elseif self.alignment == "top-right" then
+        -- x minus difference to expand left
+        self.x = self.x - (w - self.w)
+        self.w = w
+        self.h = h
+    elseif self.alignment == "left-center" then
+        self.y = self.y - (h - self.h)/2
+        self.w = w
+        self.h = h
+    elseif self.alignment == "center" then
+        self.x = self.x - (w - self.w)/2
+        self.y = self.y - (h - self.h)/2
+        self.w = w
+        self.h = h
+    elseif self.alignment == "right-center" then
+        self.x = self.x - (w - self.w)
+        self.y = self.y - (h - self.h)/2
+        self.w = w
+        self.h = h
+    elseif self.alignment == "bottom-left" then
+        self.y = self.y - (h - self.h)
+        self.w = w
+        self.h = h
+    elseif self.alignment == "bottom-center" then
+        self.x = self.x - (w - self.w)/2
+        self.y = self.y - (h - self.h)
+        self.w = w
+        self.h = h
+    elseif self.alignment == "bottom-right" then
+        self.x = self.x - (w - self.w)
+        self.y = self.y - (h - self.h)
+        self.w = w
+        self.h = h
+    end
+end
 
 function element:getSize()
-    return self.outerWidth, self.outerHeight
-end
-function element:setSize(width, height)
-    assert(width > 0, "width must be above 0")
-    assert(height > 0, "height must be above 0")
-    self.outerWidth = width
-    self.outerHeight = height
-    self.sizeControl = "specified"
+    return self.w, self.h
 end
 
-function element:getOuterWidth()
-    return self.outerWidth
-end
-function element:setOuterWidth(width)
-    assert(width > 0, "width must be above 0")
-    self.outerWidth = width
-    self.sizeControl = "specified"
-    --TODO needs to update() to update inner size based on borderSize ???
+function element:align(alignment)
+    self.alignment = alignment
+
+    if self.alignment == "top-left" then
+        self.x = self.parent.x
+        self.y = self.parent.y
+    elseif self.alignment == "top-center" then
+        -- parent's x plus half of difference in width to center
+        self.x = self.parent.x + (self.parent.w - self.w)/2
+        self.y = self.parent.y
+    elseif self.alignment == "top-right" then
+        -- parent's x plus difference in width to align right
+        self.x = self.parent.x + (self.parent.w - self.w)
+        self.y = self.parent.y
+    elseif self.alignment == "left-center" then
+        self.x = self.parent.x
+        self.y = self.parent.y + (self.parent.h - self.h)/2
+    elseif self.alignment == "center" then
+        self.x = self.parent.x + (self.parent.w - self.w)/2
+        self.y = self.parent.y + (self.parent.h - self.h)/2
+    elseif self.alignment == "right-center" then
+        self.x = self.parent.x + (self.parent.w - self.w)
+        self.y = self.parent.y + (self.parent.h - self.h)/2
+    elseif self.alignment == "bottom-left" then
+        self.x = self.parent.x
+        self.y = self.parent.y + (self.parent.h - self.h)
+    elseif self.alignment == "bottom-center" then
+        self.x = self.parent.x + (self.parent.w - self.w)/2
+        self.y = self.parent.y + (self.parent.h - self.h)
+    elseif self.alignment == "bottom-right" then
+        self.x = self.parent.x + (self.parent.w - self.w)
+        self.y = self.parent.y + (self.parent.h - self.h)
+    end
 end
 
-function element:getOuterHeight()
-    return self.outerHeight()
-end
-function element:setOuterHeight(height)
-    assert(height > 0, "height must be above 0")
-    self.outerHeight = height
-    self.sizeControl = "specified"
-    --TODO needs to update() to update inner size based on borderSize ???
+function element:alignTo(element, alignment)
+    local realParent = self.parent
+    self.parent = element
+
+    self:align(alignment)
+
+    self.parent = realParent
 end
 
-function element:getInnerWidth()
-    return self.innerWidth
-end
-function element:setInnerWidth(width)
-    assert(width > 0, "width must be above 0")
-    self.innerWidth = width
-    self.sizeControl = "specified"
-    --TODO needs to update outerWidth ???
+function element:setAlignment(alignment)
+    self.alignment = alignment
 end
 
-function element:getInnerHeight()
-    return self.innerHeight
-end
-function element:setInnerHeight(height)
-    assert(height > 0, "height must be above 0")
-    self.innerHeight = height
-    self.sizeControl = "specified"
-    --TODO needs to update outerHeight ??
-end
-
---[[ TODO determine how to write these better (consistency motherfucker)
-function element:getStyle()
-    return self.style.name
-end
-function element:setStyle(style)
-    self.style = style
-end
-]]
-
-function element:getVisible()
-    return self.visible
-end
-function element:setVisible(bool)
-    self.visible = bool
-end
-
-function element:getParent()
-    return self.parent
-end
-function element:setParent(parent)
-    self.parent.child[self] = nil
-    self.parent = parent
-    self.parent.child[self] = self
-end
-
---TODO figure out how getting and setting children might work? or no??
-
-function element:update()
-    --TODO a proper error message
-    print("update() not deifnenfei")
-end
-
-function element:draw()
-    --TODO figure out how to get class name
-    print("Attempting to use element, or did not overwrite element's :draw() method.")
+function element:setSkin(skin)
+    if type(skin) == "string" then
+        self.skin = pop.skins[skin]
+    else
+        self.skin = skin
+    end
 end
 
 return element

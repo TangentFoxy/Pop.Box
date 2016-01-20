@@ -1,99 +1,100 @@
 local lf = love.filesystem
 local lg = love.graphics
+local path = ...
 
 local pop = {}
-local path = ... --NOTE Pop.Box must be required as its directory name (w SLASHES)!
-
--- elements are local
-local box = require(path .. ".elements.box")
-local text = require(path .. ".elements.text")
---TODO require these how skins are required
-pop.elements = {}
-local elements = lf.getDirectoryItems(path .. "/elements") --NOTE Pop.Box must be required with SLASHES!
-for _, v in ipairs(elements) do
-    local name = v:sub(1,-5)
-    pop.elements[name] = require(path .. "/elements/" .. name) --TODO test this actually works right
-end
-
--- skins define how elements are drawn
+pop.elementClasses = {}
+--pop.elements = {}
+pop.window = false --top level element, defined in pop.load()
 pop.skins = {}
-local skins = lf.getDirectoryItems(path .. "/skins") --NOTE Pop.Box must be required with SLASHES!
-for _, v in ipairs(skins) do
-    local name = v:sub(1,-5)
-    pop.skins[name] = require(path .. "/skins/" .. name)
-    pop.skins[name].name = name
+pop.currentSkin = "clear"
+
+function pop.load()
+    -- load element classes
+    local elementList = lf.getDirectoryItems(path .. "/elements")
+
+    for i=0, #elementList do
+        local name = elementList[i]:sub(1, -5)
+        pop.elementClasses[name] = require(path .. "/elements/" .. name)
+
+        -- wrapper to be able to call pop.element() to create elements
+        if not pop[name] then
+            pop[name] = function(...) return pop.create(name, ...) end
+        end
+    end
+
+    -- load skins
+    local skinList = lf.getDirectoryItems(path .. "/skins")
+
+    for i=0, #skinList do
+        local name = skinList[i]:sub(1, -5)
+        pop.skins[name] = require(path .. "/skins/" .. name)
+        pop.skins[name].name = name
+    end
+
+    -- set top element
+    pop.window = pop.create("box"):setSize(lg.getWidth(), lg.getHeight())
 end
-pop.currentSkin = "clearspace" --default skin
 
--- everything has one parent element (initialized at the end)
-pop.parentElement = false
-
--- this function actually creates elements based on what type of element is requested
 function pop.create(elementType, parent, ...)
     if not parent then
-        parent = pop.parentElement
+        parent = pop.window
     end
 
-    local newElement
-
-    --TODO replace these with calls to pop.elements.ELEMENTNAME
-    if elementType == "box" then
-        newElement = box(pop, parent, ...)
-    elseif elementType == "text" then
-        newElement = text(pop, parent, ...)
-    else
-        error("Invalid element type: " .. elementType)
-    end
+    local newElement = pop.elementClasses[elementType](pop, parent, ...)
+    table.insert(parent.child, newElement) --NOTE pop.window is its own parent!
 
     return newElement
 end
 
--- pretty wrappers to call pop.element() instead of pop.create("element")
-pop.box = function(...) return pop.create("box", ...) end
-pop.text = function(...) return pop.create("text", ...) end
-
--- called every frame to draw elements
-function pop.draw(element)
+function pop.update(dt, element)
     if not element then
-        element = pop.parentElement
+        element = pop.window
     end
 
-    element:draw()
+    if element.update then
+        element:update(dt)
+    end
 
+    --TODO redo this loop
     for _, childElement in pairs(element.child) do
-        --pop.draw(childElement, element.x, element.y)
+        pop.update(dt, childElement)
+    end
+end
+
+function pop.draw(element)
+    if not element then
+        element = pop.window
+    end
+
+    if element.skin.draw and element.skin.draw(element) then
+        -- do nothing...
+    elseif element.draw then
+        element:draw()
+    end
+
+    --TODO redo this loop
+    for _, childElement in pairs(element.child) do
         pop.draw(childElement)
     end
 end
 
--- TODO decide if we should track mouse movement
-
--- these are functions to be overwritten by user if they want a global event handler
-function pop.onMousePress(button, x, y) end
-function pop.onMouseRelease(button, x, y) end
-
 function pop.mousepressed(button, x, y)
-    --TODO find which element it belongs to and if that element has a callback set,
-    -- if it does, use that, else, use the global callback (defined above..as nil)
+    --TODO find element, if it has a callback, call with button and LOCAL x/y
 end
 
 function pop.mousereleased(button, x, y)
-    --TODO find which element it belongs to and if that element has a callback set,
-    -- if it does, use that, else, use the global callback (defined above..as nil)
+    --TODO find element, if it has a callback, call with button and LOCAL x/y
 end
 
-function pop.keypressed(key, unicode)
-    --TODO handle this in some manner when needed
+function pop.keypressed(key)
+    --TODO no idea what to do with this
 end
 
 function pop.keyreleased(key)
-    --TODO handle this when needed
+    --TODO no idea what to do with this
 end
 
--- initialize the top element
-pop.parentElement = box(pop, {child={}})     -- dummy object because it has no parent
---pop.parentElement:setSizeControl("specified") -- make it not try to update itself (TODO or based on outro, and custom code to check top parent against screen size)
---pop.parentElement:setSize(lg.getWidth(), lg.getHeight()) -- fill window size
---pop.parentElement:setVisible(false) -- uneeded since its clear...
+pop.load()
 
 return pop
