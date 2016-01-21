@@ -8,12 +8,13 @@ pop.elementClasses = {}
 pop.window = false --top level element, defined in pop.load()
 pop.skins = {}
 pop.currentSkin = "clear"
+--TODO we need a "focused" element for textinput or whatever
 
 function pop.load()
     -- load element classes
     local elementList = lf.getDirectoryItems(path .. "/elements")
 
-    for i=0, #elementList do
+    for i=1, #elementList do
         local name = elementList[i]:sub(1, -5)
         pop.elementClasses[name] = require(path .. "/elements/" .. name)
 
@@ -26,14 +27,14 @@ function pop.load()
     -- load skins
     local skinList = lf.getDirectoryItems(path .. "/skins")
 
-    for i=0, #skinList do
+    for i=1, #skinList do
         local name = skinList[i]:sub(1, -5)
         pop.skins[name] = require(path .. "/skins/" .. name)
         pop.skins[name].name = name
     end
 
     -- set top element
-    pop.window = pop.create("box"):setSize(lg.getWidth(), lg.getHeight())
+    pop.window = pop.create("element"):setSize(lg.getWidth(), lg.getHeight())
 end
 
 function pop.create(elementType, parent, ...)
@@ -56,9 +57,8 @@ function pop.update(dt, element)
         element:update(dt)
     end
 
-    --TODO redo this loop
-    for _, childElement in pairs(element.child) do
-        pop.update(dt, childElement)
+    for i=1,#element.child do
+        pop.update(dt, element.child[i])
     end
 end
 
@@ -67,15 +67,16 @@ function pop.draw(element)
         element = pop.window
     end
 
-    if element.skin.draw and element.skin.draw(element) then
-        -- do nothing...
-    elseif element.draw then
-        element:draw()
-    end
+    if not element.excludeRendering then
+        if element.skin.draw and element.skin.draw(element) then
+            -- do nothing...
+        elseif element.draw then
+            element:draw()
+        end
 
-    --TODO redo this loop
-    for _, childElement in pairs(element.child) do
-        pop.draw(childElement)
+        for i=1,#element.child do
+            pop.draw(element.child[i])
+        end
     end
 end
 

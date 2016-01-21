@@ -11,6 +11,8 @@ require it.
 - `draw(element)` - If defined, will be used to render an element instead of the
   standard drawing method.
 
+**Note**: Supported Drawables: Canvas, Image, Video
+
 TODO various text style infos!
 
 [1]: https://love2d.org/wiki/Drawable

@@ -6,32 +6,27 @@ Pop.Box attempts to make a GUI system for use in the [LÖVE][2] engine that is
 easy to use, requiring as little code as possible to get working, but also
 extensible, allowing for complex interfaces to be built in it.
 
-I've never written a GUI library before..so we'll see how that goes.
+## Features
+
+- Quickly set up and align GUI elements.
+- Fully customizable alignment / styling.
+- Supports moving/resizing things in ways that take the alignment headache away,
+  without trying to do too much and become bloated.
+- Supports custom elements/skins, make your own and move them into the
+  appropriate directories for them to be automatically loaded.
+
+## Usage
 
 ```lua
 local pop = require "pop"
--- define love callbacks here (update, draw, textinput, mouse/key events)
+-- define LÖVE callbacks here (update, draw, textinput, mouse/key events)
 local box = pop.box()
 ```
 
-## Using
-
-Elements store position, size, and child elements. When moved, an element's
-children also move. Elements have simple methods for adjusting their position
-and size.
-
-`pop.window` - An element representing the game window. It will not auto-resize.
-
-Any element (and its children) with `excludeMovement == true` will not be moved
-except when its `move()` or `setPosition()` are called.
-
-Children render on top of their parents. (Rendering starts at `pop.window` and
-loops down.) Any element (and its children) with `excludeRendering == true` will
-not be rendered.
-
-See [Elements.md][3] for the standard methods each element has, and what
-elements are available.
+Docs: [pop Module][3], [Elements][4], [Skins][5]
 
 [1]: https://en.wikipedia.org/wiki/Cola_(programming_language)
 [2]: https://love2d.org/
-[3]: ./Elements.md
+[3]: ./docs/Pop.md
+[4]: ./docs/Elements.md
+[5]: ./docs/Skins.md

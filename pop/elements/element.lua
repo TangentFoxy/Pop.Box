@@ -1,7 +1,7 @@
 local path = string.sub(..., 1, string.len(...) - string.len("/elements/element"))
 local class = require(path .. "/lib/middleclass")
 
-local element = class("pop.element") --TODO follow middleclass standards!?@@R/
+local element = class("pop.element")
 
 function element:initialize(pop, parent, skin)
     self.parent = parent
@@ -13,152 +13,109 @@ function element:initialize(pop, parent, skin)
     self.h = 10
 
     self.skin = pop.skins[skin] or pop.skins[pop.currentSkin]
-    self.alignment = "top-left"
+
+    self.horizontal = "left"
+    self.vertical = "top"
 end
 
 function element:move(x, y)
     self.x = self.x + x
     self.y = self.y + y
+
+    for i=1,#element.child do
+        if not element.child[i].excludeMovement then
+            element.child[i]:move(x - oldX, y - oldY)
+        end
+    end
 end
 
 function element:setPosition(x, y)
-    if self.alignment == "top-left" then
+    local oldX = self.x
+    local oldY = self.y
+
+    if self.horizontal == "left" then
         self.x = x
-        self.y = y
-    elseif self.alignment == "top-center" then
+    elseif self.horizontal == "center" then
         self.x = x - self.w/2
-        self.y = y
-    elseif self.alignment == "top-right" then
+    elseif self.horizontal == "right" then
         self.x = x - self.w
+    end
+
+    if self.vertical == "top" then
         self.y = y
-    elseif self.alignment == "left-center" then
-        self.x = x
+    elseif self.vertical == "center" then
         self.y = y - self.h/2
-    elseif self.alignment == "center" then
-        self.x = x - self.w/2
-        self.y = y - self.h/2
-    elseif self.alignment == "right-center" then
-        self.x = x - self.w
-        self.y = y - self.h/2
-    elseif self.alignment == "bottom-left" then
-        self.x = x
+    elseif self.vertical == "bottom" then
         self.y = y - self.h
-    elseif self.alignment == "bottom-center" then
-        self.x = x - self.w/2
-        self.y = y
-    elseif self.alignment == "bottom-right" then
-        self.x = x - self.w
-        self.y = y - self.h
+    end
+
+    for i=1,#element.child do
+        if not element.child[i].excludeMovement then
+            element.child[i]:move(x - oldX, y - oldY)
+        end
     end
 end
 
 function element:getPosition()
-    if self.alignment == "top-left" then
-        return self.x, self.y
-    elseif self.alignment == "top-center" then
-        return self.x + self.w/2, self.y
-    elseif self.alignment == "top-right" then
-        return self.x + self.w, self.y
-    elseif self.alignment == "left-center" then
-        return self.x, self.y + self.h/2
-    elseif self.alignment == "center" then
-        return self.x + self.w/2, self.y + self.h/2
-    elseif self.alignment == "right-center" then
-        return self.x + self.w, self.y + self.h/2
-    elseif self.alignment == "bottom-left" then
-        return self.x, self.y + self.h
-    elseif self.alignment == "bottom-center" then
-        return self.x + self.w/2, self.y
-    elseif self.alignment == "bottom-right" then
-        return self.x + self.w, self.y + self.h
+    local resultX = self.x
+    local resultY = self.y
+
+    if self.horizontal == "center" then
+        resultX = resultX + self.w/2
+    elseif self.horizontal == "right" then
+        resultX = resultX + self.w
     end
+
+    if self.vertical == "center" then
+        resultY = resultY + self.h/2
+    elseif self.vertical == "bottom" then
+        resultY = resultY + self.h
+    end
+
+    return resultX, resultY
 end
 
 function element:setSize(w, h)
-    if self.alignment == "top-left" then
-        self.w = w
-        self.h = h
-    elseif self.alignment == "top-center" then
-        -- x minus half difference to expand horizontally
+    if self.horizontal == "center" then
         self.x = self.x - (w - self.w)/2
-        self.w = w
-        self.h = h
-    elseif self.alignment == "top-right" then
-        -- x minus difference to expand left
+    elseif self.horizontal == "right" then
         self.x = self.x - (w - self.w)
-        self.w = w
-        self.h = h
-    elseif self.alignment == "left-center" then
-        self.y = self.y - (h - self.h)/2
-        self.w = w
-        self.h = h
-    elseif self.alignment == "center" then
-        self.x = self.x - (w - self.w)/2
-        self.y = self.y - (h - self.h)/2
-        self.w = w
-        self.h = h
-    elseif self.alignment == "right-center" then
-        self.x = self.x - (w - self.w)
-        self.y = self.y - (h - self.h)/2
-        self.w = w
-        self.h = h
-    elseif self.alignment == "bottom-left" then
-        self.y = self.y - (h - self.h)
-        self.w = w
-        self.h = h
-    elseif self.alignment == "bottom-center" then
-        self.x = self.x - (w - self.w)/2
-        self.y = self.y - (h - self.h)
-        self.w = w
-        self.h = h
-    elseif self.alignment == "bottom-right" then
-        self.x = self.x - (w - self.w)
-        self.y = self.y - (h - self.h)
-        self.w = w
-        self.h = h
     end
+
+    if self.vertical == "center" then
+        self.y = self.y - (h - self.h)/2
+    elseif self.vertical == "bottom" then
+        self.y = self.y - (h - self.h)
+    end
+
+    self.w = w
+    self.h = h
 end
 
 function element:getSize()
     return self.w, self.h
 end
 
-function element:align(alignment)
-    self.alignment = alignment
+function element:align(horizontal, vertical)
+    self:setAlignment(horizontal, vertical)
 
-    if self.alignment == "top-left" then
-        self.x = self.parent.x
-        self.y = self.parent.y
-    elseif self.alignment == "top-center" then
-        -- parent's x plus half of difference in width to center
-        self.x = self.parent.x + (self.parent.w - self.w)/2
-        self.y = self.parent.y
-    elseif self.alignment == "top-right" then
-        -- parent's x plus difference in width to align right
-        self.x = self.parent.x + (self.parent.w - self.w)
-        self.y = self.parent.y
-    elseif self.alignment == "left-center" then
-        self.x = self.parent.x
-        self.y = self.parent.y + (self.parent.h - self.h)/2
-    elseif self.alignment == "center" then
-        self.x = self.parent.x + (self.parent.w - self.w)/2
-        self.y = self.parent.y + (self.parent.h - self.h)/2
-    elseif self.alignment == "right-center" then
-        self.x = self.parent.x + (self.parent.w - self.w)
-        self.y = self.parent.y + (self.parent.h - self.h)/2
-    elseif self.alignment == "bottom-left" then
-        self.x = self.parent.x
-        self.y = self.parent.y + (self.parent.h - self.h)
-    elseif self.alignment == "bottom-center" then
-        self.x = self.parent.x + (self.parent.w - self.w)/2
-        self.y = self.parent.y + (self.parent.h - self.h)
-    elseif self.alignment == "bottom-right" then
-        self.x = self.parent.x + (self.parent.w - self.w)
-        self.y = self.parent.y + (self.parent.h - self.h)
+    self.x = self.parent.x
+    self.y = self.parent.y
+
+    if self.horizontal == "center" then
+        self.x = self.x + (self.parent.w - self.w)/2
+    elseif self.horizontal == "right" then
+        self.x = self.x + (self.parent.w - self.w)
+    end
+
+    if self.vertical == "center" then
+        self.y = self.y + (self.parent.h - self.h)/2
+    elseif self.vertical == "bottom" then
+        self.y = self.y + (self.parent.h - self.h)
     end
 end
 
-function element:alignTo(element, alignment)
+function element:alignTo(element, horizontal, vertical)
     local realParent = self.parent
     self.parent = element
 
@@ -167,8 +124,13 @@ function element:alignTo(element, alignment)
     self.parent = realParent
 end
 
-function element:setAlignment(alignment)
-    self.alignment = alignment
+function element:setAlignment(horizontal, vertical)
+    if horizontal then
+        self.horizontal = horizontal
+    end
+    if vertical then
+        self.vertical = vertical
+    end
 end
 
 function element:setSkin(skin)
