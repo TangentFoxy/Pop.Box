@@ -1,9 +1,17 @@
 local pop = require "pop"
 
 function love.load()
-    pop.setSkin("blackonwhite")
-    local align = pop.box():align("center", "center"):setSize(100, 100):setSkin("blackonwhite")
-    --print(align.skin)
+    local align = pop.box():align("center", "center"):setSize(200, 200)
+    pop.box(align):align("left", "top"):setSize(75, 10):setColor(255, 0, 255, 255)
+    pop.box(align):align("center", "top"):setColor(100, 100, 100)
+    pop.box(align, {0, 255, 0, 255}):setSize(20, 5):align("right", "top")
+    pop.box(align):align("left", "center"):setColor(0, 0, 255)
+    pop.box(align):align("center", "center"):setSize(90, 90):setColor(255, 255, 255)
+    pop.box(align):align("right", "center"):setColor(255, 0, 0)
+    pop.box(align):align("left", "bottom"):setColor(0, 255, 0)
+    pop.box(align):align("center", "bottom"):setColor(255, 255, 0)
+    pop.box(align):align("right", "bottom"):setColor(0, 255, 255)
+    pop.box(nil, {255, 0, 0, 255}):align("left", "top"):setSize(50, 50)
 end
 
 function love.update(dt)
@@ -12,8 +20,6 @@ end
 
 function love.draw()
     pop.draw()
-    love.graphics.setColor(255, 255, 255, 255)
-    --love.graphics.rectangle("fill", 0, 0, 100, 100)
 end
 
 function love.textinput(text)

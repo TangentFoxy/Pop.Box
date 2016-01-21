@@ -6,44 +6,56 @@ local element = require(path .. "/elements/element")
 
 local box = class("pop.box", element)
 
-function box:initialize(pop, parent, skin)
-    element.initialize(self, pop, parent, skin)
+function box:initialize(pop, parent, background)
+    element.initialize(self, pop, parent)
+
+    self.background = background or false
 end
 
-function box:draw() --TODO these ifs are probably wrong
-    print("box drawn!")
-
-    if self.skin.background then
-        if type(self.skin.background) == "table" then
-            lg.setColor(self.skin.background)
-            print(self.skin.background[4], self.x, self.y, self.w, self.h)
-            lg.rectangle("fill", self.x, self.y, self.w, self.h)
-            print("rect")
-        else
-            lg.setColor(255, 255, 255, 255)
-            local w, h = self.skin.background:getDimensions()
-            -- scale!
-            w = self.w/w
-            h = self.h/h
-            lg.draw(self.skin.background, self.x, self.y, 0, w, h)
-        end
-    end
-
-    if self.skin.foreground then
-        if type(self.skin.foreground) == "table" then
-            lg.setColor(self.skin.foreground)
+function box:draw() --NOTE these ifs are probably wrong
+    if self.background then
+        if type(self.background) == "table" then
+            lg.setColor(self.background)
             lg.rectangle("fill", self.x, self.y, self.w, self.h)
         else
             lg.setColor(255, 255, 255, 255)
-            local w, h = self.skin.foreground:getDimensions()
+            local w, h = self.background:getDimensions()
             -- scale!
             w = self.w/w
             h = self.h/h
-            lg.draw(self.skin.foreground, self.x, self.y, 0, w, h)
+            lg.draw(self.background, self.x, self.y, 0, w, h)
         end
     end
 
     return self
+end
+
+function box:setBackground(background)
+    self.background = background
+
+    return self
+end
+
+function box:getBackground()
+    return self.background
+end
+
+function box:setColor(r, g, b, a)
+    self.background = {r, g, b, a}
+
+    if not a then
+        self.background[4] = 255
+    end
+
+    return self
+end
+
+function box:getColor()
+    if type(self.background) == "table" then
+        return self.background[1], self.background[1], self.background[3], self.background[4]
+    else
+        error("This box doesn't have a color.")
+    end
 end
 
 return box

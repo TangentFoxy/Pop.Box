@@ -3,8 +3,7 @@ local class = require(path .. "/lib/middleclass")
 
 local element = class("pop.element")
 
-function element:initialize(pop, parent, skin)
-    self.pop = pop --I hate this -.-
+function element:initialize(pop, parent)
     self.parent = parent
     self.child = {}
 
@@ -12,12 +11,6 @@ function element:initialize(pop, parent, skin)
     self.y = parent.y or 0
     self.w = 10
     self.h = 10
-
-    if skin then
-        self.skin = pop.skins[skin]
-    else
-        self.skin = pop.skins[pop.currentSkin]
-    end
 
     self.horizontal = "left"
     self.vertical = "top"
@@ -145,16 +138,6 @@ function element:setAlignment(horizontal, vertical)
     end
     if vertical then
         self.vertical = vertical
-    end
-
-    return self
-end
-
-function element:setSkin(skin)
-    if type(skin) == "string" then
-        self.skin = self.pop.skins[skin]
-    else
-        self.skin = skin
     end
 
     return self

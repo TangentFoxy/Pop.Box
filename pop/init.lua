@@ -6,8 +6,6 @@ local pop = {}
 pop.elementClasses = {}
 --pop.elements = {}
 pop.window = {child = {}} --top level element, defined in pop.load()
-pop.skins = {}
-pop.currentSkin = "clear"
 --TODO we need a "focused" element for textinput or whatever
 
 function pop.load()
@@ -22,18 +20,8 @@ function pop.load()
         -- wrapper to be able to call pop.element() to create elements
         if not pop[name] then
             pop[name] = function(...) return pop.create(name, ...) end
-            print("pop." .. name .. "() created")
+            print("wrapper: pop." .. name .. "() created")
         end
-    end
-
-    -- load skins
-    local skinList = lf.getDirectoryItems(path .. "/skins")
-
-    for i=1, #skinList do
-        local name = skinList[i]:sub(1, -5)
-        pop.skins[name] = require(path .. "/skins/" .. name)
-        pop.skins[name].name = name
-        print("loaded \"" .. name .. "\" skin")
     end
 
     -- set top element
@@ -61,6 +49,7 @@ function pop.update(dt, element)
         element:update(dt)
     end
 
+    --NOTE add excludeUpdating for performance if needed
     for i=1,#element.child do
         pop.update(dt, element.child[i])
     end
@@ -72,9 +61,7 @@ function pop.draw(element)
     end
 
     if not element.excludeRendering then
-        if element.skin.draw and element.skin.draw(element) then
-            -- do nothing...
-        elseif element.draw then
+        if element.draw then
             element:draw()
         end
 
@@ -98,14 +85,6 @@ end
 
 function pop.keyreleased(key)
     --TODO no idea what to do with this
-end
-
-function pop.setSkin(skin)
-    if type(skin) == "string" then
-        pop.currentSkin = pop.skins[skin]
-    else
-        pop.currentSkin = skin
-    end
 end
 
 pop.load()
