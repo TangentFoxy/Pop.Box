@@ -4,6 +4,7 @@ local class = require(path .. "/lib/middleclass")
 local element = class("pop.element")
 
 function element:initialize(pop, parent, skin)
+    self.pop = pop --I hate this -.-
     self.parent = parent
     self.child = {}
 
@@ -12,7 +13,11 @@ function element:initialize(pop, parent, skin)
     self.w = 10
     self.h = 10
 
-    self.skin = pop.skins[skin] or pop.skins[pop.currentSkin]
+    if skin then
+        self.skin = pop.skins[skin]
+    else
+        self.skin = pop.skins[pop.currentSkin]
+    end
 
     self.horizontal = "left"
     self.vertical = "top"
@@ -27,6 +32,8 @@ function element:move(x, y)
             element.child[i]:move(x - oldX, y - oldY)
         end
     end
+
+    return self
 end
 
 function element:setPosition(x, y)
@@ -54,6 +61,8 @@ function element:setPosition(x, y)
             element.child[i]:move(x - oldX, y - oldY)
         end
     end
+
+    return self
 end
 
 function element:getPosition()
@@ -90,6 +99,8 @@ function element:setSize(w, h)
 
     self.w = w
     self.h = h
+
+    return self
 end
 
 function element:getSize()
@@ -113,6 +124,8 @@ function element:align(horizontal, vertical)
     elseif self.vertical == "bottom" then
         self.y = self.y + (self.parent.h - self.h)
     end
+
+    return self
 end
 
 function element:alignTo(element, horizontal, vertical)
@@ -122,6 +135,8 @@ function element:alignTo(element, horizontal, vertical)
     self:align(alignment)
 
     self.parent = realParent
+
+    return self
 end
 
 function element:setAlignment(horizontal, vertical)
@@ -131,14 +146,18 @@ function element:setAlignment(horizontal, vertical)
     if vertical then
         self.vertical = vertical
     end
+
+    return self
 end
 
 function element:setSkin(skin)
     if type(skin) == "string" then
-        self.skin = pop.skins[skin]
+        self.skin = self.pop.skins[skin]
     else
         self.skin = skin
     end
+
+    return self
 end
 
 return element

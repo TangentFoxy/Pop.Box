@@ -5,7 +5,7 @@ local path = ...
 local pop = {}
 pop.elementClasses = {}
 --pop.elements = {}
-pop.window = false --top level element, defined in pop.load()
+pop.window = {child = {}} --top level element, defined in pop.load()
 pop.skins = {}
 pop.currentSkin = "clear"
 --TODO we need a "focused" element for textinput or whatever
@@ -17,10 +17,12 @@ function pop.load()
     for i=1, #elementList do
         local name = elementList[i]:sub(1, -5)
         pop.elementClasses[name] = require(path .. "/elements/" .. name)
+        print("loaded \"" .. name .. "\" element")
 
         -- wrapper to be able to call pop.element() to create elements
         if not pop[name] then
             pop[name] = function(...) return pop.create(name, ...) end
+            print("pop." .. name .. "() created")
         end
     end
 
@@ -31,10 +33,12 @@ function pop.load()
         local name = skinList[i]:sub(1, -5)
         pop.skins[name] = require(path .. "/skins/" .. name)
         pop.skins[name].name = name
+        print("loaded \"" .. name .. "\" skin")
     end
 
     -- set top element
     pop.window = pop.create("element"):setSize(lg.getWidth(), lg.getHeight())
+    print("created pop.window")
 end
 
 function pop.create(elementType, parent, ...)
@@ -43,7 +47,7 @@ function pop.create(elementType, parent, ...)
     end
 
     local newElement = pop.elementClasses[elementType](pop, parent, ...)
-    table.insert(parent.child, newElement) --NOTE pop.window is its own parent!
+    table.insert(parent.child, newElement) --NOTE pop.window is its own parent?
 
     return newElement
 end
@@ -94,6 +98,14 @@ end
 
 function pop.keyreleased(key)
     --TODO no idea what to do with this
+end
+
+function pop.setSkin(skin)
+    if type(skin) == "string" then
+        pop.currentSkin = pop.skins[skin]
+    else
+        pop.currentSkin = skin
+    end
 end
 
 pop.load()

@@ -1,8 +1,9 @@
 local pop = require "pop"
 
 function love.load()
-    --pop.box() -- returns the box element
-    -- or pop.create("box") (this is what is actually called when you call pop.box())
+    pop.setSkin("blackonwhite")
+    local align = pop.box():align("center", "center"):setSize(100, 100):setSkin("blackonwhite")
+    --print(align.skin)
 end
 
 function love.update(dt)
@@ -11,6 +12,8 @@ end
 
 function love.draw()
     pop.draw()
+    love.graphics.setColor(255, 255, 255, 255)
+    --love.graphics.rectangle("fill", 0, 0, 100, 100)
 end
 
 function love.textinput(text)
