@@ -20,9 +20,9 @@ function element:move(x, y)
     self.x = self.x + x
     self.y = self.y + y
 
-    for i=1,#element.child do
-        if not element.child[i].excludeMovement then
-            element.child[i]:move(x - oldX, y - oldY)
+    for i=1,#self.child do
+        if not self.child[i].excludeMovement then
+            self.child[i]:move(x - oldX, y - oldY)
         end
     end
 
@@ -49,9 +49,9 @@ function element:setPosition(x, y)
         self.y = y - self.h
     end
 
-    for i=1,#element.child do
-        if not element.child[i].excludeMovement then
-            element.child[i]:move(x - oldX, y - oldY)
+    for i=1,#self.child do
+        if not self.child[i].excludeMovement then
+            self.child[i]:move(x - oldX, y - oldY)
         end
     end
 
@@ -78,20 +78,23 @@ function element:getPosition()
 end
 
 function element:setSize(w, h)
-    if self.horizontal == "center" then
-        self.x = self.x - (w - self.w)/2
-    elseif self.horizontal == "right" then
-        self.x = self.x - (w - self.w)
+    if w then
+        if self.horizontal == "center" then
+            self.x = self.x - (w - self.w)/2
+        elseif self.horizontal == "right" then
+            self.x = self.x - (w - self.w)
+        end
+        self.w = w
     end
 
-    if self.vertical == "center" then
-        self.y = self.y - (h - self.h)/2
-    elseif self.vertical == "bottom" then
-        self.y = self.y - (h - self.h)
+    if h then
+        if self.vertical == "center" then
+            self.y = self.y - (h - self.h)/2
+        elseif self.vertical == "bottom" then
+            self.y = self.y - (h - self.h)
+        end
+        self.h = h
     end
-
-    self.w = w
-    self.h = h
 
     return self
 end
