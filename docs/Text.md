@@ -1,0 +1,3 @@
+- set text will modify size
+- set font will modify size
+- set size just fixes the size, you cannot manually set text size

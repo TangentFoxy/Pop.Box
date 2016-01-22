@@ -12,6 +12,7 @@ function love.load()
     pop.box(align):align("center", "bottom"):setColor(255, 255, 0)
     pop.box(align):align("right", "bottom"):setColor(0, 255, 255)
     pop.box(nil, {255, 0, 0, 255}):align("left", "top"):setSize(50, 50)
+    pop.text(nil, "Hello World!"):align("center"):setText("Hey, I've been modified!")
 end
 
 function love.update(dt)
