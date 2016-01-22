@@ -23,10 +23,13 @@ local pop = require "pop"
 local box = pop.box()
 ```
 
-Docs: [pop Module][3], [Elements][4], [Skins][5]
+Docs: [pop Module][3], [Elements][4], [Skins][5], [Drawables][6]
+
+TODO Support rotation?
 
 [1]: https://en.wikipedia.org/wiki/Cola_(programming_language)
 [2]: https://love2d.org/
 [3]: ./docs/Pop.md
 [4]: ./docs/Elements.md
 [5]: ./docs/Skins.md
+[6]: ./docs/Drawables.md

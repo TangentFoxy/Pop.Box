@@ -9,15 +9,13 @@ Once that has been done (or at the very least, `pop` has been required and a
 callback is set up for `pop.draw`), you can start creating [Elements][1] and
 drawing them.
 
-Also look into [Skins][2], which control how elements are rendered.
+Also look into [Skins][2], which can make it easy to apply styles to many
+elements at once.
 
 ## `pop` Values / Methods
 
 - `pop.window` is the top level element. It essentially represents the game
   window.
-- `pop.currentSkin` holds a string specifying the currently in-use skin.
-  Basically, it's a shortcut so you don't have to specify a skin with every
-  call to construct an element.
 - `pop.create(element, parent, ...)` is how elements are actually created,
   `element` is a string naming the desired element. There are wrappers around
   any element that doesn't conflict with a key in the `pop` module so that you
@@ -25,6 +23,8 @@ Also look into [Skins][2], which control how elements are rendered.
 - `pop.load()` loads elements and skins, and sets up `pop.window`. This is used
   internally, and will probably lead to issues if you use it (namely, destroying
   Pop.Box's access to any existing GUI).
+- `pop.skin(element, skin, stop)` will apply the specified [skin][2] to the
+  specified `element` and its children (unless `stop` is set).
 
 ## `pop` Callbacks
 

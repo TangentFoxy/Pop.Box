@@ -100,6 +100,13 @@ function element:getSize()
     return self.w, self.h
 end
 
+function element:adjustSize(x, y)
+    local X, Y = self:getSize()
+    self:setSize(X + x, Y + y)
+
+    return self
+end
+
 function element:align(horizontal, vertical)
     self:setAlignment(horizontal, vertical)
 

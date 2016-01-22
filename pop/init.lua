@@ -87,6 +87,24 @@ function pop.keyreleased(key)
     --TODO no idea what to do with this
 end
 
+function pop.skin(element, skin, stop)
+    if element.background then
+        element.background = skin.background
+    end
+    if element.color then
+        element.color = skin.color
+    end
+    if element.font then
+        element.font = skin.font
+    end
+
+    if not stop then
+        for i=1,#element.child do
+            pop.skin(element.child[i], skin)
+        end
+    end
+end
+
 pop.load()
 
 return pop

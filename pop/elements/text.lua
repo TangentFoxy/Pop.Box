@@ -67,4 +67,18 @@ function text:getFont()
     return self.font
 end
 
+function text:setColor(r, g, b, a)
+    self.color = {r, g, b, a}
+
+    if not a then
+        self.color[4] = 255
+    end
+
+    return self
+end
+
+function text:getColor()
+    return self.color[1], self.color[1], self.color[3], self.color[4]
+end
+
 return text
