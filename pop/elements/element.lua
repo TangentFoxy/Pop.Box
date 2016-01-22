@@ -105,7 +105,15 @@ end
 
 function element:adjustSize(x, y)
     local X, Y = self:getSize()
-    self:setSize(X + x, Y + y)
+
+    if x then
+        X = X + x
+    end
+    if y then
+        Y = Y + y
+    end
+
+    self:setSize(X, Y)
 
     return self
 end

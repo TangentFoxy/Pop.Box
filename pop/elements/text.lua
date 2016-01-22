@@ -9,7 +9,7 @@ local text = class("pop.text", element)
 function text:initialize(pop, parent, text, color)
     element.initialize(self, pop, parent)
 
-    self.font = lg.newFont()
+    self.font = lg.newFont(14)
     self:setText(text or "")
     self.color = color or {255, 255, 255, 255}
 end
