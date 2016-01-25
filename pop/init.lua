@@ -45,13 +45,14 @@ function pop.update(dt, element)
         element = pop.window
     end
 
-    if element.update then
-        element:update(dt)
-    end
+    if not element.excludeUpdating then
+        if element.update then
+            element:update(dt)
+        end
 
-    --NOTE add excludeUpdating for performance if needed
-    for i=1,#element.child do
-        pop.update(dt, element.child[i])
+        for i=1,#element.child do
+            pop.update(dt, element.child[i])
+        end
     end
 end
 
@@ -87,6 +88,10 @@ function pop.keyreleased(key)
     --TODO no idea what to do with this
 end
 
+function pop.textinput(text)
+    --TODO something useful will happen here
+end
+
 function pop.skin(element, skin, stop)
     if element.background then
         element.background = skin.background
@@ -102,6 +107,28 @@ function pop.skin(element, skin, stop)
         for i=1,#element.child do
             pop.skin(element.child[i], skin)
         end
+    end
+end
+
+function pop.debugDraw(element)
+    if not element then
+        element = pop.window
+    end
+
+    if element.debugDraw then
+        element:debugDraw()
+    else
+        lg.setLineWidth(1)
+        lg.setColor(0, 0, 0, 100)
+        lg.rectangle("fill", self.x, self.y, self.w, self.h)
+        lg.setColor(150, 150, 150, 150)
+        lg.rectangle("line", self.x, self.y, self.w, self.h)
+        lg.setColor(200, 200, 200, 255)
+        lg.print(".", self.x, self.y)
+    end
+
+    for i=1,#element.child do
+        pop.debugDraw(element.child[i])
     end
 end
 

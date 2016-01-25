@@ -54,7 +54,7 @@ Additional methods:
 - `getColor()` - Returns background color, or errors if the background is not a
   color.
 
-TODO Make it possible to just specify skin?
+TODO Make it possible to just specify background?
 
 ## Text Element
 
@@ -64,10 +64,13 @@ Text is used to draw text.
 If `parent` not specified, uses `pop.window` (the top level element).
 If `color` is not specified, uses white.
 
-Additional methods:
+Overwritten methods:
 
 - `setSize()` - Does not allow you to set the size, instead, it fixes the size
   if it is incorrect (mostly for internal use).
+
+Additional methods:
+
 - `setText(text)` - Sets text and modifies size to fit.
 - `getText()` - Returns text.
 - `setFont()` - Sets [Font][2] and modifies size to fit. Note: Empty text will
@@ -77,7 +80,7 @@ Additional methods:
 - `setColor(r, g, b, a)` - Sets text color (`a` is alpha, and optional).
 - `getColor()` - Returns text color.
 
-TODO Make it possible to just specify text, or just text and skin?
+TODO Make it possible to just specify text, or just text and color?
 TODO Make it possible to use setting size on text to actually calculate what
      font size will make that work?
 
@@ -87,6 +90,9 @@ If you set `excludeMovement` to `true` on any element, it and its children will
 not be moved unless its own movement methods are used.
 
 If you set `excludeRendering` to `true` on any element, it and its children will
+not be rendered.
+
+If you set `excludeUpdating` to `true` on any element, it and its children will
 not be rendered.
 
 [1]: ./Skins.md

@@ -22,6 +22,16 @@ function text:draw()
     return self
 end
 
+function text:debugDraw()
+    lg.setLineWidth(1)
+    lg.setColor(0, 0, 0, 100)
+    lg.rectangle("fill", self.x, self.y, self.w, self.h)
+    lg.setColor(200, 0, 0, 200)
+    lg.rectangle("line", self.x, self.y, self.w, self.h)
+    lg.setColor(255, 200, 200, 255)
+    lg.print("t", self.x, self.y)
+end
+
 function text:setSize()
     local w = self.font:getWidth(self.text)
     local h = self.font:getHeight()

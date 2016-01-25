@@ -30,6 +30,16 @@ function box:draw() --NOTE these ifs are probably wrong
     return self
 end
 
+function box:debugDraw()
+    lg.setLineWidth(1)
+    lg.setColor(0, 0, 0, 100)
+    lg.rectangle("fill", self.x, self.y, self.w, self.h)
+    lg.setColor(0, 0, 200, 200)
+    lg.rectangle("line", self.x, self.y, self.w, self.h)
+    lg.setColor(200, 200, 255, 255)
+    lg.print("b", self.x, self.y)
+end
+
 function box:setBackground(background)
     self.background = background
 

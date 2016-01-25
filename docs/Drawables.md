@@ -2,6 +2,9 @@
 
 Pop.Box supports three [Drawables][1]: Canvas, Image, Video
 
+**Note**: Video support is theoretical, as I have not tested it. (Well,
+everything is theoretical, but I'm writing tests now.)
+
 Additionally, you can use in the place of any Drawable `false` to stop rendering
 of whatever is using a Drawable, or a table of color values.
 

@@ -31,6 +31,8 @@ elements at once.
 - `pop.update(dt)` is used so that any element can have a frame-by-frame update
   attached to it.
 - `pop.draw()` is used to draw everything.
+- `pop.debugDraw()` can be used to draw everything in existence, to try to help
+  figure out exactly what's going on.
 - `pop.textinput(text)` is used to grab text input for any focused element that
   can accept it.
 - `pop.mousepressed(button, x, y)` is used to detect and handle when an element

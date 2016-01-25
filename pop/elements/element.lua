@@ -1,3 +1,5 @@
+local lg = love.graphics
+
 local path = string.sub(..., 1, string.len(...) - string.len("/elements/element"))
 local class = require(path .. "/lib/middleclass")
 
@@ -14,6 +16,16 @@ function element:initialize(pop, parent)
 
     self.horizontal = "left"
     self.vertical = "top"
+end
+
+function element:debugDraw()
+    lg.setLineWidth(1)
+    lg.setColor(0, 0, 0, 100)
+    lg.rectangle("fill", self.x, self.y, self.w, self.h)
+    lg.setColor(0, 200, 0, 200)
+    lg.rectangle("line", self.x, self.y, self.w, self.h)
+    lg.setColor(200, 255, 200, 255)
+    lg.print("e", self.x, self.y)
 end
 
 function element:move(x, y)
