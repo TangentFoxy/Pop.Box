@@ -10,6 +10,8 @@ function love.load()
     pop.text(nil, "Press \"s\" to show objects for visual testing/demo.\nPress \"t\" to run tests.\nPress \"d\" to toggle debug draw."):move(2, 2)
     --TODO correct the fact that the size is wrong here! (height doesn't take into account \n)
     --NOTE width? Is width calculated correctly when \n's exist? TEST THIS (also test tabs)
+    pop.text(nil, "This is a test\ncollection of strings to see how width is determined.\nLooks like it takes width of widest line!"):move(30, 120)
+    pop.element():align("right", "bottom"):setSize(25, 25):move(-5, -5)
 end
 
 function love.update(dt)

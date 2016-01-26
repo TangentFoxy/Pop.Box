@@ -31,7 +31,7 @@ function box:draw() --NOTE these ifs are probably wrong
 end
 
 function box:debugDraw()
-    lg.setLineWidth(1)
+    lg.setLineWidth(0.5)
     lg.setColor(0, 0, 0, 100)
     lg.rectangle("fill", self.x, self.y, self.w, self.h)
     lg.setColor(0, 0, 200, 200)

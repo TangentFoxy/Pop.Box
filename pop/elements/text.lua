@@ -23,7 +23,7 @@ function text:draw()
 end
 
 function text:debugDraw()
-    lg.setLineWidth(1)
+    lg.setLineWidth(0.5)
     lg.setColor(0, 0, 0, 100)
     lg.rectangle("fill", self.x, self.y, self.w, self.h)
     lg.setColor(200, 0, 0, 200)
@@ -34,7 +34,7 @@ end
 
 function text:setSize()
     local w = self.font:getWidth(self.text)
-    local h = self.font:getHeight()
+    local h = self.font:getHeight() * (select(2, self.text:gsub("\n", "\n")) + 1)
 
     if self.horizontal == "center" then
         self.x = self.x - (w - self.w)/2
