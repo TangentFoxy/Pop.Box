@@ -54,7 +54,7 @@ function love.keypressed(key)
             pop.box(align):align("right", "bottom"):setColor(0, 255, 255):setSize(40, 40)
             --pop.box(nil, {255, 0, 0, 255}):align("left", "top"):setSize(50, 50) --TODO adjust z-height of elements
             pop.text(nil, "Hello World!"):align("center"):setText("Hey, I've been modified!")--:move(0, 18)
-            pop.text(nil, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+[]{}\\:;\"',./<>?`~"):align("center", "bottom")
+            pop.text(nil, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+[]{}\\|:;\"',./<>?`~"):align("center", "bottom")
 
             visualTestsShown = true
         elseif (key == "t") and (not testsRun) then
