@@ -6,7 +6,7 @@ local pop = {}
 pop.elementClasses = {}
 --pop.elements = {}
 pop.window = {child = {}} --top level element, defined in pop.load()
---TODO we need a "focused" element for textinput or whatever
+pop.focused = pop.window  --defaults to top level
 
 function pop.load()
     -- load element classes
@@ -72,12 +72,62 @@ function pop.draw(element)
     end
 end
 
-function pop.mousepressed(button, x, y)
-    --TODO find element, if it has a callback, call with button and LOCAL x/y
+function pop.mousepressed(button, x, y, element)
+    if not element then
+        element = pop.window
+
+        if (x < element.x) or (y < element.y) or
+        (x > (element.x + element.w)) or (y > (element.y + element.h)) then
+            return
+        end
+    end
+
+    local handled = false
+    for i=1,#element.child do
+        if (x >= element.x) and (y >= element.y) and
+        (x <= (element.x + element.w)) and (y <= (element.y + element.h)) then
+            handled = pop.mousepressed(button, x, y, element.child[i])
+        end
+    end
+
+    if (not handled) and element.mousepressed then
+        element:mousepressed(button, x - element.x, y - element.y)
+        pop.focused = element
+    end
+
+    return handled
 end
 
-function pop.mousereleased(button, x, y)
-    --TODO find element, if it has a callback, call with button and LOCAL x/y
+function pop.mousereleased(button, x, y, element)
+    if not element then
+        element = pop.window
+
+        if (x < element.x) or (y < element.y) or
+        (x > (element.x + element.w)) or (y > (element.y + element.h)) then
+            return
+        end
+    end
+
+    local handled = false
+    for i=1,#element.child do
+        if (x >= element.x) and (y >= element.y) and
+        (x <= (element.x + element.w)) and (y <= (element.y + element.h)) then
+            handled = pop.mousereleased(button, x, y, element.child[i])
+        end
+    end
+
+    if not handled then
+        if element.mousereleased then
+            element:mousereleased(button, x - element.x, y - element.y)
+            handled = true
+        end
+        if element.clicked then
+            element:clicked(button, x - element.x, y - element.y)
+            handled = true
+        end
+    end
+
+    return handled
 end
 
 function pop.keypressed(key)

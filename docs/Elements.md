@@ -29,6 +29,21 @@ All elements have the following standard methods:
 - `setAlignment(horizontal, vertical)` - Sets alignment *values* to this, but
   does not move the element. Same `horizontal`/`vertical` strings as `align()`
 
+Events:
+
+If any of these is set as a function, they will be called when the appropriate
+event happens.
+
+- `mousepressed(button, x, y)` - Called the moment a mouse click starts, uses
+  the same values for `button` as [love.mousepressed][4], but the `x`/`y` are
+  relative to the element.
+- `mousereleased(button, x, y)` - Called the moment a mouse click stops, uses
+  the same values for `button` as [love.mousepressed][4], but the `x`/`y` are
+  relative to the element.
+- `clicked(button, x, y)` - Called when a mouse click stops if it started on the
+  same element. Uses the same values for `button` as [love.mousepressed][4], but
+  the `x`/`y` are relative to the element.
+
 **Note**! Calls to `align()`, `alignTo()`, and `setAlignment()` change what
 positions will be returned, and how positioning and resizing will work. Run the
 demo to see how these affect things.
@@ -98,3 +113,4 @@ not be rendered.
 [1]: ./Skins.md
 [2]: https://love2d.org/wiki/Font
 [3]: ./Drawables.md
+[4]: https://love2d.org/wiki/love.mousepressed

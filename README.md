@@ -15,6 +15,9 @@ extensible, allowing for complex interfaces to be built in it.
 - Supports custom elements/skins, make your own and move them into the
   appropriate directories for them to be automatically loaded.
 
+**Note**: Skins are currently a work-in-progress, and not automatically loaded.
+See the documentation linked to below.
+
 ## Usage
 
 ```lua

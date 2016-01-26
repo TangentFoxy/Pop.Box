@@ -16,6 +16,8 @@ elements at once.
 
 - `pop.window` is the top level element. It essentially represents the game
   window.
+- `pop.focused` holds a reference to the last clicked on element (that handled
+  the click using `element:mousepressed()` (see [Elements.md][1])).
 - `pop.create(element, parent, ...)` is how elements are actually created,
   `element` is a string naming the desired element. There are wrappers around
   any element that doesn't conflict with a key in the `pop` module so that you
@@ -36,10 +38,10 @@ elements at once.
 - `pop.textinput(text)` is used to grab text input for any focused element that
   can accept it.
 - `pop.mousepressed(button, x, y)` is used to detect and handle when an element
-  is clicked on. (Not actually used yet.)
+  is clicked on. See [Elements.md][1].
+- `pop.mousereleased(button, x, y)` is used to detect and handle when a mouse
+  button is released over an element. See [Elements.md][1].
 
-- `pop.mousereleased(button, x, y)` is not used yet, but probably will be used
-  in the future.
 - `pop.keypressed(key)` is not used yet, but probably will be used in the
   future.
 - `pop.keyreleased(key)` is also not used yet, but probably will be used in the
