@@ -12,6 +12,7 @@ class element
 
         @horizontal = "left"
         @vertical = "top"
+        @margin = 0
 
     debugDraw: =>
         graphics.setLineWidth 0.5
@@ -120,16 +121,20 @@ class element
         @y = @parent.y
 
         switch @horizontal
+            when "left"
+                @x += @margin
             when "center"
                 @x += (@parent.w - @w)/2
             when "right"
-                @x += @parent.w - @w
+                @x += @parent.w - @w - @margin
 
         switch @vertical
+            when "top"
+                @y += @margin
             when "center"
                 @y += (@parent.h - @h)/2
             when "bottom"
-                @y += @parent.h - @h
+                @y += @parent.h - @h - @margin
 
         return @
 

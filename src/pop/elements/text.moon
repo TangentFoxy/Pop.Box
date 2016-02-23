@@ -38,13 +38,13 @@ class text extends element
             when "center"
                 @x -= (w - @w)/2
             when "right"
-                @x -= w - @w
+                @x -= w - @w - @margin
 
         switch @vertical
             when "center"
                 @y -= (h - @h)/2
             when "right"
-                @y -= h - @h
+                @y -= h - @h - @margin
 
         @w = w
         @h = h

@@ -59,6 +59,8 @@ class Pop
         error "Unimplemented."
 
     skin: (element, skin, apply_to_children=false) =>
+        element.margin = skin.margin
+
         if element.background
             element.background = skin.background
         if element.color
