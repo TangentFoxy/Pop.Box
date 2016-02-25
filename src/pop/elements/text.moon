@@ -32,7 +32,7 @@ class text extends element
 
     setSize: =>
         w = @font\getWidth @text
-        h = @font\getHeight * (select(2, @text:gsub("\n", "\n")) + 1) --hack to get height of multiple lines of text
+        h = @font\getHeight! * (select(2, @text\gsub("\n", "\n")) + 1) --hack to get height of multiple lines of text
 
         switch @horizontal
             when "center"

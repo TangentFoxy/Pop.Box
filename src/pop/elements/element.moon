@@ -29,7 +29,7 @@ class element
         @x += x
         @y += y
 
-        for i in @child do
+        for i = 1, #@child
             if not @child[i].excludeMovement
                 @child[i]\move x, y
 
@@ -55,7 +55,7 @@ class element
             when "bottom"
                 @y = y - @h
 
-        for i in @child
+        for i = 1, #@child
             if not @child[i].excludeMovement
                 @child[i]\move x - oldX, y - oldY
 
@@ -86,6 +86,7 @@ class element
                     @x -= (w - @w)/2
                 when "right"
                     @x -= w - @w
+
             @w = w
 
         if h
