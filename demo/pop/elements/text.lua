@@ -5,13 +5,22 @@ do
   local _obj_0 = string
   sub, len = _obj_0.sub, _obj_0.len
 end
-local path = sub(..., 1, len(...) - len("/text"))
+local path = sub(..., 1, len(...) - len("/box"))
 local element = require(tostring(path) .. "/element")
 local text
 do
   local _class_0
   local _parent_0 = element
   local _base_0 = {
+    wrap = function(pop)
+      return function(parent, ...)
+        if type(parent) == "string" then
+          return pop.create("text", nil, parent, ...)
+        else
+          return pop.create("text", parent, ...)
+        end
+      end
+    end,
     draw = function(self)
       graphics.setColor(self.color)
       graphics.setFont(self.font)
@@ -40,7 +49,7 @@ do
       local _exp_1 = self.vertical
       if "center" == _exp_1 then
         self.y = self.y - ((h - self.h) / 2)
-      elseif "right" == _exp_1 then
+      elseif "bottom" == _exp_1 then
         self.y = self.y - (h - self.h - self.margin)
       end
       self.w = w
@@ -70,12 +79,16 @@ do
       if a == nil then
         a = 255
       end
-      self.color = {
-        r,
-        g,
-        b,
-        a
-      }
+      if type(r) == "table" then
+        self.color = r
+      else
+        self.color = {
+          r,
+          g,
+          b,
+          a
+        }
+      end
       return self
     end,
     getColor = function(self)

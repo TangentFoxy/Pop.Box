@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "Pop.Box Demo / Tests"
+    t.title = "Pop.Box demo/tests"
     t.console = true
 
     t.window.width = 960

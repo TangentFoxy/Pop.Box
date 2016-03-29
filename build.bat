@@ -1,4 +1,5 @@
 @ECHO OFF
+REM Assumes you have Windows binaries in the project's root directory!
 cd src
 "%cd%\..\moonc.exe" -t ../lib .
 cd ..

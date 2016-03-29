@@ -1,17 +1,22 @@
-local pop = require "pop"
-
 local lg = love.graphics
-
-local visualTestsShown = false
-local testsRun = false
-local debugDrawEnabled = false
+local pop
 
 function love.load()
-    pop.text(nil, "Press \"s\" to show objects for visual testing/demo.\nPress \"t\" to run tests.\nPress \"d\" to toggle debug draw."):move(2, 2)
-    --TODO correct the fact that the size is wrong here! (height doesn't take into account \n)
-    --NOTE width? Is width calculated correctly when \n's exist? TEST THIS (also test tabs)
-    pop.text(nil, "This is a test\ncollection of strings to see how width is determined.\nLooks like it takes width of widest line!"):move(30, 120)
-    pop.element():align("right", "bottom"):setSize(25, 25):move(-5, -5)
+    pop = require "pop"
+    local c = pop.box():align("center", "center"):setSize(300, 300)
+    pop.box(c, {255, 0, 0, 255}):setSize(100, 50)
+    pop.box(c, {0, 255, 0, 255}):align("center"):setSize(100, 100)
+    pop.box(c, {0, 0, 255, 255}):align("right"):setSize(50, 100)
+    pop.box(c, {100, 100, 100, 255}):align("center", "center"):setSize(500, 100)
+    pop.box(c):align("center"):setSize(50, 500):move(0, -100)
+    pop.box(c, {255, 255, 0, 255}):align(false, "bottom"):setSize(100, 100)
+    pop.box(c, {255, 150, 0, 255}):align("center", "bottom"):setSize(100, 50)
+    pop.box(c, {0, 255, 255}):align("right", "bottom"):setSize(50, 100):move(-50)
+    pop.text(nil, "Here's some test text\n(with newlines)\nin the top left corner!")
+    pop.text(nil, "Here's some test text in the bottom right corner!"):align("right", "bottom")
+    pop.skin(pop.text("Here's easier-to-code test text in the center!"):align("center", "center", true)) -- 'true' means align to pixel!
+    w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
+    b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
 end
 
 function love.update(dt)
@@ -20,55 +25,29 @@ end
 
 function love.draw()
     pop.draw()
-
-    if debugDrawEnabled then
-        pop.debugDraw()
-    end
+    --pop.debugDraw()
 end
 
-function love.textinput(text)
-    pop.textinput(text)
+function love.mousepressed(x, y, button)
+    pop.mousepressed(x, y, button)
 end
 
-function love.mousepressed(button, x, y)
-    pop.mousepressed(button, x, y)
-end
-
-function love.mousereleased(button, x, y)
-    pop.mousereleased(button, x, y)
+function love.mousereleased(x, y, button)
+    pop.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
-    if key == "escape" then
+    local handled = pop.keypressed(key)
+
+    if (key == "escape") and (not handled) then
         love.event.quit()
-    else
-        if (key == "s") and (not visualTestsShown) then
-            -- old visual tests
-            local align = pop.box():align("center", "center"):setSize(200, 200)
-            pop.box(align):align("left", "top"):setSize(75, 10):setColor(255, 0, 255, 255)
-            pop.box(align):align("center", "top"):setColor(100, 100, 100)
-            pop.box(align, {0, 255, 0, 255}):setSize(20, 5):align("right", "top")
-            pop.box(align):align("left", "center"):setColor(0, 0, 255)
-            pop.box(align):align("center", "center"):setSize(90, 90):setColor(255, 255, 255)
-            pop.box(align):align("right", "center"):setColor(255, 0, 0)
-            pop.box(align):align("left", "bottom"):setColor(0, 255, 0):setSize(nil, 40)
-            pop.box(align):align("center", "bottom"):setColor(255, 255, 0)
-            pop.box(align):align("right", "bottom"):setColor(0, 255, 255):setSize(40, 40)
-            --pop.box(nil, {255, 0, 0, 255}):align("left", "top"):setSize(50, 50) --TODO adjust z-height of elements
-            pop.text(nil, "Hello World!"):align("center"):setText("Hey, I've been modified!")--:move(0, 18)
-            pop.text(nil, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+[]{}\\|:;\"',./<>?`~"):align("center", "bottom")
-
-            visualTestsShown = true
-        elseif (key == "t") and (not testsRun) then
-            require "test"
-        elseif key == "d" then
-            debugDrawEnabled = not debugDrawEnabled
-        end
-
-        pop.keypressed(key)
     end
 end
 
 function love.keyreleased(key)
     pop.keyreleased(key)
+end
+
+function love.textinput(text)
+    pop.textinput(text)
 end

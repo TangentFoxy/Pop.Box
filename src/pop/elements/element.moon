@@ -1,12 +1,18 @@
 import graphics from love
+import floor from math
 
 class element
     new: (pop, parent) =>
         @parent = parent
         @child = {}
 
-        @x = parent.x or 0
-        @y = parent.y or 0
+        if parent
+            @x = parent.x or 0
+            @y = parent.y or 0
+        else
+            @x = 0
+            @y = 0
+
         @w = 10
         @h = 10
 
@@ -26,11 +32,13 @@ class element
         return @
 
     move: (x, y) =>
-        @x += x
-        @y += y
+        if x
+            @x = @x + x
+        if y
+            @y = @y + y
 
         for i = 1, #@child
-            if not @child[i].excludeMovement
+            unless @child[i].excludeMovement
                 @child[i]\move x, y
 
         return @
@@ -39,24 +47,30 @@ class element
         oldX = @x
         oldY = @y
 
-        switch @horizontal
-            when "left"
-                @x = x
-            when "center"
-                @x = x - @w/2
-            when "right"
-                @x = x - @w
+        if x
+            switch @horizontal
+                when "left"
+                    @x = x
+                when "center"
+                    @x = x - @w/2
+                when "right"
+                    @x = x - @w
+        else
+            x = oldX
 
-        switch @vertical
-            when "top"
-                @y = y
-            when "center"
-                @y = y - @h/2
-            when "bottom"
-                @y = y - @h
+        if y
+            switch @vertical
+                when "top"
+                    @y = y
+                when "center"
+                    @y = y - @h/2
+                when "bottom"
+                    @y = y - @h
+        else
+            y = oldY
 
         for i = 1, #@child
-            if not @child[i].excludeMovement
+            unless @child[i].excludeMovement
                 @child[i]\move x - oldX, y - oldY
 
         return @
@@ -69,7 +83,7 @@ class element
             when "center"
                 resultX += @w/2
             when "right"
-                resultX += @w
+                resultY += @w
 
         switch @vertical
             when "center"
@@ -115,7 +129,8 @@ class element
 
         return @
 
-    align: (horizontal, vertical) =>
+    --TODO note that align requires a parent!
+    align: (horizontal, vertical, toPixel) =>
         @setAlignment horizontal, vertical
 
         @x = @parent.x
@@ -137,15 +152,19 @@ class element
             when "bottom"
                 @y += @parent.h - @h - @margin
 
+        if toPixel
+            @x = floor @x
+            @y = floor @y
+
         return @
 
     alignTo: (element, horizontal, vertical) =>
-        realParent = @parent
+        parent = @parent
         @parent = element
 
         @align horizontal, vertical
 
-        @parent = realParent
+        @parent = parent
 
         return @
 
@@ -156,3 +175,11 @@ class element
             @vertical = vertical
 
         return @
+
+    setMargin: (margin) =>
+        @margin = margin
+        @align!
+        return @
+
+    getMargin: =>
+        return @margin

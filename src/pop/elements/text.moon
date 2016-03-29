@@ -1,10 +1,17 @@
 import graphics from love
 import sub, len from string
 
-path = sub ..., 1, len(...) - len "/text"
+path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
 class text extends element
+    wrap: (pop) ->
+        return (parent, ...) ->
+            if type(parent) == "string"
+                return pop.create("text", nil, parent, ...)
+            else
+                return pop.create("text", parent, ...)
+
     new: (pop, parent, text="", color={255,255,255,255}) =>
         super pop, parent
 
@@ -30,9 +37,10 @@ class text extends element
 
         return @
 
+    -- unlike most elements, you cannot set a size for text elements
     setSize: =>
         w = @font\getWidth @text
-        h = @font\getHeight! * (select(2, @text\gsub("\n", "\n")) + 1) --hack to get height of multiple lines of text
+        h = @font\getHeight! * (select(2, @text\gsub("\n", "\n")) + 1) --hack to get height of multiple lines
 
         switch @horizontal
             when "center"
@@ -43,7 +51,7 @@ class text extends element
         switch @vertical
             when "center"
                 @y -= (h - @h)/2
-            when "right"
+            when "bottom"
                 @y -= h - @h - @margin
 
         @w = w
@@ -68,7 +76,11 @@ class text extends element
         return @font
 
     setColor: (r, g, b, a=255) =>
-        @color = {r, g, b, a}
+        if type(r) == "table"
+            @color = r
+        else
+            @color = {r, g, b, a}
+
         return @
 
     getColor: =>

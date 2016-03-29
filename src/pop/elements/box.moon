@@ -10,15 +10,15 @@ class box extends element
 
         @background = background
 
-    draw: => --NOTE these ifs might be wrong? test this!
+    draw: =>
         if @background
             if type(@background) == "table"
                 graphics.setColor @background
+                graphics.rectangle "fill", @x, @y, @w, @h
             else
-                graphics.setColor @background
                 w, h = @background\getDimensions!
-                w = @w/w
-                h = @h/h
+                w = @w / w
+                h = @h / h
                 graphics.draw @background, @x, @y, 0, w, h
 
         return @
@@ -42,11 +42,15 @@ class box extends element
         return @background
 
     setColor: (r, g, b, a=255) =>
-        @background = {r, g, b, a}
+        if type(r) == "table"
+            @background = r
+        else
+            @background = {r, g, b, a}
+
         return @
 
     getColor: =>
         if type(@background) == "table"
             return unpack @background
         else
-            error "This box doesn't have a color." --might be bad design...
+            error "This box doesn't have a color." --might be a bad idea

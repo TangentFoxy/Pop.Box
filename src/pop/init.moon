@@ -6,94 +6,115 @@ path = ...
 pop = {}
 
 pop.elements = {}
-pop.window = {child: {}} --placeholder to allow window creation without specialized code
---pop.focused = false
+pop.skins = {}
 
+pop.screen = false -- initialized in pop.load()
+--pop.focused ?
+
+-- loads elements and skins, creates pop.screen (intended to only be called once at the beginning)
 pop.load = ->
     elements = filesystem.getDirectoryItems "#{path}/elements"
     for i = 1, #elements
+        -- only attempt to load lua files
+        unless elements[i]\sub(-4) == ".lua"
+            continue
+
+        -- load into pop.elements table
         name = elements[i]\sub 1, -5
         pop.elements[name] = require "#{path}/elements/#{name}"
-        print "loaded element: #{name}"
+        print "element loaded: \"#{name}\""
 
-        if not pop[name]
-            pop[name] = (...) -> return pop.create(name, ...)
-            print "wrapper created: #{name}()"
+        -- create pop.element() wrapper if possible
+        unless pop[name]
+            if pop.elements[name].wrap
+                pop[name] = pop.elements[name].wrap pop
+            else
+                pop[name] = (...) ->
+                    return pop.create(name, ...)
 
-    pop.window = pop.create("element")\setSize(graphics.getWidth!, graphics.getHeight!)
-    --pop.window.parent = pop.window --may be dangerous? infinite loop looking for the window?
-    --pop.window.parent = false --may be dangerous? attempting to index a boolean?
-    print "created window"
+            print "wrapper created: \"pop.#{name}()\""
 
-pop.create = (elementType, parent=pop.window, ...) ->
-    newElement = pop.elements[elementType](parent, ...)
-    insert parent.child, newElement
-    return newElement
+    -- works just like above, except no wrappers
+    skins = filesystem.getDirectoryItems "#{path}/skins"
+    for i = 1, #skins
+        unless skins[i]\sub(-4) == ".lua"
+            continue
+        name = skins[i]\sub 1, -5
+        pop.skins[name] = require "#{path}/skins/#{name}"
+        print "skin loaded: \"#{name}\""
 
-pop.update = (dt, element=pop.window) ->
-    if not element.excludeUpdating
+    -- main window (called screen because there will be a window element class)
+    pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
+    print "created \"pop.screen\""
+
+-- creates an element with specified parent (parent can be false)
+pop.create = (element, parent=pop.screen, ...) ->
+    element = pop.elements[element](pop, parent, ...)
+
+    if parent
+        insert parent.child, element
+
+    return element
+
+pop.update = (dt, element=pop.screen) ->
+    unless element.excludeUpdate
         if element.update
             element\update dt
-
         for i = 1, #element.child
             pop.update dt, element.child[i]
 
-pop.draw = (element=pop.window) ->
-    if not element.excludeRendering
+pop.draw = (element=pop.screen) ->
+    unless element.excludeDraw
         if element.draw
-            element\draw
-
+            element\draw!
         for i = 1, #element.child
-            pop.draw element.child
+            pop.draw element.child[i]
 
-pop.mousepressed = (button, x, y, element=pop.window) ->
-    -- if within bounds, check children
-    --  if not handled, check if we can handle it
-    --   abort with success if handled
-    if (x >= element.x) and (x <= (element.x + element.w))
-        if (y >= element.y) and (y <= (element.y + element.h))
-            for i = 1, #element.child
-                if pop.mousepressed button, x, y, element.child[i]
-                    return true
+pop.mousepressed = (x, y, button, element=pop.screen) ->
+    print "mousepressed", x, y, button, element
+    return false --TODO event handlers return if they have handled the event!
 
-            if element.mousepressed
-                return element\mousepressed button, x - element.x, y - element.y
-            else
-                return false
-
---TODO multiple return values, mousereleased first, click second
-pop.mousereleased = (button, x, y, element=pop.window) ->
-    -- same as mousepressed, except a click can be fired as well
+pop.mousereleased = (x, y, button, element=pop.screen) ->
+    print "mousereleased", x, y, button, element
+    return false --TODO event handlers return if they have handled the event!
 
 pop.keypressed = (key) ->
-    print "pop.keypressed() is unimplemented."
+    print "keypressed", key
+    return false --TODO event handlers return if they have handled the event!
 
 pop.keyreleased = (key) ->
-    print "pop.keyreleased() is unimplemented."
+    print "keyreleased", key
+    return false --TODO event handlers return if they have handled the event!
 
 pop.textinput = (text) ->
-    print "pop.textinput() is unimplemented."
+    print "textinput", text
+    return false --TODO event handlers return if they have handled the event!
 
-pop.skin = (element, skin, apply_to_children=true) ->
-    element.margin = skin.margin
-
-    if element.background
+-- skins an element (and its children unless depth == true or 0)
+--  depth can be an integer for how many levels to go down when skinning
+--  defaults to pop.screen and the default skin
+pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
+    if element.background and skin.background
         element.background = skin.background
-    if element.color
+    if element.color and skin.color
         element.color = skin.color
-    if element.font
+    if element.font and skin.font
         element.font = skin.font
 
-    if apply_to_children
-        for i = 1, #element.child
-            pop.skin element.child[i], skin
+    unless depth or (depth == 0)
+        if depth == tonumber depth
+            for i = 1, #element.child
+                pop.skin element.child[i], skin, depth - 1
+        else
+            for i = 1, #element.child
+                pop.skin element.child[i], skin, false
 
-pop.debugDraw = (element=pop.window) ->
+pop.debugDraw = (element=pop.screen) ->
     if element.debugDraw
         element\debugDraw!
     else
         graphics.setLineWidth 1
-        graphics.setColor 0, 0, 0, 100
+        graphics.setLineColor 0, 0, 0, 100
         graphics.rectangle "fill", element.x, element.y, element.w, element.h
         graphics.setColor 150, 150, 150, 150
         graphics.rectangle "line", element.x, element.y, element.w, element.h
