@@ -16,8 +16,8 @@ do
       if self.background then
         if type(self.background) == "table" then
           graphics.setColor(self.background)
+          graphics.rectangle("fill", self.x, self.y, self.w, self.h)
         else
-          graphics.setColor(self.background)
           local w, h = self.background:getDimensions()
           w = self.w / w
           h = self.h / h
@@ -47,12 +47,16 @@ do
       if a == nil then
         a = 255
       end
-      self.background = {
-        r,
-        g,
-        b,
-        a
-      }
+      if type(r) == "table" then
+        self.background = r
+      else
+        self.background = {
+          r,
+          g,
+          b,
+          a
+        }
+      end
       return self
     end,
     getColor = function(self)

@@ -8,38 +8,71 @@ insert = table.insert
 local path = ...
 local pop = { }
 pop.elements = { }
-pop.window = {
-  child = { }
-}
+pop.skins = { }
+pop.screen = false
 pop.load = function()
   local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
   for i = 1, #elements do
-    local name = elements[i]:sub(1, -5)
-    pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
-    print("loaded element: " .. tostring(name))
-    if not pop[name] then
-      pop[name] = function(...)
-        return pop.create(name, ...)
+    local _continue_0 = false
+    repeat
+      if not (elements[i]:sub(-4) == ".lua") then
+        _continue_0 = true
+        break
       end
-      print("wrapper created: " .. tostring(name) .. "()")
+      local name = elements[i]:sub(1, -5)
+      pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
+      print("element loaded: \"" .. tostring(name) .. "\"")
+      if not (pop[name]) then
+        if pop.elements[name].wrap then
+          pop[name] = pop.elements[name].wrap(pop)
+        else
+          pop[name] = function(...)
+            return pop.create(name, ...)
+          end
+        end
+        print("wrapper created: \"pop." .. tostring(name) .. "()\"")
+      end
+      _continue_0 = true
+    until true
+    if not _continue_0 then
+      break
     end
   end
-  pop.window = pop.create("element"):setSize(graphics.getWidth(), graphics.getHeight())
-  return print("created window")
-end
-pop.create = function(elementType, parent, ...)
-  if parent == nil then
-    parent = pop.window
+  local skins = filesystem.getDirectoryItems(tostring(path) .. "/skins")
+  for i = 1, #skins do
+    local _continue_0 = false
+    repeat
+      if not (skins[i]:sub(-4) == ".lua") then
+        _continue_0 = true
+        break
+      end
+      local name = skins[i]:sub(1, -5)
+      pop.skins[name] = require(tostring(path) .. "/skins/" .. tostring(name))
+      print("skin loaded: \"" .. tostring(name) .. "\"")
+      _continue_0 = true
+    until true
+    if not _continue_0 then
+      break
+    end
   end
-  local newElement = pop.elements[elementType](parent, ...)
-  insert(parent.child, newElement)
-  return newElement
+  pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
+  return print("created \"pop.screen\"")
+end
+pop.create = function(element, parent, ...)
+  if parent == nil then
+    parent = pop.screen
+  end
+  element = pop.elements[element](pop, parent, ...)
+  if parent then
+    insert(parent.child, element)
+  end
+  return element
 end
 pop.update = function(dt, element)
   if element == nil then
-    element = pop.window
+    element = pop.screen
   end
-  if not element.excludeUpdating then
+  if not (element.excludeUpdate) then
     if element.update then
       element:update(dt)
     end
@@ -50,86 +83,80 @@ pop.update = function(dt, element)
 end
 pop.draw = function(element)
   if element == nil then
-    element = pop.window
+    element = pop.screen
   end
-  if not element.excludeRendering then
+  if not (element.excludeDraw) then
     if element.draw then
-      local _
-      do
-        local _base_0 = element
-        local _fn_0 = _base_0.draw
-        _ = function(...)
-          return _fn_0(_base_0, ...)
-        end
-      end
+      element:draw()
     end
     for i = 1, #element.child do
-      pop.draw(element.child)
+      pop.draw(element.child[i])
     end
   end
 end
-pop.mousepressed = function(button, x, y, element)
+pop.mousepressed = function(x, y, button, element)
   if element == nil then
-    element = pop.window
+    element = pop.screen
   end
-  if (x >= element.x) and (x <= (element.x + element.w)) then
-    if (y >= element.y) and (y <= (element.y + element.h)) then
-      for i = 1, #element.child do
-        if pop.mousepressed(button, x, y, element.child[i]) then
-          return true
-        end
-      end
-      if element.mousepressed then
-        return element:mousepressed(button, x - element.x, y - element.y)
-      else
-        return false
-      end
-    end
-  end
+  print("mousepressed", x, y, button, element)
+  return false
 end
-pop.mousereleased = function(button, x, y, element)
+pop.mousereleased = function(x, y, button, element)
   if element == nil then
-    element = pop.window
+    element = pop.screen
   end
+  print("mousereleased", x, y, button, element)
+  return false
 end
 pop.keypressed = function(key)
-  return print("pop.keypressed() is unimplemented.")
+  print("keypressed", key)
+  return false
 end
 pop.keyreleased = function(key)
-  return print("pop.keyreleased() is unimplemented.")
+  print("keyreleased", key)
+  return false
 end
 pop.textinput = function(text)
-  return print("pop.textinput() is unimplemented.")
+  print("textinput", text)
+  return false
 end
-pop.skin = function(element, skin, apply_to_children)
-  if apply_to_children == nil then
-    apply_to_children = true
+pop.skin = function(element, skin, depth)
+  if element == nil then
+    element = pop.screen
   end
-  element.margin = skin.margin
-  if element.background then
+  if skin == nil then
+    skin = pop.skins.default
+  end
+  if element.background and skin.background then
     element.background = skin.background
   end
-  if element.color then
+  if element.color and skin.color then
     element.color = skin.color
   end
-  if element.font then
+  if element.font and skin.font then
     element.font = skin.font
   end
-  if apply_to_children then
-    for i = 1, #element.child do
-      pop.skin(element.child[i], skin)
+  if not (depth or (depth == 0)) then
+    if depth == tonumber(depth) then
+      for i = 1, #element.child do
+        pop.skin(element.child[i], skin, depth - 1)
+      end
+    else
+      for i = 1, #element.child do
+        pop.skin(element.child[i], skin, false)
+      end
     end
   end
 end
 pop.debugDraw = function(element)
   if element == nil then
-    element = pop.window
+    element = pop.screen
   end
   if element.debugDraw then
     element:debugDraw()
   else
     graphics.setLineWidth(1)
-    graphics.setColor(0, 0, 0, 100)
+    graphics.setLineColor(0, 0, 0, 100)
     graphics.rectangle("fill", element.x, element.y, element.w, element.h)
     graphics.setColor(150, 150, 150, 150)
     graphics.rectangle("line", element.x, element.y, element.w, element.h)
