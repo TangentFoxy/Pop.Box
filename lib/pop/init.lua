@@ -63,7 +63,7 @@ pop.create = function(element, parent, ...)
   if parent == nil then
     parent = pop.screen
   end
-  element = pop.elements[element](pop, parent, ...)
+  element = pop.elements[element](parent, ...)
   if parent then
     insert(parent.child, element)
   end

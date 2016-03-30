@@ -49,7 +49,7 @@ pop.load = ->
 
 -- creates an element with specified parent (parent can be false)
 pop.create = (element, parent=pop.screen, ...) ->
-    element = pop.elements[element](pop, parent, ...)
+    element = pop.elements[element](parent, ...)
 
     if parent
         insert parent.child, element

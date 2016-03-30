@@ -12,8 +12,8 @@ class text extends element
             else
                 return pop.create("text", parent, ...)
 
-    new: (pop, parent, text="", color={255,255,255,255}) =>
-        super pop, parent
+    new: (parent, text="", color={255,255,255,255}) =>
+        super parent
 
         @font = graphics.newFont 14
         @setText text

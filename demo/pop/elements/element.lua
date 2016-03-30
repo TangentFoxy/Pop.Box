@@ -169,7 +169,7 @@ do
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
-    __init = function(self, pop, parent)
+    __init = function(self, parent)
       self.parent = parent
       self.child = { }
       if parent then
