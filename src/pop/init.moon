@@ -9,7 +9,7 @@ pop.elements = {}
 pop.skins = {}
 
 pop.screen = false -- initialized in pop.load()
---pop.focused ?
+pop.focused = false
 
 -- loads elements and skins, creates pop.screen (intended to only be called once at the beginning)
 pop.load = ->
@@ -72,10 +72,27 @@ pop.draw = (element=pop.screen) ->
 
 pop.mousepressed = (x, y, button, element=pop.screen) ->
     print "mousepressed", x, y, button, element
-    return false --TODO event handlers return if they have handled the event!
+    handled = false
+    if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        if element.mousepressed
+            handled = element\mousepressed x - element.x, y - element.y, button
+        if handled
+            pop.focused = element
+        else
+            for i = 1, #element.child
+                handled = pop.mousepressed x, y, button, element.child[i]
+                if handled
+                    pop.focused = element.child[i]
+                    break
+    return handled
 
 pop.mousereleased = (x, y, button, element=pop.screen) ->
     print "mousereleased", x, y, button, element
+    --clickHandled = false
+    --mouseReleaseHandled = false
+    --if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        -- efw
+        --
     return false --TODO event handlers return if they have handled the event!
 
 pop.keypressed = (key) ->

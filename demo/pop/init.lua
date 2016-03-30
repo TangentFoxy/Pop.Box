@@ -10,6 +10,7 @@ local pop = { }
 pop.elements = { }
 pop.skins = { }
 pop.screen = false
+pop.focused = false
 pop.load = function()
   local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
   for i = 1, #elements do
@@ -99,7 +100,24 @@ pop.mousepressed = function(x, y, button, element)
     element = pop.screen
   end
   print("mousepressed", x, y, button, element)
-  return false
+  local handled = false
+  if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
+    if element.mousepressed then
+      handled = element:mousepressed(x - element.x, y - element.y, button)
+    end
+    if handled then
+      pop.focused = element
+    else
+      for i = 1, #element.child do
+        handled = pop.mousepressed(x, y, button, element.child[i])
+        if handled then
+          pop.focused = element.child[i]
+          break
+        end
+      end
+    end
+  end
+  return handled
 end
 pop.mousereleased = function(x, y, button, element)
   if element == nil then
