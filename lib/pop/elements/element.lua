@@ -105,6 +105,32 @@ do
     getSize = function(self)
       return self.w, self.h
     end,
+    setWidth = function(self, w)
+      local _exp_0 = self.horizontal
+      if "center" == _exp_0 then
+        self.x = self.x - ((w - self.w) / 2)
+      elseif "right" == _exp_0 then
+        self.x = self.x - (w - self.w)
+      end
+      self.w = w
+      return self
+    end,
+    getWidth = function(self)
+      return self.w
+    end,
+    setHeight = function(self, h)
+      local _exp_0 = self.vertical
+      if "center" == _exp_0 then
+        self.y = self.y - ((h - self.h) / 2)
+      elseif "bottom" == _exp_0 then
+        self.y = self.y - (h - self.h)
+      end
+      self.h = h
+      return self
+    end,
+    getHeight = function(self)
+      return self.h
+    end,
     adjustSize = function(self, w, h)
       local W, H = self:getSize()
       if w then
@@ -136,7 +162,7 @@ do
       elseif "bottom" == _exp_1 then
         self.y = self.y + (self.parent.h - self.h - self.margin)
       end
-      if toPixel then
+      if toPixel or (toPixel == nil) then
         self.x = floor(self.x)
         self.y = floor(self.y)
       end
@@ -179,8 +205,8 @@ do
         self.x = 0
         self.y = 0
       end
-      self.w = 10
-      self.h = 10
+      self.w = 20
+      self.h = 20
       self.horizontal = "left"
       self.vertical = "top"
       self.margin = 0

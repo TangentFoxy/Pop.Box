@@ -14,6 +14,7 @@ pop.focused = false
 -- loads elements and skins, creates pop.screen (intended to only be called once at the beginning)
 pop.load = ->
     elements = filesystem.getDirectoryItems "#{path}/elements"
+
     for i = 1, #elements
         -- only attempt to load lua files
         unless elements[i]\sub(-4) == ".lua"
@@ -36,11 +37,14 @@ pop.load = ->
 
     -- works just like above, except no wrappers
     skins = filesystem.getDirectoryItems "#{path}/skins"
+
     for i = 1, #skins
         unless skins[i]\sub(-4) == ".lua"
             continue
+
         name = skins[i]\sub 1, -5
         pop.skins[name] = require "#{path}/skins/#{name}"
+
         print "skin loaded: \"#{name}\""
 
     -- main window (called screen because there will be a window element class)
@@ -57,6 +61,7 @@ pop.create = (element, parent=pop.screen, ...) ->
     return element
 
 pop.update = (dt, element=pop.screen) ->
+    --pop.screen\update dt
     unless element.excludeUpdate
         if element.update
             element\update dt
@@ -64,6 +69,7 @@ pop.update = (dt, element=pop.screen) ->
             pop.update dt, element.child[i]
 
 pop.draw = (element=pop.screen) ->
+    --pop.screen\draw!
     unless element.excludeDraw
         if element.draw
             element\draw!

@@ -17,6 +17,24 @@ function love.load()
     pop.skin(pop.text("Here's easier-to-code test text in the center!"):align("center", "center", true)) -- 'true' means align to pixel!
     w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
     b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
+
+    c:move(100)
+
+    w2 = pop.window(nil, "Window")
+    w2:move(100, 100)
+    w2:setWidth(500)
+    w2:move(-50, 80)
+    w2:setHeight(500)
+    w2:move(0, -175)
+    w2.child[2]:align("center")
+    --w2:align("center")
+    --w2:setAlignment("center"):align("center")
+
+    --w2.child[1]:setBackground {100, 100, 100, 255}
+    --w2.child[3]:setBackground {160, 140, 40, 255}
+
+    --TODO make rounding to nearest pixel DEFAULT BEHAVIOR
+    --TODO make debugdraw better
 end
 
 function love.update(dt)
@@ -26,6 +44,7 @@ end
 function love.draw()
     pop.draw()
     --pop.debugDraw()
+    --w2:debugDraw()
 end
 
 function love.mousepressed(x, y, button)

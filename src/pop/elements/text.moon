@@ -59,6 +59,16 @@ class text extends element
 
         return @
 
+    -- cannot set width!
+    setWidth: =>
+        @setSize!
+        return @
+
+    -- cannot set height!
+    setHeight: =>
+        @setSize!
+        return @
+
     setText: (text="") =>
         @text = text
         @setSize!

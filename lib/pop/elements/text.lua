@@ -56,6 +56,14 @@ do
       self.h = h
       return self
     end,
+    setWidth = function(self)
+      self:setSize()
+      return self
+    end,
+    setHeight = function(self)
+      self:setSize()
+      return self
+    end,
     setText = function(self, text)
       if text == nil then
         text = ""

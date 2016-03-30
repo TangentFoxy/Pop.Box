@@ -13,8 +13,8 @@ class element
             @x = 0
             @y = 0
 
-        @w = 10
-        @h = 10
+        @w = 20
+        @h = 20
 
         @horizontal = "left"
         @vertical = "top"
@@ -117,6 +117,34 @@ class element
     getSize: =>
         return @w, @h
 
+    setWidth: (w) =>
+        switch @horizontal
+            when "center"
+                @x -= (w - @w)/2
+            when "right"
+                @x -= w - @w
+
+        @w = w
+
+        return @
+
+    getWidth: =>
+        return @w
+
+    setHeight: (h) =>
+        switch @vertical
+            when "center"
+                @y -= (h - @h)/2
+            when "bottom"
+                @y -= h - @h
+
+        @h = h
+
+        return @
+
+    getHeight: =>
+        return @h
+
     adjustSize: (w, h) =>
         W, H = @getSize!
 
@@ -152,7 +180,7 @@ class element
             when "bottom"
                 @y += @parent.h - @h - @margin
 
-        if toPixel
+        if toPixel or (toPixel == nil)
             @x = floor @x
             @y = floor @y
 
