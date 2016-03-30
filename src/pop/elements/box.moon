@@ -8,6 +8,9 @@ class box extends element
     new: (parent, background=false) =>
         super parent
 
+        @w = 20
+        @h = 20
+
         @background = background
 
     draw: =>
@@ -19,6 +22,7 @@ class box extends element
                 w, h = @background\getDimensions!
                 w = @w / w
                 h = @h / h
+                graphics.setColor 255, 255, 255, 255
                 graphics.draw @background, @x, @y, 0, w, h
 
         return @

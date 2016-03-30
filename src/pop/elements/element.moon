@@ -6,19 +6,25 @@ class element
         @parent = parent
         @child = {}
 
+        @w = 0
+        @h = 0
+
+        @margin = 0
+
         if parent
-            @x = parent.x or 0
-            @y = parent.y or 0
+            @x = parent.x
+            @y = parent.y
+            --@horizontal = parent.horizontal
+            --@vertical = parent.vertical
+            --@align!
         else
             @x = 0
             @y = 0
-
-        @w = 20
-        @h = 20
+            --@horizontal = "left"
+            --@vertical = "top"
 
         @horizontal = "left"
         @vertical = "top"
-        @margin = 0
 
     debugDraw: =>
         graphics.setLineWidth 0.5

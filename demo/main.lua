@@ -1,6 +1,8 @@
 local lg = love.graphics
 local pop
 
+local debugDraw = false
+
 function love.load()
     pop = require "pop"
     local c = pop.box():align("center", "center"):setSize(300, 300)
@@ -18,8 +20,9 @@ function love.load()
     w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
     b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
 
-    c:move(100)
+    --c:move(100)
 
+    --[[
     w2 = pop.window(nil, "Window")
     w2:move(100, 100)
     w2:setWidth(500)
@@ -32,9 +35,16 @@ function love.load()
 
     --w2.child[1]:setBackground {100, 100, 100, 255}
     --w2.child[3]:setBackground {160, 140, 40, 255}
+    --]]
+
+    local test = lg.newImage("test.png")
+    G = pop.element():align("right"):move(-2, 2)
+    pop.box(G, test):align("right")
+    pop.box(G, test):align("right"):move(-25):setWidth(40)
+    pop.box(G, test):align("right"):move(0, 25):setHeight(40)
 
     --TODO make rounding to nearest pixel DEFAULT BEHAVIOR
-    --TODO make debugdraw better
+    --TODO make debugDraw better
 end
 
 function love.update(dt)
@@ -43,8 +53,11 @@ end
 
 function love.draw()
     pop.draw()
-    --pop.debugDraw()
-    --w2:debugDraw()
+
+    if debugDraw then
+        pop.debugDraw()
+        --w2:debugDraw()
+    end
 end
 
 function love.mousepressed(x, y, button)
@@ -57,6 +70,10 @@ end
 
 function love.keypressed(key)
     local handled = pop.keypressed(key)
+
+    if (key == "d") and (not handled) then
+        debugDraw = not debugDraw
+    end
 
     if (key == "escape") and (not handled) then
         love.event.quit()

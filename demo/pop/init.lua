@@ -99,7 +99,9 @@ pop.mousepressed = function(x, y, button, element)
   if element == nil then
     element = pop.screen
   end
-  print("mousepressed", x, y, button, element)
+  if element == pop.screen then
+    print("mousepressed", x, y, button, element)
+  end
   local handled = false
   if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
     if element.mousepressed then
@@ -123,7 +125,6 @@ pop.mousereleased = function(x, y, button, element)
   if element == nil then
     element = pop.screen
   end
-  print("mousereleased", x, y, button, element)
   return false
 end
 pop.keypressed = function(key)

@@ -198,18 +198,18 @@ do
     __init = function(self, parent)
       self.parent = parent
       self.child = { }
+      self.w = 0
+      self.h = 0
+      self.margin = 0
       if parent then
-        self.x = parent.x or 0
-        self.y = parent.y or 0
+        self.x = parent.x
+        self.y = parent.y
       else
         self.x = 0
         self.y = 0
       end
-      self.w = 20
-      self.h = 20
       self.horizontal = "left"
       self.vertical = "top"
-      self.margin = 0
     end,
     __base = _base_0,
     __name = "element"

@@ -77,7 +77,9 @@ pop.draw = (element=pop.screen) ->
             pop.draw element.child[i]
 
 pop.mousepressed = (x, y, button, element=pop.screen) ->
-    print "mousepressed", x, y, button, element
+    if element == pop.screen
+        print "mousepressed", x, y, button, element
+
     handled = false
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
         if element.mousepressed
@@ -93,13 +95,28 @@ pop.mousepressed = (x, y, button, element=pop.screen) ->
     return handled
 
 pop.mousereleased = (x, y, button, element=pop.screen) ->
-    print "mousereleased", x, y, button, element
+    --[[
+    --if element == pop.screen
+    --    print "mousereleased", x, y, button, element
+
     --clickHandled = false
     --mouseReleaseHandled = false
+
     --if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-        -- efw
-        --
-    return false --TODO event handlers return if they have handled the event!
+    --    if element.mousereleased
+    --        mouseReleaseHandled = element\mousereleased x - element.x, y - element.y, button
+    --    unless mouseReleaseHandled
+    --        for i = 1, #element.child
+    --            clickHandled, mouseReleaseHandled = pop.mousereleased x, y, button, element.child[i]
+    --            if mouseReleaseHandled
+    --                break
+
+    --if element == pop.focused
+
+    --return mouseReleaseHandled
+    --]]
+
+    return false -- ugh this sucks
 
 pop.keypressed = (key) ->
     print "keypressed", key
