@@ -37,6 +37,12 @@ class element
 
         return @
 
+    addChild: (child) =>
+        @child[#@child+1] = child
+        child.parent = @
+
+        return @
+
     move: (x, y) =>
         if x
             @x = @x + x

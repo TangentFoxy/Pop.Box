@@ -53,6 +53,7 @@ pop.load = ->
 
 -- creates an element with specified parent (parent can be false)
 pop.create = (element, parent=pop.screen, ...) ->
+    -- 1: if parent is object, use it, 2: if parent is false, use it (use false), 3: if parent is nil, use pop.screen as parent
     element = pop.elements[element](parent, ...)
 
     if parent

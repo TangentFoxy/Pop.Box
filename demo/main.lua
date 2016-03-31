@@ -5,6 +5,7 @@ local debugDraw = false
 
 function love.load()
     pop = require "pop"
+    ---[[
     local c = pop.box():align("center", "center"):setSize(300, 300)
     pop.box(c, {255, 0, 0, 255}):setSize(100, 50)
     pop.box(c, {0, 255, 0, 255}):align("center"):setSize(100, 100)
@@ -19,6 +20,7 @@ function love.load()
     pop.skin(pop.text("Here's easier-to-code test text in the center!"):align("center", "center", true)) -- 'true' means align to pixel!
     w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
     b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
+    --]]
 
     --c:move(100)
 
@@ -39,9 +41,13 @@ function love.load()
 
     local test = lg.newImage("test.png")
     G = pop.element():align("right"):move(-2, 2)
-    pop.box(G, test):align("right")
-    pop.box(G, test):align("right"):move(-25):setWidth(40)
-    pop.box(G, test):align("right"):move(0, 25):setHeight(40)
+    a = pop.box(G, test):align("right")
+    b = pop.box(G, test):align("right"):move(-25):setWidth(40)
+    c = pop.box(G, test):align("right"):move(0, 25):setHeight(40)
+
+    print(a.horizontal, a.vertical)
+    print(b.horizontal, b.vertical)
+    print(c.horizontal, c.vertical)
 
     --TODO make rounding to nearest pixel DEFAULT BEHAVIOR
     --TODO make debugDraw better
