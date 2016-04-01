@@ -51,10 +51,30 @@ pop.load = ->
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
     print "created \"pop.screen\""
 
+instanceOfElement = (object) ->
+    if object.__class
+        class = object.__class
+
+        if class.__name == "element"
+            return true
+
+        while class.__parent
+            class = class.__parent
+            if class.__name == "element"
+                return true
+
+    return false
+
 -- creates an element with specified parent (parent can be false)
 pop.create = (element, parent=pop.screen, ...) ->
-    -- 1: if parent is object, use it, 2: if parent is false, use it (use false), 3: if parent is nil, use pop.screen as parent
-    element = pop.elements[element](parent, ...)
+    --if parent
+    --    print parent.__class, parent.__class.__name, parent.__class.__base, parent.__class.__parent
+    --element = pop.elements[element](parent, ...)
+
+    if instanceOfElement parent
+        element = pop.elements[element](parent, ...)
+    else
+        element = pop.elements[element](pop.screen, parent, ...)
 
     if parent
         insert parent.child, element

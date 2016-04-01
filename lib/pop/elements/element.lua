@@ -16,6 +16,11 @@ do
       graphics.print("e", self.x, self.y)
       return self
     end,
+    addChild = function(self, child)
+      self.child[#self.child + 1] = child
+      child.parent = self
+      return self
+    end,
     move = function(self, x, y)
       if x then
         self.x = self.x + x
