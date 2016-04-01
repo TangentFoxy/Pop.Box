@@ -47,6 +47,16 @@ pop.load = ->
 
         print "skin loaded: \"#{name}\""
 
+    -- load extensions by just running them via require
+    extensions = filesystem.getDirectoryItems "#{path}/extensions"
+
+    for i = 1, #extensions
+        unless extensions[i]\sub(-4) == ".lua"
+            continue
+
+        name = extensions[i]\sub 1, -5
+        require "#{path}/extensions/#{name}"
+
     -- main window (called screen because there will be a window element class)
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
     print "created \"pop.screen\""
