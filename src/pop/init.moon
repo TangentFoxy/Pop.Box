@@ -79,11 +79,10 @@ instanceOfElement = (object) ->
 pop.create = (element, parent=pop.screen, ...) ->
     if instanceOfElement parent
         element = pop.elements[element](parent, ...)
+        insert parent.child, element
     else
         element = pop.elements[element](pop.screen, parent, ...)
-
-    if parent
-        insert parent.child, element
+        insert pop.screen.child, element
 
     return element
 

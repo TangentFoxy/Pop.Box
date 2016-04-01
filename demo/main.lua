@@ -23,6 +23,7 @@ function love.load()
     --]]
 
     --c:move(100)
+    pop.box({255, 0, 0, 255}):position(50, 600) -- testing streamlined_get_set extension & optional parents
 
     --[[
     w2 = pop.window(nil, "Window")
