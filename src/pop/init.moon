@@ -52,25 +52,21 @@ pop.load = ->
     print "created \"pop.screen\""
 
 instanceOfElement = (object) ->
-    if object.__class
-        class = object.__class
+    if object and object.__class
+        cls = object.__class
 
-        if class.__name == "element"
+        if cls.__name == "element"
             return true
 
-        while class.__parent
-            class = class.__parent
-            if class.__name == "element"
+        while cls.__parent
+            cls = cls.__parent
+            if cls.__name == "element"
                 return true
 
     return false
 
--- creates an element with specified parent (parent can be false)
+-- creates an element with specified parent (parent can be false or non-existent)
 pop.create = (element, parent=pop.screen, ...) ->
-    --if parent
-    --    print parent.__class, parent.__class.__name, parent.__class.__base, parent.__class.__parent
-    --element = pop.elements[element](parent, ...)
-
     if instanceOfElement parent
         element = pop.elements[element](parent, ...)
     else
