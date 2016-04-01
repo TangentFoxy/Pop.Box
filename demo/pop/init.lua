@@ -59,14 +59,31 @@ pop.load = function()
   pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
   return print("created \"pop.screen\"")
 end
+local instanceOfElement
+instanceOfElement = function(object)
+  if object and object.__class then
+    local cls = object.__class
+    if cls.__name == "element" then
+      return true
+    end
+    while cls.__parent do
+      cls = cls.__parent
+      if cls.__name == "element" then
+        return true
+      end
+    end
+  end
+  return false
+end
 pop.create = function(element, parent, ...)
   if parent == nil then
     parent = pop.screen
   end
-  if parent then
-    print(parent.__class, parent.__class.__name, parent.__class.__base, parent.__class.__parent)
+  if instanceOfElement(parent) then
+    element = pop.elements[element](parent, ...)
+  else
+    element = pop.elements[element](pop.screen, parent, ...)
   end
-  element = pop.elements[element](parent, ...)
   if parent then
     insert(parent.child, element)
   end
