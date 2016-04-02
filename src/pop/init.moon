@@ -1,5 +1,9 @@
+unless love.getVersion
+    error "Pop.Box only supports LÖVE versions >= 0.9.1"
+
 import filesystem, graphics from love
 import insert from table
+import inheritsFromElement from require "#{...}/util"
 
 path = ...
 
@@ -7,6 +11,7 @@ pop = {}
 
 pop.elements = {}
 pop.skins = {}
+pop.events = {}
 
 pop.screen = false -- initialized in pop.load()
 pop.focused = false
@@ -57,29 +62,19 @@ pop.load = ->
         name = extensions[i]\sub 1, -5
         require "#{path}/extensions/#{name}"
 
+        print "extension loaded: \"#{name}\""
+
     -- main window (called screen because there will be a window element class)
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
     print "created \"pop.screen\""
 
-instanceOfElement = (object) ->
-    if object and object.__class
-        cls = object.__class
-
-        if cls.__name == "element"
-            return true
-
-        while cls.__parent
-            cls = cls.__parent
-            if cls.__name == "element"
-                return true
-
-    return false
-
 -- creates an element with specified parent (parent can be false or non-existent)
 pop.create = (element, parent=pop.screen, ...) ->
-    if instanceOfElement parent
+    if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
         insert parent.child, element
+    elseif parent == false
+        element = pop.elements[element](false, ...)
     else
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
@@ -102,11 +97,19 @@ pop.draw = (element=pop.screen) ->
         for i = 1, #element.child
             pop.draw element.child[i]
 
-pop.mousepressed = (x, y, button, element=pop.screen) ->
-    if element == pop.screen
-        print "mousepressed", x, y, button, element
+pop.mousemoved = (x, y, dx, dy) =>
+    if pop.focused and pop.focused.mousemoved
+        return pop.focused\mousemoved x, y, dx, dy
+
+    return false
+
+pop.mousepressed = (x, y, button, element) ->
+    unless element
+        print "mousepressed", x, y, button
+        element = pop.screen
 
     handled = false
+
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
         if element.mousepressed
             handled = element\mousepressed x - element.x, y - element.y, button
@@ -118,31 +121,27 @@ pop.mousepressed = (x, y, button, element=pop.screen) ->
                 if handled
                     pop.focused = element.child[i]
                     break
+    if handled
+        pop.events[button] = element
+
     return handled
 
-pop.mousereleased = (x, y, button, element=pop.screen) ->
-    --[[
-    --if element == pop.screen
-    --    print "mousereleased", x, y, button, element
+pop.mousereleased = (x, y, button) ->
+    print "mousereleased", x, y, button
 
-    --clickHandled = false
-    --mouseReleaseHandled = false
+    clickedHandled = false
+    mousereleasedHandled = false
 
-    --if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-    --    if element.mousereleased
-    --        mouseReleaseHandled = element\mousereleased x - element.x, y - element.y, button
-    --    unless mouseReleaseHandled
-    --        for i = 1, #element.child
-    --            clickHandled, mouseReleaseHandled = pop.mousereleased x, y, button, element.child[i]
-    --            if mouseReleaseHandled
-    --                break
+    if element = pop.events[button]
+        if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+            if clickedHandled = element\clicked x - element.x, y - element.y, button
+                pop.events[button] = nil
 
-    --if element == pop.focused
+        if element.mousereleased
+            if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
+                pop.events[button] = nil
 
-    --return mouseReleaseHandled
-    --]]
-
-    return false -- ugh this sucks
+    return clickedHandled, mousereleasedHandled
 
 pop.keypressed = (key) ->
     print "keypressed", key

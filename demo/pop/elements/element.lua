@@ -196,6 +196,12 @@ do
     end,
     getMargin = function(self)
       return self.margin
+    end,
+    fill = function(self)
+      self.x = self.parent.x + self.margin
+      self.y = self.parent.y + self.margin
+      self.w = self.parent.w - self.margin * 2
+      self.h = self.parent.h - self.margin * 2
     end
   }
   _base_0.__index = _base_0

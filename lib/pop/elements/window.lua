@@ -9,6 +9,23 @@ local path = sub(..., 1, len(...) - len("/window"))
 local element = require(tostring(path) .. "/element")
 local box = require(tostring(path) .. "/box")
 local text = require(tostring(path) .. "/text")
+local left = 1
+local move_event = true
+do
+  local major, minor, revision = love.getVersion()
+  if (major == 0) and (minor == 10) and ((revision == 0) or (revision == 1)) then
+    left = 1
+  end
+  if (major == 0) and (minor == 9) then
+    left = "l"
+    if revision == 1 then
+      move_event = false
+    end
+  else
+    print("elements/window: unrecognized LÖVE version: " .. tostring(major) .. "." .. tostring(minor) .. "." .. tostring(revision))
+    print("                 assuming LÖVE version > 0.10.1  (there may be bugs)")
+  end
+end
 local window
 do
   local _class_0
@@ -94,7 +111,7 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, parent, title, tBackground)
+    __init = function(self, parent, title, tBackground, tColor, wBackground)
       if title == nil then
         title = "window"
       end
@@ -106,15 +123,26 @@ do
           255
         }
       end
+      if tColor == nil then
+        tColor = {
+          255,
+          255,
+          255,
+          255
+        }
+      end
+      if wBackground == nil then
+        wBackground = {
+          200,
+          200,
+          210,
+          255
+        }
+      end
       _class_0.__parent.__init(self, parent)
       self.head = box(self, tBackground)
-      self.title = text(self, title)
-      self.window = box(self, {
-        0,
-        0,
-        0,
-        255
-      })
+      self.title = text(self, title, tColor)
+      self.window = box(self, wBackground)
       local height = self.title:getHeight()
       self.head:setSize(self.w, height)
       self.window:move(nil, height)

@@ -12,3 +12,38 @@ element.__base.position = (x, y) =>
         return @setPosition x, y
     else
         return @getPosition!
+
+element.__base.size = (w, h) =>
+    if w or h
+        return @setSize w, h
+    else
+        return @getSize!
+
+element.__base.width = (w) =>
+    if w
+        return @setWidth w
+    else
+        return @getWidth!
+
+element.__base.height = (h) =>
+    if h
+        return @setHeight h
+    else
+        return @getHeight!
+
+element.__base.margin = (m) =>
+    if m
+        return @setMargin m
+    else
+        return @getMargin!
+
+--oldinit = element.__init
+--
+--element.__init = (...) ->
+--    object = oldinit ...
+--    value = object.margin
+--
+--    object.margin = setmetatable {:value}, {
+--        __call: (...) ->
+--            print ...
+--    }

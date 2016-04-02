@@ -23,9 +23,11 @@ function love.load()
     --]]
 
     --c:move(100)
-    pop.box({255, 0, 0, 255}):position(50, 600) -- testing streamlined_get_set extension & optional parents
+    pop.box({255, 0, 0, 255}):position(50, 500) -- testing streamlined_get_set extension & optional parents
+    --b:margin(2) -- testing streamlined_get_set extension
+    b:fill() -- testing fill!
 
-    --[[
+    ---[[
     w2 = pop.window(nil, "Window")
     w2:move(100, 100)
     w2:setWidth(500)
@@ -65,6 +67,10 @@ function love.draw()
         pop.debugDraw()
         --w2:debugDraw()
     end
+end
+
+function love.mousemoved(x, y, dx, dy)
+    pop.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button)

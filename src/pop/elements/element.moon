@@ -223,3 +223,9 @@ class element
 
     getMargin: =>
         return @margin
+
+    fill: =>
+        @x = @parent.x + @margin
+        @y = @parent.y + @margin
+        @w = @parent.w - @margin*2
+        @h = @parent.h - @margin*2
