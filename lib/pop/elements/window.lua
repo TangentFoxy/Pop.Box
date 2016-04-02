@@ -10,7 +10,7 @@ local element = require(tostring(path) .. "/element")
 local box = require(tostring(path) .. "/box")
 local text = require(tostring(path) .. "/text")
 local left = 1
-local move_event = true
+local mousemoved_event = true
 do
   local major, minor, revision = love.getVersion()
   if (major == 0) and (minor == 10) and ((revision == 0) or (revision == 1)) then
@@ -19,7 +19,7 @@ do
   if (major == 0) and (minor == 9) then
     left = "l"
     if revision == 1 then
-      move_event = false
+      mousemoved_event = false
     end
   else
     print("elements/window: unrecognized LÖVE version: " .. tostring(major) .. "." .. tostring(minor) .. "." .. tostring(revision))
@@ -111,7 +111,7 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, parent, title, tBackground, tColor, wBackground)
+    __init = function(self, pop, parent, title, tBackground, tColor, wBackground)
       if title == nil then
         title = "window"
       end
@@ -139,8 +139,10 @@ do
           255
         }
       end
-      _class_0.__parent.__init(self, parent)
+      print((parent == pop.screen), (title == "Window"))
+      _class_0.__parent.__init(self, pop, parent)
       self.head = box(self, tBackground)
+      print(self, title, tColor)
       self.title = text(self, title, tColor)
       self.window = box(self, wBackground)
       local height = self.title:getHeight()
@@ -152,6 +154,56 @@ do
         self.title,
         self.window
       }
+      self.head.selected = false
+      if mousemoved_event then
+        self.head.mousemoved = function(self, x, y, dx, dy)
+          print("mousemoved CALLED!")
+          if self.selected then
+            self.parent:move(dx, dy)
+            return true
+          end
+          return false
+        end
+        self.head.mousepressed = function(self, x, y, button)
+          print("mousepressed CALLED!")
+          if button == left then
+            print("selected!")
+            self.selected = true
+            return true
+          end
+          return false
+        end
+        self.head.mousereleased = function(self, x, y, button)
+          print("mousereleased CALLED!")
+          if button == left then
+            self.selected = false
+            self.pop.focused = false
+            return true
+          end
+          print("ERROR FELL THROUGH")
+          return false
+        end
+      else
+        self.head.mx = 0
+        self.head.my = 0
+        self.head.update = function(self)
+          return false
+        end
+        self.head.mousepressed = function(self, x, y, button)
+          if button == left then
+            self.selected = true
+            self.mx = x
+            self.my = y
+          end
+        end
+        self.head.mousereleased = function(self, x, y, button)
+          if button == left then
+            self.selected = false
+            return true
+          end
+          return false
+        end
+      end
     end,
     __base = _base_0,
     __name = "window",

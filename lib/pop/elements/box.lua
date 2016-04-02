@@ -71,11 +71,11 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, parent, background)
+    __init = function(self, pop, parent, background)
       if background == nil then
         background = false
       end
-      _class_0.__parent.__init(self, parent)
+      _class_0.__parent.__init(self, pop, parent)
       self.w = 20
       self.h = 20
       self.background = background

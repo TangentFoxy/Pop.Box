@@ -87,12 +87,12 @@ pop.create = function(element, parent, ...)
     parent = pop.screen
   end
   if inheritsFromElement(parent) then
-    element = pop.elements[element](parent, ...)
+    element = pop.elements[element](pop, parent, ...)
     insert(parent.child, element)
   elseif parent == false then
-    element = pop.elements[element](false, ...)
+    element = pop.elements[element](pop, false, ...)
   else
-    element = pop.elements[element](pop.screen, parent, ...)
+    element = pop.elements[element](pop, pop.screen, parent, ...)
     insert(pop.screen.child, element)
   end
   return element
@@ -140,12 +140,12 @@ pop.mousepressed = function(x, y, button, element)
       handled = element:mousepressed(x - element.x, y - element.y, button)
     end
     if handled then
+      print("pop.focused has been set!")
       pop.focused = element
     else
       for i = 1, #element.child do
         handled = pop.mousepressed(x, y, button, element.child[i])
         if handled then
-          pop.focused = element.child[i]
           break
         end
       end

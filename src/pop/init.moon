@@ -71,12 +71,12 @@ pop.load = ->
 -- creates an element with specified parent (parent can be false or non-existent)
 pop.create = (element, parent=pop.screen, ...) ->
     if inheritsFromElement parent
-        element = pop.elements[element](parent, ...)
+        element = pop.elements[element](pop, parent, ...)
         insert parent.child, element
     elseif parent == false
-        element = pop.elements[element](false, ...)
+        element = pop.elements[element](pop, false, ...)
     else
-        element = pop.elements[element](pop.screen, parent, ...)
+        element = pop.elements[element](pop, pop.screen, parent, ...)
         insert pop.screen.child, element
 
     return element
@@ -114,12 +114,13 @@ pop.mousepressed = (x, y, button, element) ->
         if element.mousepressed
             handled = element\mousepressed x - element.x, y - element.y, button
         if handled
+            print "pop.focused has been set!"
             pop.focused = element
         else
             for i = 1, #element.child
                 handled = pop.mousepressed x, y, button, element.child[i]
                 if handled
-                    pop.focused = element.child[i]
+                    --pop.focused = element.child[i]
                     break
     if handled
         pop.events[button] = element

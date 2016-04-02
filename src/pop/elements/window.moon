@@ -8,7 +8,7 @@ text = require "#{path}/text"
 
 -- version compatibility
 left = 1          -- what is the left mouse button?
-move_event = true -- is the mousemoved event available?
+mousemoved_event = true -- is the mousemoved event available?
 
 do
     major, minor, revision = love.getVersion!
@@ -17,16 +17,18 @@ do
     if (major == 0) and (minor == 9)
         left = "l"
         if revision == 1
-            move_event = false
+            mousemoved_event = false
     else
         print "elements/window: unrecognized LÖVE version: #{major}.#{minor}.#{revision}"
         print "                 assuming LÖVE version > 0.10.1  (there may be bugs)"
 
 class window extends element
-    new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
-        super parent
+    new: (pop, parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
+        print (parent == pop.screen), (title == "Window")
+        super pop, parent
 
         @head = box @, tBackground       -- title box at top
+        print @, title, tColor
         @title = text @, title, tColor   -- text at top
         @window = box @, wBackground     -- main window area
 
@@ -43,6 +45,53 @@ class window extends element
 
         --@selected = false -- whether or not the window title (and thus, the window) has been selected
         --NOTE all of these commented out, because I realized these event handlers should be attached to the title element
+
+        @head.selected = false -- whether or not the window title (and thus, the window) has been selected
+
+        if mousemoved_event
+            @head.mousemoved = (x, y, dx, dy) =>
+                print "mousemoved CALLED!"
+                if @selected
+                    @parent\move dx, dy
+                    return true
+                return false
+
+            @head.mousepressed = (x, y, button) =>
+                print "mousepressed CALLED!"
+                if button == left
+                    print "selected!"
+                    @selected = true
+                    return true
+                return false
+
+            @head.mousereleased = (x, y, button) =>
+                print "mousereleased CALLED!"
+                if button == left
+                    @selected = false
+                    @pop.focused = false -- we need to have a way to clear
+                    return true
+                print "ERROR FELL THROUGH"
+                return false
+
+        else
+            @head.mx = 0           -- local mouse coordinates when selected
+            @head.my = 0
+
+            @head.update = =>
+                --TODO write me!
+                return false
+
+            @head.mousepressed = (x, y, button) =>
+                if button == left
+                    @selected = true
+                    @mx = x
+                    @my = y
+
+            @head.mousereleased = (x, y, button) => -- this is actually the same for both versions...
+                if button == left
+                    @selected = false
+                    return true
+                return false
 
     debugDraw: =>
         graphics.setLineWidth 0.5

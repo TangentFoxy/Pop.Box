@@ -5,8 +5,8 @@ path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
 class box extends element
-    new: (parent, background=false) =>
-        super parent
+    new: (pop, parent, background=false) =>
+        super pop, parent
 
         @w = 20
         @h = 20

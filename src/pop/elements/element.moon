@@ -2,7 +2,8 @@ import graphics from love
 import floor from math
 
 class element
-    new: (parent) =>
+    new: (pop, parent) =>
+        @pop = pop
         @parent = parent
         @child = {}
 
