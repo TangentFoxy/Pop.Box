@@ -22,14 +22,16 @@ do
         print "elements/window: unrecognized LÖVE version: #{major}.#{minor}.#{revision}"
         print "                 assuming LÖVE version > 0.10.1  (there may be bugs)"
 
--- a reference to pop is needed for windows, this is obtained using the wrap function when it is loaded
-pop_ref = nil -- yes, this is convoluted and probably needs a re-design
+pop_ref = false -- reference to pop, loaded by pop.load!
 
 class window extends element
-    wrap: (pop) ->
-        pop_ref = pop -- set our reference to pop (needed for mouse handling)
-        return (...) -> -- standard wrapper, nothing special needed
-            return pop.create("window", ...)
+    load: (pop) ->
+        pop_ref = pop
+
+    --wrap: (pop) ->
+    --    pop_ref = pop -- set our reference to pop (needed for mouse handling)
+    --    return (...) -> -- standard wrapper, nothing special needed
+    --        return pop.create("window", ...)
 
     new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
         super parent

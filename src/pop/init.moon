@@ -28,6 +28,10 @@ pop.load = ->
         -- load into pop.elements table
         name = elements[i]\sub 1, -5
         pop.elements[name] = require "#{path}/elements/#{name}"
+
+        if pop.elements[name].load
+            pop.elements[name].load pop
+
         print "element loaded: \"#{name}\""
 
         -- create pop.element() wrapper if possible

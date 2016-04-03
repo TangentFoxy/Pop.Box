@@ -25,17 +25,14 @@ do
     print("                 assuming LÖVE version > 0.10.1  (there may be bugs)")
   end
 end
-local pop_ref = nil
+local pop_ref = false
 local window
 do
   local _class_0
   local _parent_0 = element
   local _base_0 = {
-    wrap = function(pop)
+    load = function(pop)
       pop_ref = pop
-      return function(...)
-        return pop.create("window", ...)
-      end
     end,
     debugDraw = function(self)
       graphics.setLineWidth(0.5)

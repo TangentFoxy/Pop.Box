@@ -28,6 +28,9 @@ pop.load = function()
       end
       local name = elements[i]:sub(1, -5)
       pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
+      if pop.elements[name].load then
+        pop.elements[name].load(pop)
+      end
       print("element loaded: \"" .. tostring(name) .. "\"")
       if not (pop[name]) then
         if pop.elements[name].wrap then
