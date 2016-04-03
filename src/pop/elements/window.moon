@@ -7,7 +7,7 @@ box = require "#{path}/box"
 text = require "#{path}/text"
 
 -- version compatibility
-left = 1          -- what is the left mouse button?
+left = 1                -- what is the left mouse button?
 mousemoved_event = true -- is the mousemoved event available?
 
 do
@@ -47,6 +47,7 @@ class window extends element
         @setSize 100, 80
 
         -- our child elements are still child elements
+        --TODO change title to be a child of head ?
         @child = {
             @head, @title, @window
         }
@@ -107,6 +108,15 @@ class window extends element
         graphics.print "w", @x, @y
 
         return @
+
+    addChild: (child) =>
+        @window.child[#@window.child+1] = child
+        child.parent = @window
+
+        return @
+
+    getChildren: =>
+        return @window.child
 
     --update: =>
         -- if selected, set position based on current mouse position relative to position it was when mousepressed

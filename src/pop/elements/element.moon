@@ -43,6 +43,9 @@ class element
 
         return @
 
+    getChildren: =>
+        return @child
+
     move: (x, y) =>
         if x
             @x = @x + x
