@@ -71,12 +71,12 @@ pop.load = ->
 -- creates an element with specified parent (parent can be false or non-existent)
 pop.create = (element, parent=pop.screen, ...) ->
     if inheritsFromElement parent
-        element = pop.elements[element](pop, parent, ...)
+        element = pop.elements[element](parent, ...)
         insert parent.child, element
     elseif parent == false
-        element = pop.elements[element](pop, false, ...)
+        element = pop.elements[element](false, ...)
     else
-        element = pop.elements[element](pop, pop.screen, parent, ...)
+        element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
 
     return element
@@ -101,6 +101,7 @@ pop.mousemoved = (x, y, dx, dy) =>
     if pop.focused and pop.focused.mousemoved
         return pop.focused\mousemoved x, y, dx, dy
 
+    print "mousemoved unhandled!"
     return false
 
 pop.mousepressed = (x, y, button, element) ->
@@ -112,18 +113,23 @@ pop.mousepressed = (x, y, button, element) ->
 
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
         if element.mousepressed
+            if element == pop.screen
+                error "pop.screen somehow has a fucking mousepressed handler"
             handled = element\mousepressed x - element.x, y - element.y, button
         if handled
             print "pop.focused has been set!"
             pop.focused = element
+            pop.events[button] = element
+            if element == pop.screen
+                error "pop.screen fucking focused SOMEHOW"
         else
             for i = 1, #element.child
                 handled = pop.mousepressed x, y, button, element.child[i]
                 if handled
                     --pop.focused = element.child[i]
                     break
-    if handled
-        pop.events[button] = element
+    --if handled
+    --    pop.events[button] = element
 
     return handled
 
@@ -134,13 +140,22 @@ pop.mousereleased = (x, y, button) ->
     mousereleasedHandled = false
 
     if element = pop.events[button]
+        print "mousereleased should be functional"
         if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
             if clickedHandled = element\clicked x - element.x, y - element.y, button
                 pop.events[button] = nil
 
+        for k,v in pairs element
+            print k, v
+
         if element.mousereleased
+            print "mousereleased SHOULD be called"
             if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
                 pop.events[button] = nil
+
+        -- temporary, calling it regardless of its existence
+        --if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
+        --    pop.events[button] = nil
 
     return clickedHandled, mousereleasedHandled
 

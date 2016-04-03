@@ -26,11 +26,18 @@ do
     print("                 assuming LÖVE version > 0.10.1  (there may be bugs)")
   end
 end
+local pop_ref = nil
 local window
 do
   local _class_0
   local _parent_0 = element
   local _base_0 = {
+    wrap = function(pop)
+      pop_ref = pop
+      return function(...)
+        return pop.create("window", ...)
+      end
+    end,
     debugDraw = function(self)
       graphics.setLineWidth(0.5)
       graphics.setColor(0, 0, 0, 100)
@@ -111,7 +118,7 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, pop, parent, title, tBackground, tColor, wBackground)
+    __init = function(self, parent, title, tBackground, tColor, wBackground)
       if title == nil then
         title = "window"
       end
@@ -139,8 +146,7 @@ do
           255
         }
       end
-      print((parent == pop.screen), (title == "Window"))
-      _class_0.__parent.__init(self, pop, parent)
+      _class_0.__parent.__init(self, parent)
       self.head = box(self, tBackground)
       print(self, title, tColor)
       self.title = text(self, title, tColor)
@@ -157,9 +163,8 @@ do
       self.head.selected = false
       if mousemoved_event then
         self.head.mousemoved = function(self, x, y, dx, dy)
-          print("mousemoved CALLED!")
           if self.selected then
-            self.parent:move(dx, dy)
+            self.parent:move(y, dx)
             return true
           end
           return false
@@ -175,9 +180,11 @@ do
         end
         self.head.mousereleased = function(self, x, y, button)
           print("mousereleased CALLED!")
+          print((button == left))
           if button == left then
             self.selected = false
-            self.pop.focused = false
+            pop_ref.focused = false
+            print("SHOULD BE FIXED GOD FUCKING DAMMIT")
             return true
           end
           print("ERROR FELL THROUGH")

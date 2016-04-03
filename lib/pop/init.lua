@@ -87,12 +87,12 @@ pop.create = function(element, parent, ...)
     parent = pop.screen
   end
   if inheritsFromElement(parent) then
-    element = pop.elements[element](pop, parent, ...)
+    element = pop.elements[element](parent, ...)
     insert(parent.child, element)
   elseif parent == false then
-    element = pop.elements[element](pop, false, ...)
+    element = pop.elements[element](false, ...)
   else
-    element = pop.elements[element](pop, pop.screen, parent, ...)
+    element = pop.elements[element](pop.screen, parent, ...)
     insert(pop.screen.child, element)
   end
   return element
@@ -127,6 +127,7 @@ pop.mousemoved = function(self, x, y, dx, dy)
   if pop.focused and pop.focused.mousemoved then
     return pop.focused:mousemoved(x, y, dx, dy)
   end
+  print("mousemoved unhandled!")
   return false
 end
 pop.mousepressed = function(x, y, button, element)
@@ -137,11 +138,18 @@ pop.mousepressed = function(x, y, button, element)
   local handled = false
   if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
     if element.mousepressed then
+      if element == pop.screen then
+        error("pop.screen somehow has a fucking mousepressed handler")
+      end
       handled = element:mousepressed(x - element.x, y - element.y, button)
     end
     if handled then
       print("pop.focused has been set!")
       pop.focused = element
+      pop.events[button] = element
+      if element == pop.screen then
+        error("pop.screen fucking focused SOMEHOW")
+      end
     else
       for i = 1, #element.child do
         handled = pop.mousepressed(x, y, button, element.child[i])
@@ -150,9 +158,6 @@ pop.mousepressed = function(x, y, button, element)
         end
       end
     end
-  end
-  if handled then
-    pop.events[button] = element
   end
   return handled
 end
@@ -163,6 +168,7 @@ pop.mousereleased = function(x, y, button)
   do
     local element = pop.events[button]
     if element then
+      print("mousereleased should be functional")
       if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
         do
           clickedHandled = element:clicked(x - element.x, y - element.y, button)
@@ -171,7 +177,11 @@ pop.mousereleased = function(x, y, button)
           end
         end
       end
+      for k, v in pairs(element) do
+        print(k, v)
+      end
       if element.mousereleased then
+        print("mousereleased SHOULD be called")
         do
           mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
           if mousereleasedHandled then

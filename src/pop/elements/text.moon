@@ -4,26 +4,22 @@ import sub, len from string
 path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
-util = sub path, 1, len(path) - len "/elements"
-import inheritsFromElement from require "#{util}/util"
+--util = sub path, 1, len(path) - len "/elements"
+--import inheritsFromElement from require "#{util}/util"
 
 class text extends element
     wrap: (pop) ->
         return (parent, ...) ->
             if type(parent) == "string"
                 return pop.create("text", nil, parent, ...)
-            elseif inheritsFromElement parent
+            else--if inheritsFromElement parent
                 return pop.create("text", parent, ...)
-            --else
+            --elseif parent == false
+            --    return pop.create("text", )
             --    error "text wrapper failed", parent
 
-    new: (pop, parent, text="", color={255,255,255,255}) =>
-        print("---===---")
-        print(@, pop, parent, text, color)
-        print(pop.load)
-        print("---===---")
-
-        super pop, parent
+    new: (parent, text="", color={255,255,255,255}) =>
+        super parent
 
         @font = graphics.newFont 14
         @setText text

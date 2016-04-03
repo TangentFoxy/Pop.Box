@@ -4,6 +4,8 @@ local pop
 local debugDraw = false
 
 function love.load()
+    print(love.getVersion())
+
     pop = require "pop"
     ---[[
     local c = pop.box():align("center", "center"):setSize(300, 300)

@@ -206,8 +206,7 @@ do
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
-    __init = function(self, pop, parent)
-      self.pop = pop
+    __init = function(self, parent)
       self.parent = parent
       self.child = { }
       self.w = 0

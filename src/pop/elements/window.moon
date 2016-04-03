@@ -22,10 +22,17 @@ do
         print "elements/window: unrecognized LÖVE version: #{major}.#{minor}.#{revision}"
         print "                 assuming LÖVE version > 0.10.1  (there may be bugs)"
 
+-- a reference to pop is needed for windows, this is obtained using the wrap function when it is loaded
+pop_ref = nil -- yes, this is convoluted and needs a re-design
+
 class window extends element
-    new: (pop, parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
-        print (parent == pop.screen), (title == "Window")
-        super pop, parent
+    wrap: (pop) ->
+        pop_ref = pop -- set our reference to pop (needed for mouse handling)
+        return (...) -> -- standard wrapper, nothing special needed
+            return pop.create("window", ...)
+
+    new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
+        super parent
 
         @head = box @, tBackground       -- title box at top
         print @, title, tColor
@@ -50,9 +57,10 @@ class window extends element
 
         if mousemoved_event
             @head.mousemoved = (x, y, dx, dy) =>
-                print "mousemoved CALLED!"
+                --print "mousemoved CALLED!", x, y, dx, dy
                 if @selected
-                    @parent\move dx, dy
+                    -- for some reason, y and dx are actually dx and dy...what the fuck? (note: in version 0.10.0)
+                    @parent\move y, dx --dx, dy
                     return true
                 return false
 
@@ -66,9 +74,11 @@ class window extends element
 
             @head.mousereleased = (x, y, button) =>
                 print "mousereleased CALLED!"
+                print (button == left)
                 if button == left
                     @selected = false
-                    @pop.focused = false -- we need to have a way to clear
+                    pop_ref.focused = false -- we need to have a way to clear
+                    print "SHOULD BE FIXED GOD FUCKING DAMMIT"
                     return true
                 print "ERROR FELL THROUGH"
                 return false

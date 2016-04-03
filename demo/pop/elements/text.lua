@@ -106,7 +106,7 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, pop, parent, text, color)
+    __init = function(self, parent, text, color)
       if text == nil then
         text = ""
       end
@@ -118,10 +118,7 @@ do
           255
         }
       end
-      print("---===---")
-      print(self, pop, parent, text, color)
-      print("---===---")
-      _class_0.__parent.__init(self, pop, parent)
+      _class_0.__parent.__init(self, parent)
       self.font = graphics.newFont(14)
       self:setText(text)
       self.color = color
