@@ -4,19 +4,14 @@ import sub, len from string
 path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
---util = sub path, 1, len(path) - len "/elements"
---import inheritsFromElement from require "#{util}/util"
-
 class text extends element
+    -- this should be completely unneccessary, but I'm keeping it just in case
     wrap: (pop) ->
         return (parent, ...) ->
             if type(parent) == "string"
                 return pop.create("text", nil, parent, ...)
-            else--if inheritsFromElement parent
+            else
                 return pop.create("text", parent, ...)
-            --elseif parent == false
-            --    return pop.create("text", )
-            --    error "text wrapper failed", parent
 
     new: (parent, text="", color={255,255,255,255}) =>
         super parent

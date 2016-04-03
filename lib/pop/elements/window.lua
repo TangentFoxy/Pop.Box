@@ -15,8 +15,7 @@ do
   local major, minor, revision = love.getVersion()
   if (major == 0) and (minor == 10) and ((revision == 0) or (revision == 1)) then
     left = 1
-  end
-  if (major == 0) and (minor == 9) then
+  elseif (major == 0) and (minor == 9) then
     left = "l"
     if revision == 1 then
       mousemoved_event = false
@@ -148,7 +147,6 @@ do
       end
       _class_0.__parent.__init(self, parent)
       self.head = box(self, tBackground)
-      print(self, title, tColor)
       self.title = text(self, title, tColor)
       self.window = box(self, wBackground)
       local height = self.title:getHeight()
@@ -170,24 +168,18 @@ do
           return false
         end
         self.head.mousepressed = function(self, x, y, button)
-          print("mousepressed CALLED!")
           if button == left then
-            print("selected!")
             self.selected = true
             return true
           end
           return false
         end
         self.head.mousereleased = function(self, x, y, button)
-          print("mousereleased CALLED!")
-          print((button == left))
           if button == left then
             self.selected = false
             pop_ref.focused = false
-            print("SHOULD BE FIXED GOD FUCKING DAMMIT")
             return true
           end
-          print("ERROR FELL THROUGH")
           return false
         end
       else
