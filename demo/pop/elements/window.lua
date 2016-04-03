@@ -44,6 +44,14 @@ do
       graphics.print("w", self.x, self.y)
       return self
     end,
+    addChild = function(self, child)
+      self.window.child[#self.window.child + 1] = child
+      child.parent = self.window
+      return self
+    end,
+    getChildren = function(self)
+      return self.window.child
+    end,
     setSize = function(self, w, h)
       local x = 0
       local y = 0
@@ -108,6 +116,10 @@ do
       self.head:move(nil, y)
       self.title:move(nil, y)
       self.window:move(nil, y)
+      return self
+    end,
+    setTitle = function(self, title)
+      self.title:setText(title)
       return self
     end
   }

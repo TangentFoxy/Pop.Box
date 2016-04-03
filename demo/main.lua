@@ -57,7 +57,9 @@ function love.load()
     print(b.horizontal, b.vertical)
     print(c.horizontal, c.vertical)
 
-    --TODO make rounding to nearest pixel DEFAULT BEHAVIOR
+    local window = pop.window():align("center", "center"):setTitle("Welcome!")
+    --window:addChild(pop.text("Welcome to Pop.Box()!"))
+
     --TODO make debugDraw better
 end
 

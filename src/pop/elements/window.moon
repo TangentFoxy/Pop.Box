@@ -207,3 +207,7 @@ class window extends element
         @window\move nil, y
 
         return @
+
+    setTitle: (title) =>
+        @title\setText title
+        return @
