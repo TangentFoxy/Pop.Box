@@ -35,6 +35,13 @@ element.__base.height = function(self, h)
     return self:getHeight()
   end
 end
+element.__base.alignment = function(self, horizontal, vertical)
+  if horizontal or vertical then
+    return self:setAlignment(horizontal, vertical)
+  else
+    return self:getAlignment()
+  end
+end
 element.__base.margin = function(self, m)
   if m then
     return self:setMargin(m)

@@ -136,6 +136,8 @@ class window extends element
             @w = w
             @x += x
 
+            @title\align!
+
         if h
             h = h - @head\getHeight!
             switch @vertical
@@ -149,7 +151,7 @@ class window extends element
             @y += y
 
         @head\move x, y
-        @title\move x, y
+        --@title\move x, y
         @window\move x, y
 
         return @
@@ -168,8 +170,10 @@ class window extends element
         @w = w
         @x += x
 
+        @title\align!
+
         @head\move x
-        @title\move x
+        --@title\move x
         @window\move x
 
         return @
@@ -188,8 +192,8 @@ class window extends element
         @h = h + @head\getHeight!
         @y += y
 
-        @head\move x, y
-        @title\move x, y
-        @window\move x, y
+        @head\move nil, y
+        @title\move nil, y
+        @window\move nil, y
 
         return @

@@ -216,6 +216,9 @@ class element
 
         return @
 
+    getAlignment: =>
+        return @horizontal, @vertical
+
     setMargin: (margin) =>
         @margin = margin
         @align!

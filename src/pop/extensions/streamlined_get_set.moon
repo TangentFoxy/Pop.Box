@@ -31,6 +31,13 @@ element.__base.height = (h) =>
     else
         return @getHeight!
 
+element.__base.alignment = (horizontal, vertical) =>
+    if horizontal or vertical
+        return @setAlignment horizontal, vertical
+    else
+        return @getAlignment!
+
+-- why is this bit here? Oo
 element.__base.margin = (m) =>
     if m
         return @setMargin m

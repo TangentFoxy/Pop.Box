@@ -58,6 +58,7 @@ do
         self.window:setWidth(w)
         self.w = w
         self.x = self.x + x
+        self.title:align()
       end
       if h then
         h = h - self.head:getHeight()
@@ -72,7 +73,6 @@ do
         self.y = self.y + y
       end
       self.head:move(x, y)
-      self.title:move(x, y)
       self.window:move(x, y)
       return self
     end,
@@ -88,8 +88,8 @@ do
       self.window:setWidth(w)
       self.w = w
       self.x = self.x + x
+      self.title:align()
       self.head:move(x)
-      self.title:move(x)
       self.window:move(x)
       return self
     end,
@@ -105,9 +105,9 @@ do
       self.window:setHeight(h)
       self.h = h + self.head:getHeight()
       self.y = self.y + y
-      self.head:move(x, y)
-      self.title:move(x, y)
-      self.window:move(x, y)
+      self.head:move(nil, y)
+      self.title:move(nil, y)
+      self.window:move(nil, y)
       return self
     end
   }

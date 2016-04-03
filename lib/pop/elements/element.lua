@@ -189,6 +189,9 @@ do
       end
       return self
     end,
+    getAlignment = function(self)
+      return self.horizontal, self.vertical
+    end,
     setMargin = function(self, margin)
       self.margin = margin
       self:align()
