@@ -1,11 +1,12 @@
 local lg = love.graphics
-local pop
+local pop, inspect
 
 local debugDraw = false
 
 function love.load()
     print(love.getVersion())
 
+    inspect = require "debug-lib/inspect"
     pop = require "pop"
     ---[[
     local c = pop.box():align("center", "center"):setSize(300, 300)

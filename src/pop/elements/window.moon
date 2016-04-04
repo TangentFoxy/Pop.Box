@@ -118,6 +118,16 @@ class window extends element
     getChildren: =>
         return @window.child
 
+    align: (horizontal, vertical, toPixel) =>
+        super horizontal, vertical, toPixel
+
+        for i = 1, #@child
+            @child[i]\align!
+
+        @window\move nil, @head\getHeight!
+
+        return @
+
     --update: =>
         -- if selected, set position based on current mouse position relative to position it was when mousepressed
 

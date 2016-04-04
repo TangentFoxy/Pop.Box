@@ -12,19 +12,10 @@ do
   local _class_0
   local _parent_0 = element
   local _base_0 = {
-    wrap = function(pop)
-      return function(parent, ...)
-        if type(parent) == "string" then
-          return pop.create("text", nil, parent, ...)
-        else
-          return pop.create("text", parent, ...)
-        end
-      end
-    end,
     draw = function(self)
       graphics.setColor(self.color)
       graphics.setFont(self.font)
-      graphics.print(self.text, self.x, self.y)
+      graphics.print(self.txt, self.x, self.y)
       return self
     end,
     debugDraw = function(self)
@@ -38,8 +29,8 @@ do
       return self
     end,
     setSize = function(self)
-      local w = self.font:getWidth(self.text)
-      local h = self.font:getHeight() * (select(2, self.text:gsub("\n", "\n")) + 1)
+      local w = self.font:getWidth(self.txt)
+      local h = self.font:getHeight() * (select(2, self.txt:gsub("\n", "\n")) + 1)
       local _exp_0 = self.horizontal
       if "center" == _exp_0 then
         self.x = self.x - ((w - self.w) / 2)
@@ -68,12 +59,12 @@ do
       if text == nil then
         text = ""
       end
-      self.text = text
+      self.txt = text
       self:setSize()
       return self
     end,
     getText = function(self)
-      return self.text
+      return self.txt
     end,
     setFont = function(self, font)
       self.font = font
@@ -145,6 +136,16 @@ do
     end
   })
   _base_0.__class = _class_0
+  local self = _class_0
+  self.wrap = function(pop)
+    return function(parent, ...)
+      if type(parent) == "string" then
+        return pop.create("text", nil, parent, ...)
+      else
+        return pop.create("text", parent, ...)
+      end
+    end
+  end
   if _parent_0.__inherited then
     _parent_0.__inherited(_parent_0, _class_0)
   end

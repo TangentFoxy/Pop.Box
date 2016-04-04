@@ -52,6 +52,14 @@ do
     getChildren = function(self)
       return self.window.child
     end,
+    align = function(self, horizontal, vertical, toPixel)
+      _class_0.__parent.__base.align(self, horizontal, vertical, toPixel)
+      for i = 1, #self.child do
+        self.child[i]:align()
+      end
+      self.window:move(nil, self.head:getHeight())
+      return self
+    end,
     setSize = function(self, w, h)
       local x = 0
       local y = 0
