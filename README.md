@@ -6,11 +6,14 @@ Pop.Box is a GUI library for use in the [LÖVE][2] engine, designed to be easy t
 use and require as little code as possible to set up. It is primarily designed
 to make it easy to experiment with GUIs during development.
 
+Supports LÖVE versions 0.9.1 and higher.
+
 ## Features
 
 - Quickly set up and align GUI elements.
 - Fully customizable alignment / styling.
 - Moving/resizing elements takes alignment into account.
+- Mouse and key input handling. (**Note**: Work in progress.)
 - Extensible: Make your own elements, skins, extensions, and everything is
   automatically loaded.
 
@@ -24,6 +27,9 @@ local pop = require "pop"
 local window = pop.window():align("center"):setTitle("Welcome!")
 window:addChild(pop.text("Welcome to Pop.Box()!"))
 ```
+
+**Note**: Due to this being so early in development...the above example doesn't
+actually work as expected. `window` is a very new element.
 
 For more examples, see the code in `demo`. For documentation, see `docs`.
 

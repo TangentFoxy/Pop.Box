@@ -157,6 +157,8 @@ pop.textinput = (text) ->
     print "textinput", text
     return false --TODO event handlers return if they have handled the event!
 
+--TODO rewrite skin system to not rely on knowing internals of elements,
+--     instead call functions like setColor and setBackground
 -- skins an element (and its children unless depth == true or 0)
 --  depth can be an integer for how many levels to go down when skinning
 --  defaults to pop.screen and the default skin
