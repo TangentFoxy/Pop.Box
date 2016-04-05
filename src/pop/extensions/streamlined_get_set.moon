@@ -6,6 +6,7 @@ import sub, len from string
 
 path = sub ..., 1, len(...) - len "/extensions/streamlined_get_set"
 element = require "#{path}/elements/element"
+box = require "#{path}/elements/box"
 text = require "#{path}/elements/text"
 
 element.__base.position = (x, y) =>
@@ -56,10 +57,30 @@ element.__base.margin = (m) =>
 --            print ...
 --    }
 
+element.__base.resize = element.__base.adjustSize
+
+-- box.__base.background -- can't be done!
+
+box.__base.color = (r, g, b, a) =>
+    if r or g or b or a
+        return @setColor r, g, b, a
+    else
+        return @getColor!
+
 text.__base.text = (text) =>
     if text
         return @setText text
     else
         return @getText!
 
--- size probably needs redefine here, elemental size won't fall through...or will it?
+text.__base.font = (font) =>
+    if font
+        return @setFont font
+    else
+        return @getFont!
+
+text.__base.color = (r, g, b, a) =>
+    if r or g or b or a
+        return @setColor r, g, b, a
+    else
+        return @getColor!
