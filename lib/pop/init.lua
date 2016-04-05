@@ -1,3 +1,6 @@
+if not (love.getVersion) then
+  error("Pop.Box only supports LÖVE versions >= 0.9.1")
+end
 local filesystem, graphics
 do
   local _obj_0 = love
@@ -5,11 +8,15 @@ do
 end
 local insert
 insert = table.insert
+local inheritsFromElement
+inheritsFromElement = require(tostring(...) .. "/util").inheritsFromElement
 local path = ...
 local pop = { }
 pop.elements = { }
 pop.skins = { }
+pop.events = { }
 pop.screen = false
+pop.focused = false
 pop.load = function()
   local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
   for i = 1, #elements do
@@ -21,6 +28,9 @@ pop.load = function()
       end
       local name = elements[i]:sub(1, -5)
       pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
+      if pop.elements[name].load then
+        pop.elements[name].load(pop)
+      end
       print("element loaded: \"" .. tostring(name) .. "\"")
       if not (pop[name]) then
         if pop.elements[name].wrap then
@@ -55,6 +65,23 @@ pop.load = function()
       break
     end
   end
+  local extensions = filesystem.getDirectoryItems(tostring(path) .. "/extensions")
+  for i = 1, #extensions do
+    local _continue_0 = false
+    repeat
+      if not (extensions[i]:sub(-4) == ".lua") then
+        _continue_0 = true
+        break
+      end
+      local name = extensions[i]:sub(1, -5)
+      require(tostring(path) .. "/extensions/" .. tostring(name))
+      print("extension loaded: \"" .. tostring(name) .. "\"")
+      _continue_0 = true
+    until true
+    if not _continue_0 then
+      break
+    end
+  end
   pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
   return print("created \"pop.screen\"")
 end
@@ -62,9 +89,14 @@ pop.create = function(element, parent, ...)
   if parent == nil then
     parent = pop.screen
   end
-  element = pop.elements[element](pop, parent, ...)
-  if parent then
+  if inheritsFromElement(parent) then
+    element = pop.elements[element](parent, ...)
     insert(parent.child, element)
+  elseif parent == false then
+    element = pop.elements[element](false, ...)
+  else
+    element = pop.elements[element](pop.screen, parent, ...)
+    insert(pop.screen.child, element)
   end
   return element
 end
@@ -94,19 +126,62 @@ pop.draw = function(element)
     end
   end
 end
-pop.mousepressed = function(x, y, button, element)
-  if element == nil then
-    element = pop.screen
+pop.mousemoved = function(self, x, y, dx, dy)
+  if pop.focused and pop.focused.mousemoved then
+    return pop.focused:mousemoved(x, y, dx, dy)
   end
-  print("mousepressed", x, y, button, element)
   return false
 end
-pop.mousereleased = function(x, y, button, element)
-  if element == nil then
+pop.mousepressed = function(x, y, button, element)
+  if not (element) then
+    print("mousepressed", x, y, button)
     element = pop.screen
   end
-  print("mousereleased", x, y, button, element)
-  return false
+  local handled = false
+  if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
+    if element.mousepressed then
+      handled = element:mousepressed(x - element.x, y - element.y, button)
+    end
+    if handled then
+      pop.focused = element
+      pop.events[button] = element
+    else
+      for i = 1, #element.child do
+        handled = pop.mousepressed(x, y, button, element.child[i])
+        if handled then
+          break
+        end
+      end
+    end
+  end
+  return handled
+end
+pop.mousereleased = function(x, y, button)
+  print("mousereleased", x, y, button)
+  local clickedHandled = false
+  local mousereleasedHandled = false
+  do
+    local element = pop.events[button]
+    if element then
+      if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
+        do
+          clickedHandled = element:clicked(x - element.x, y - element.y, button)
+          if clickedHandled then
+            pop.events[button] = nil
+          end
+        end
+      end
+      if element.mousereleased then
+        do
+          mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
+          if mousereleasedHandled then
+            pop.events[button] = nil
+          end
+        end
+      end
+    end
+  end
+  return clickedHandled, mousereleasedHandled
 end
 pop.keypressed = function(key)
   print("keypressed", key)

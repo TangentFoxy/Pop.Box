@@ -5,8 +5,11 @@ path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
 class box extends element
-    new: (pop, parent, background=false) =>
-        super pop, parent
+    new: (parent, background=false) =>
+        super parent
+
+        @w = 20
+        @h = 20
 
         @background = background
 
@@ -19,6 +22,7 @@ class box extends element
                 w, h = @background\getDimensions!
                 w = @w / w
                 h = @h / h
+                graphics.setColor 255, 255, 255, 255
                 graphics.draw @background, @x, @y, 0, w, h
 
         return @

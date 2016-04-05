@@ -1,8 +1,14 @@
 local lg = love.graphics
-local pop
+local pop, inspect
+
+local debugDraw = false
 
 function love.load()
+    print(love.getVersion())
+
+    inspect = require "debug-lib/inspect"
     pop = require "pop"
+    ---[[
     local c = pop.box():align("center", "center"):setSize(300, 300)
     pop.box(c, {255, 0, 0, 255}):setSize(100, 50)
     pop.box(c, {0, 255, 0, 255}):align("center"):setSize(100, 100)
@@ -17,6 +23,45 @@ function love.load()
     pop.skin(pop.text("Here's easier-to-code test text in the center!"):align("center", "center", true)) -- 'true' means align to pixel!
     w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
     b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
+    --]]
+
+    --c:move(100)
+    pop.box({255, 0, 0, 255}):position(50, 500) -- testing streamlined_get_set extension & optional parents
+    --b:margin(2) -- testing streamlined_get_set extension
+    b:fill() -- testing fill!
+
+    ---[[
+    w2 = pop.window(nil, "Window")
+    w2:move(100, 100)
+    w2:setWidth(500)
+    w2:move(-50, 80)
+    w2:setHeight(500)
+    w2:move(0, -175)
+    w2.title:align("center")
+    w2:position(0, 0)
+    --w2:setAlignment("right")
+    w2:size(200, 120):position(90, 70)
+    --w2:align("center")
+    --w2:setAlignment("center"):align("center")
+
+    --w2.child[1]:setBackground {100, 100, 100, 255}
+    --w2.child[3]:setBackground {160, 140, 40, 255}
+    --]]
+
+    local test = lg.newImage("test.png")
+    G = pop.element():align("right"):move(-2, 2)
+    a = pop.box(G, test):align("right")
+    b = pop.box(G, test):align("right"):move(-25):setWidth(40)
+    c = pop.box(G, test):align("right"):move(0, 25):setHeight(40)
+
+    print(a.horizontal, a.vertical)
+    print(b.horizontal, b.vertical)
+    print(c.horizontal, c.vertical)
+
+    local window = pop.window():align("center", "center"):setTitle("Welcome!")
+    --window:addChild(pop.text("Welcome to Pop.Box()!"))
+
+    --TODO make debugDraw better
 end
 
 function love.update(dt)
@@ -25,7 +70,15 @@ end
 
 function love.draw()
     pop.draw()
-    --pop.debugDraw()
+
+    if debugDraw then
+        pop.debugDraw()
+        --w2:debugDraw()
+    end
+end
+
+function love.mousemoved(x, y, dx, dy)
+    pop.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button)
@@ -38,6 +91,10 @@ end
 
 function love.keypressed(key)
     local handled = pop.keypressed(key)
+
+    if (key == "d") and (not handled) then
+        debugDraw = not debugDraw
+    end
 
     if (key == "escape") and (not handled) then
         love.event.quit()

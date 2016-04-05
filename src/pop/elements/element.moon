@@ -2,23 +2,29 @@ import graphics from love
 import floor from math
 
 class element
-    new: (pop, parent) =>
+    new: (parent) =>
         @parent = parent
         @child = {}
 
+        @w = 0
+        @h = 0
+
+        @margin = 0
+
         if parent
-            @x = parent.x or 0
-            @y = parent.y or 0
+            @x = parent.x
+            @y = parent.y
+            --@horizontal = parent.horizontal
+            --@vertical = parent.vertical
+            --@align!
         else
             @x = 0
             @y = 0
-
-        @w = 10
-        @h = 10
+            --@horizontal = "left"
+            --@vertical = "top"
 
         @horizontal = "left"
         @vertical = "top"
-        @margin = 0
 
     debugDraw: =>
         graphics.setLineWidth 0.5
@@ -30,6 +36,15 @@ class element
         graphics.print "e", @x, @y
 
         return @
+
+    addChild: (child) =>
+        @child[#@child+1] = child
+        child.parent = @
+
+        return @
+
+    getChildren: =>
+        return @child
 
     move: (x, y) =>
         if x
@@ -117,6 +132,34 @@ class element
     getSize: =>
         return @w, @h
 
+    setWidth: (w) =>
+        switch @horizontal
+            when "center"
+                @x -= (w - @w)/2
+            when "right"
+                @x -= w - @w
+
+        @w = w
+
+        return @
+
+    getWidth: =>
+        return @w
+
+    setHeight: (h) =>
+        switch @vertical
+            when "center"
+                @y -= (h - @h)/2
+            when "bottom"
+                @y -= h - @h
+
+        @h = h
+
+        return @
+
+    getHeight: =>
+        return @h
+
     adjustSize: (w, h) =>
         W, H = @getSize!
 
@@ -130,7 +173,7 @@ class element
         return @
 
     --TODO note that align requires a parent!
-    align: (horizontal, vertical, toPixel) =>
+    align: (horizontal, vertical, toPixel=true) =>
         @setAlignment horizontal, vertical
 
         @x = @parent.x
@@ -158,11 +201,11 @@ class element
 
         return @
 
-    alignTo: (element, horizontal, vertical) =>
+    alignTo: (element, horizontal, vertical, toPixel=true) =>
         parent = @parent
         @parent = element
 
-        @align horizontal, vertical
+        @align horizontal, vertical, toPixel
 
         @parent = parent
 
@@ -176,6 +219,9 @@ class element
 
         return @
 
+    getAlignment: =>
+        return @horizontal, @vertical
+
     setMargin: (margin) =>
         @margin = margin
         @align!
@@ -183,3 +229,9 @@ class element
 
     getMargin: =>
         return @margin
+
+    fill: =>
+        @x = @parent.x + @margin
+        @y = @parent.y + @margin
+        @w = @parent.w - @margin*2
+        @h = @parent.h - @margin*2

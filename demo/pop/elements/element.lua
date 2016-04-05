@@ -16,6 +16,14 @@ do
       graphics.print("e", self.x, self.y)
       return self
     end,
+    addChild = function(self, child)
+      self.child[#self.child + 1] = child
+      child.parent = self
+      return self
+    end,
+    getChildren = function(self)
+      return self.child
+    end,
     move = function(self, x, y)
       if x then
         self.x = self.x + x
@@ -105,6 +113,32 @@ do
     getSize = function(self)
       return self.w, self.h
     end,
+    setWidth = function(self, w)
+      local _exp_0 = self.horizontal
+      if "center" == _exp_0 then
+        self.x = self.x - ((w - self.w) / 2)
+      elseif "right" == _exp_0 then
+        self.x = self.x - (w - self.w)
+      end
+      self.w = w
+      return self
+    end,
+    getWidth = function(self)
+      return self.w
+    end,
+    setHeight = function(self, h)
+      local _exp_0 = self.vertical
+      if "center" == _exp_0 then
+        self.y = self.y - ((h - self.h) / 2)
+      elseif "bottom" == _exp_0 then
+        self.y = self.y - (h - self.h)
+      end
+      self.h = h
+      return self
+    end,
+    getHeight = function(self)
+      return self.h
+    end,
     adjustSize = function(self, w, h)
       local W, H = self:getSize()
       if w then
@@ -136,7 +170,7 @@ do
       elseif "bottom" == _exp_1 then
         self.y = self.y + (self.parent.h - self.h - self.margin)
       end
-      if toPixel then
+      if toPixel or (toPixel == nil) then
         self.x = floor(self.x)
         self.y = floor(self.y)
       end
@@ -158,6 +192,9 @@ do
       end
       return self
     end,
+    getAlignment = function(self)
+      return self.horizontal, self.vertical
+    end,
     setMargin = function(self, margin)
       self.margin = margin
       self:align()
@@ -165,25 +202,31 @@ do
     end,
     getMargin = function(self)
       return self.margin
+    end,
+    fill = function(self)
+      self.x = self.parent.x + self.margin
+      self.y = self.parent.y + self.margin
+      self.w = self.parent.w - self.margin * 2
+      self.h = self.parent.h - self.margin * 2
     end
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
-    __init = function(self, pop, parent)
+    __init = function(self, parent)
       self.parent = parent
       self.child = { }
+      self.w = 0
+      self.h = 0
+      self.margin = 0
       if parent then
-        self.x = parent.x or 0
-        self.y = parent.y or 0
+        self.x = parent.x
+        self.y = parent.y
       else
         self.x = 0
         self.y = 0
       end
-      self.w = 10
-      self.h = 10
       self.horizontal = "left"
       self.vertical = "top"
-      self.margin = 0
     end,
     __base = _base_0,
     __name = "element"

@@ -21,6 +21,7 @@ do
           local w, h = self.background:getDimensions()
           w = self.w / w
           h = self.h / h
+          graphics.setColor(255, 255, 255, 255)
           graphics.draw(self.background, self.x, self.y, 0, w, h)
         end
       end
@@ -70,11 +71,13 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
-    __init = function(self, pop, parent, background)
+    __init = function(self, parent, background)
       if background == nil then
         background = false
       end
-      _class_0.__parent.__init(self, pop, parent)
+      _class_0.__parent.__init(self, parent)
+      self.w = 20
+      self.h = 20
       self.background = background
     end,
     __base = _base_0,
