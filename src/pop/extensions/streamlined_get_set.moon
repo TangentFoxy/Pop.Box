@@ -6,6 +6,7 @@ import sub, len from string
 
 path = sub ..., 1, len(...) - len "/extensions/streamlined_get_set"
 element = require "#{path}/elements/element"
+text = require "#{path}/elements/text"
 
 element.__base.position = (x, y) =>
     if x or y
@@ -54,3 +55,11 @@ element.__base.margin = (m) =>
 --        __call: (...) ->
 --            print ...
 --    }
+
+text.__base.text = (text) =>
+    if text
+        return @setText text
+    else
+        return @getText!
+
+-- size probably needs redefine here, elemental size won't fall through...or will it?
