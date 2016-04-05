@@ -21,6 +21,9 @@ do
       child.parent = self
       return self
     end,
+    getChildren = function(self)
+      return self.child
+    end,
     move = function(self, x, y)
       if x then
         self.x = self.x + x
