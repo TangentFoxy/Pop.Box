@@ -19,8 +19,8 @@ do
         if revision == 1
             mousemoved_event = false
     else
-        print "elements/window: unrecognized LÖVE version: #{major}.#{minor}.#{revision}"
-        print "                 assuming LÖVE version > 0.10.1  (there may be bugs)"
+        print "elements/window: unrecognized LOVE version: #{major}.#{minor}.#{revision}"
+        print "                 assuming LOVE version > 0.10.1  (there may be bugs)"
 
 pop_ref = false -- reference to pop, loaded by pop.load!
 

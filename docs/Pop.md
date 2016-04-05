@@ -29,19 +29,7 @@ end
 Once `pop` has been required, you can create [Elements][1] and interact with
 them. Most elements can be created like this: `local box = pop.box(...)`
 
-However, if an element's name clashes with a function name used in Pop.Box, you
-will have to use `pop.create(type, ...)` where `type` is a string naming the
-element type.
-
-When creating an element, the first argument is its parent element. If the first
-argument is not an element, it will be treated as the second argument. If it is
-`false`, then an element with no parent will be created. When no parent is
-specified, an element's parent is `pop.screen`, which is the top-level element
-of Pop.Box.
-
-(This behavior can be modified by elements themselves. No standard element does
- this, but if you use an element created by someone else, check its
- documentation first.)
+For more information, see the [Elements documentation][1].
 
 ## Skinning Elements
 

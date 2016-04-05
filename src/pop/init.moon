@@ -1,5 +1,5 @@
 unless love.getVersion
-    error "Pop.Box only supports LÖVE versions >= 0.9.1"
+    error "Pop.Box only supports LOVE versions >= 0.9.1"
 
 import filesystem, graphics from love
 import insert from table

@@ -173,7 +173,7 @@ class element
         return @
 
     --TODO note that align requires a parent!
-    align: (horizontal, vertical, toPixel) =>
+    align: (horizontal, vertical, toPixel=true) =>
         @setAlignment horizontal, vertical
 
         @x = @parent.x
@@ -195,17 +195,17 @@ class element
             when "bottom"
                 @y += @parent.h - @h - @margin
 
-        if toPixel or (toPixel == nil)
+        if toPixel
             @x = floor @x
             @y = floor @y
 
         return @
 
-    alignTo: (element, horizontal, vertical) =>
+    alignTo: (element, horizontal, vertical, toPixel=true) =>
         parent = @parent
         @parent = element
 
-        @align horizontal, vertical
+        @align horizontal, vertical, toPixel
 
         @parent = parent
 
