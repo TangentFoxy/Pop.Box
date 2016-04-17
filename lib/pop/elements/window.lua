@@ -1,5 +1,10 @@
 local graphics
 graphics = love.graphics
+local insert, remove
+do
+  local _obj_0 = table
+  insert, remove = _obj_0.insert, _obj_0.remove
+end
 local sub, len
 do
   local _obj_0 = string
@@ -21,8 +26,8 @@ do
       mousemoved_event = false
     end
   else
-    print("elements/window: unrecognized LÖVE version: " .. tostring(major) .. "." .. tostring(minor) .. "." .. tostring(revision))
-    print("                 assuming LÖVE version > 0.10.1  (there may be bugs)")
+    print("elements/window: unrecognized LOVE version: " .. tostring(major) .. "." .. tostring(minor) .. "." .. tostring(revision))
+    print("                 assuming LOVE version > 0.10.1  (there may be bugs)")
   end
 end
 local pop_ref = false
@@ -45,9 +50,16 @@ do
       return self
     end,
     addChild = function(self, child)
-      self.window.child[#self.window.child + 1] = child
-      child.parent = self.window
+      self.window:addChild(child)
       return self
+    end,
+    removeChild = function(self, child)
+      local result = self.window:removeChild(child)
+      if result == self.window then
+        return self
+      else
+        return result
+      end
     end,
     getChildren = function(self)
       return self.window.child

@@ -7,6 +7,8 @@ do
 end
 local path = sub(..., 1, len(...) - len("/extensions/streamlined_get_set"))
 local element = require(tostring(path) .. "/elements/element")
+local box = require(tostring(path) .. "/elements/box")
+local text = require(tostring(path) .. "/elements/text")
 element.__base.position = function(self, x, y)
   if x or y then
     return self:setPosition(x, y)
@@ -47,5 +49,34 @@ element.__base.margin = function(self, m)
     return self:setMargin(m)
   else
     return self:getMargin()
+  end
+end
+element.__base.resize = element.__base.adjustSize
+box.__base.color = function(self, r, g, b, a)
+  if r or g or b or a then
+    return self:setColor(r, g, b, a)
+  else
+    return self:getColor()
+  end
+end
+text.__base.text = function(self, text)
+  if text then
+    return self:setText(text)
+  else
+    return self:getText()
+  end
+end
+text.__base.font = function(self, font)
+  if font then
+    return self:setFont(font)
+  else
+    return self:getFont()
+  end
+end
+text.__base.color = function(self, r, g, b, a)
+  if r or g or b or a then
+    return self:setColor(r, g, b, a)
+  else
+    return self:getColor()
   end
 end

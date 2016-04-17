@@ -2,6 +2,12 @@ local graphics
 graphics = love.graphics
 local floor
 floor = math.floor
+local insert, remove
+do
+  local _obj_0 = table
+  insert, remove = _obj_0.insert, _obj_0.remove
+end
+local tonumber = tonumber
 local element
 do
   local _class_0
@@ -17,9 +23,26 @@ do
       return self
     end,
     addChild = function(self, child)
-      self.child[#self.child + 1] = child
+      if child.parent then
+        child.parent:removeChild(child)
+      end
+      insert(self.child, child)
       child.parent = self
       return self
+    end,
+    removeChild = function(self, child)
+      if tonumber(child) == child then
+        self.child[child].parent = false
+        return remove(self.child, child)
+      else
+        for k, v in ipairs(self.child) do
+          if v == child then
+            remove(self.child, k)
+            return self
+          end
+        end
+        return error("Element \"" .. tostring(child) .. "\" is not a child of element \"" .. tostring(self) .. "\". Cannot remove it.")
+      end
     end,
     getChildren = function(self)
       return self.child
@@ -66,9 +89,7 @@ do
         y = oldY
       end
       for i = 1, #self.child do
-        if not (self.child[i].excludeMovement) then
-          self.child[i]:move(x - oldX, y - oldY)
-        end
+        self.child[i]:move(x - oldX, y - oldY)
       end
       return self
     end,
@@ -151,6 +172,9 @@ do
       return self
     end,
     align = function(self, horizontal, vertical, toPixel)
+      if toPixel == nil then
+        toPixel = true
+      end
       self:setAlignment(horizontal, vertical)
       self.x = self.parent.x
       self.y = self.parent.y
@@ -170,16 +194,19 @@ do
       elseif "bottom" == _exp_1 then
         self.y = self.y + (self.parent.h - self.h - self.margin)
       end
-      if toPixel or (toPixel == nil) then
+      if toPixel then
         self.x = floor(self.x)
         self.y = floor(self.y)
       end
       return self
     end,
-    alignTo = function(self, element, horizontal, vertical)
+    alignTo = function(self, element, horizontal, vertical, toPixel)
+      if toPixel == nil then
+        toPixel = true
+      end
       local parent = self.parent
       self.parent = element
-      self:align(horizontal, vertical)
+      self:align(horizontal, vertical, toPixel)
       self.parent = parent
       return self
     end,

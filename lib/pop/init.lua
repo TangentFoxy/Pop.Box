@@ -1,5 +1,5 @@
 if not (love.getVersion) then
-  error("Pop.Box only supports LÖVE versions >= 0.9.1")
+  error("Pop.Box only supports LOVE versions >= 0.9.1")
 end
 local filesystem, graphics
 do
@@ -139,7 +139,7 @@ pop.mousepressed = function(x, y, button, element)
   end
   local handled = false
   if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
-    if element.mousepressed then
+    if element.mousepressed and (not element.excludeDraw) then
       handled = element:mousepressed(x - element.x, y - element.y, button)
     end
     if handled then
@@ -163,7 +163,7 @@ pop.mousereleased = function(x, y, button)
   do
     local element = pop.events[button]
     if element then
-      if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
+      if element.clicked and (not element.excludeDraw) and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
         do
           clickedHandled = element:clicked(x - element.x, y - element.y, button)
           if clickedHandled then
@@ -171,7 +171,7 @@ pop.mousereleased = function(x, y, button)
           end
         end
       end
-      if element.mousereleased then
+      if element.mousereleased and (not element.excludeDraw) then
         do
           mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
           if mousereleasedHandled then

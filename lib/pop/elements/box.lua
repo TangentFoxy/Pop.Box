@@ -64,7 +64,7 @@ do
       if type(self.background) == "table" then
         return unpack(self.background)
       else
-        return error("This box doesn't have a color.")
+        return error("Box \"" .. tostring(self) .. "\" doesn't have a color.")
       end
     end
   }

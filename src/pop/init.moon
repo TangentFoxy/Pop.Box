@@ -116,7 +116,7 @@ pop.mousepressed = (x, y, button, element) ->
     handled = false
 
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-        if element.mousepressed
+        if element.mousepressed and (not element.excludeDraw)
             handled = element\mousepressed x - element.x, y - element.y, button
         if handled
             pop.focused = element
@@ -136,11 +136,11 @@ pop.mousereleased = (x, y, button) ->
     mousereleasedHandled = false
 
     if element = pop.events[button]
-        if element.clicked and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        if element.clicked and (not element.excludeDraw) and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
             if clickedHandled = element\clicked x - element.x, y - element.y, button
                 pop.events[button] = nil
 
-        if element.mousereleased
+        if element.mousereleased and (not element.excludeDraw)
             if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
                 pop.events[button] = nil
 
