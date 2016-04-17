@@ -253,3 +253,9 @@ class element
         @y = @parent.y + @margin
         @w = @parent.w - @margin*2
         @h = @parent.h - @margin*2
+
+    delete: =>
+        for k,v in ipairs @child
+            v\delete!
+
+        @parent\removeChild @
