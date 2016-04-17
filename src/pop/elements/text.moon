@@ -5,7 +5,7 @@ path = sub ..., 1, len(...) - len "/box"
 element = require "#{path}/element"
 
 class text extends element
-    -- this should be completely unneccessary, but I'm keeping it just in case
+    -- this should be completely unneccessary, but I'm keeping it just in case (and moreso to remember how to do this)
     @wrap = (pop) ->
         return (parent, ...) ->
             if type(parent) == "string"

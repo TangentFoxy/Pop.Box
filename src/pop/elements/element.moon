@@ -42,7 +42,7 @@ class element
     addChild: (child) =>
         -- make sure we don't duplicate references
         if child.parent
-            child.parent\removeChild(child)
+            child.parent\removeChild child
 
         insert @child, child
         child.parent = @
@@ -104,8 +104,7 @@ class element
             y = oldY
 
         for i = 1, #@child
-            unless @child[i].excludeMovement
-                @child[i]\move x - oldX, y - oldY
+            @child[i]\move x - oldX, y - oldY
 
         return @
 

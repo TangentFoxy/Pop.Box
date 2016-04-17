@@ -13,7 +13,7 @@ pop.elements = {}
 pop.skins = {}
 pop.events = {}
 
-pop.screen = false -- initialized in pop.load()
+pop.screen = false  -- initialized in pop.load()
 pop.focused = false
 
 -- loads elements and skins, creates pop.screen (intended to only be called once at the beginning)
@@ -68,17 +68,20 @@ pop.load = ->
 
         print "extension loaded: \"#{name}\""
 
-    -- main window (called screen because there will be a window element class)
+    -- main window (called screen because there is a window element class)
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
     print "created \"pop.screen\""
 
 -- creates an element with specified parent (parent can be false or non-existent)
 pop.create = (element, parent=pop.screen, ...) ->
+    -- if valid parent element (includes default of pop.screen when no parent has been passed)
     if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
         insert parent.child, element
+    -- if explicitly no parent
     elseif parent == false
         element = pop.elements[element](false, ...)
+    -- else we use pop.screen, and "parent" is actually first argument
     else
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
@@ -86,7 +89,6 @@ pop.create = (element, parent=pop.screen, ...) ->
     return element
 
 pop.update = (dt, element=pop.screen) ->
-    --pop.screen\update dt
     unless element.excludeUpdate
         if element.update
             element\update dt
@@ -94,7 +96,6 @@ pop.update = (dt, element=pop.screen) ->
             pop.update dt, element.child[i]
 
 pop.draw = (element=pop.screen) ->
-    --pop.screen\draw!
     unless element.excludeDraw
         if element.draw
             element\draw!

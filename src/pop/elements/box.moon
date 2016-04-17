@@ -57,4 +57,4 @@ class box extends element
         if type(@background) == "table"
             return unpack @background
         else
-            error "This box doesn't have a color." --might be a bad idea
+            error "Box \"#{@}\" doesn't have a color." --might be a bad idea

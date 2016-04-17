@@ -1,4 +1,5 @@
 import graphics from love
+import insert, remove from table
 import sub, len from string
 
 path = sub ..., 1, len(...) - len "/window"
@@ -28,11 +29,6 @@ class window extends element
     load: (pop) ->
         pop_ref = pop
 
-    --wrap: (pop) ->
-    --    pop_ref = pop -- set our reference to pop (needed for mouse handling)
-    --    return (...) -> -- standard wrapper, nothing special needed
-    --        return pop.create("window", ...)
-
     new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
         super parent
 
@@ -52,15 +48,12 @@ class window extends element
             @head, @title, @window
         }
 
-        --@selected = false -- whether or not the window title (and thus, the window) has been selected
-        --NOTE all of these commented out, because I realized these event handlers should be attached to the title element
-
         @head.selected = false -- whether or not the window title (and thus, the window) has been selected
 
         if mousemoved_event
             @head.mousemoved = (x, y, dx, dy) =>
                 if @selected
-                    -- for some reason, y and dx are actually dx and dy...what the fuck? (note: in version 0.10.0)
+                    -- for some reason, y and dx are actually dx and dy...what the fuck? (note: in version 0.10.0 AND 0.10.1)
                     @parent\move y, dx --dx, dy
                     return true
                 return false
@@ -110,10 +103,17 @@ class window extends element
         return @
 
     addChild: (child) =>
-        @window.child[#@window.child+1] = child
-        child.parent = @window
+        @window\addChild child
 
         return @
+
+    -- pass through to window, but return us if window returns itself
+    removeChild: (child) =>
+        result = @window\removeChild child
+        if result == @window
+            return @
+        else
+            return result
 
     getChildren: =>
         return @window.child
