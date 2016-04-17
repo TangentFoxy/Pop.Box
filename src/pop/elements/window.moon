@@ -53,8 +53,7 @@ class window extends element
         if mousemoved_event
             @head.mousemoved = (x, y, dx, dy) =>
                 if @selected
-                    -- for some reason, y and dx are actually dx and dy...what the fuck? (note: in version 0.10.0 AND 0.10.1)
-                    @parent\move y, dx --dx, dy
+                    @parent\move dx, dy
                     return true
                 return false
 

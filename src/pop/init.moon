@@ -102,7 +102,7 @@ pop.draw = (element=pop.screen) ->
         for i = 1, #element.child
             pop.draw element.child[i]
 
-pop.mousemoved = (x, y, dx, dy) =>
+pop.mousemoved = (x, y, dx, dy) ->
     if pop.focused and pop.focused.mousemoved
         return pop.focused\mousemoved x, y, dx, dy
 

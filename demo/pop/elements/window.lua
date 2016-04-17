@@ -197,7 +197,7 @@ do
       if mousemoved_event then
         self.head.mousemoved = function(self, x, y, dx, dy)
           if self.selected then
-            self.parent:move(y, dx)
+            self.parent:move(dx, dy)
             return true
           end
           return false

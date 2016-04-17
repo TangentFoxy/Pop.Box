@@ -126,7 +126,7 @@ pop.draw = function(element)
     end
   end
 end
-pop.mousemoved = function(self, x, y, dx, dy)
+pop.mousemoved = function(x, y, dx, dy)
   if pop.focused and pop.focused.mousemoved then
     return pop.focused:mousemoved(x, y, dx, dy)
   end
