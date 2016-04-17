@@ -2,7 +2,7 @@
 
 Elements are the core of Pop.Box.
 
-Once `pop` has been required, you can create Elements and interact with them.
+Once `pop` has been required, you can create elements and interact with them.
 Most elements can be created like this: `local box = pop.box(...)`
 
 However, if an element's name clashes with a function name used in Pop.Box, you
@@ -22,7 +22,7 @@ so check their documentation.)
 - [Element][1] (The base of all elements, and useful for alignment.)
 - [Box][2] (A box, can be colored, or display a [supported Drawable][3].)
 - [Text][4] (Plain text, no special features. Useful for basic labels and such.)
-- [Window][5] (A moveable window. Has a title and area for other elements.)
+- [Window][5] (A movable window. Has a title and area for other elements.)
 
 [1]: ./elements/element.md
 [2]: ./elements/box.md

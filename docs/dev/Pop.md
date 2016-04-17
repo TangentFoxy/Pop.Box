@@ -5,4 +5,11 @@
 
 TODO: Write me.
 
+## Notes
+
+- `pop.mousereleased()` Handling a click maybe should *not* check bounds.
+  Handling a mouse release should maybe *not* check for `excludeDraw`. If an
+  element was already selected and then went invisible, I'm probably breaking
+  things worse by doing this.
+
 [1]: ../Pop.md

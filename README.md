@@ -31,11 +31,12 @@ window:addChild(pop.text("Welcome to Pop.Box()!"))
 **Note**: Due to this being so early in development...the above example doesn't
 actually work as expected. `window` is a very new element.
 
-For more examples, see the code in `demo`. For documentation, see `docs`.
+For more examples, see the code in `demo`. For documentation, see `docs` (and
+links to documentation below).
 
 # Documentation
 
-**Note**: Docs not written just yet. Will be soon.
+**Note**: Docs are a work in progress, sometimes lagging behind the actual code.
 
 - [Pop Module][3] (The main module/interface.)
 - [Elements][4] (Basic features of elements/types of elements.)
