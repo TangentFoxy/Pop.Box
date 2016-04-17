@@ -10,5 +10,14 @@ Note that any element using one of these excludes its children as well.
 - `excludeUpdate` Excludes an element from being updated (by `pop.update()`).
 - `excludeDraw` Excludes being rendered (by `pop.draw()`).
 
-**Note**: `excludeDraw` also excludes an element from accepting events (it
-wouldn't make sense to have an invisible element capturing text input).
+**Note**: `excludeDraw` also excludes an element from accepting the following
+events:
+
+- `mousepressed`
+- `clicked`
+- `keypressed`
+- `textinput`
+
+The reason for this is that it wouldn't make sense for an invisible element to
+be capturing input. However, some events are passed through in case an element
+becomes invisible while processing input.

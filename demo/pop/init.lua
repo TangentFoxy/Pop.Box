@@ -163,7 +163,7 @@ pop.mousereleased = function(x, y, button)
   do
     local element = pop.events[button]
     if element then
-      if element.clicked and (not element.excludeDraw) and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
+      if element.clicked and (not element.excludeDraw) then
         do
           clickedHandled = element:clicked(x - element.x, y - element.y, button)
           if clickedHandled then
@@ -171,7 +171,7 @@ pop.mousereleased = function(x, y, button)
           end
         end
       end
-      if element.mousereleased and (not element.excludeDraw) then
+      if element.mousereleased then
         do
           mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
           if mousereleasedHandled then
@@ -185,14 +185,26 @@ pop.mousereleased = function(x, y, button)
 end
 pop.keypressed = function(key)
   print("keypressed", key)
+  local element = pop.focused
+  if element and element.keypressed and (not element.excludeDraw) then
+    return element.keypressed(key)
+  end
   return false
 end
 pop.keyreleased = function(key)
   print("keyreleased", key)
+  local element = pop.focused
+  if element and element.keyreleased then
+    return element.keyreleased(key)
+  end
   return false
 end
 pop.textinput = function(text)
   print("textinput", text)
+  local element = pop.focused
+  if element and element.textinput and (not element.excludeDraw) then
+    return element.textinput(text)
+  end
   return false
 end
 pop.skin = function(element, skin, depth)

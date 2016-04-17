@@ -1,4 +1,4 @@
-import graphics from love
+import graphics, mouse from love
 import insert, remove from table
 import sub, len from string
 
@@ -64,32 +64,29 @@ class window extends element
                     return true
                 return false
 
-            @head.mousereleased = (x, y, button) =>
-                if button == left
-                    @selected = false
-                    pop_ref.focused = false -- clear our focus
-                    return true
-                return false
-
         else
             @head.mx = 0           -- local mouse coordinates when selected
             @head.my = 0
 
             @head.update = =>
-                --TODO write me!
-                return false
+                x, y = mouse.getPosition!
+                @setPosition x - mx, y - my
+                --return false -- why?
 
             @head.mousepressed = (x, y, button) =>
                 if button == left
                     @selected = true
                     @mx = x
                     @my = y
-
-            @head.mousereleased = (x, y, button) => -- this is actually the same for both versions...
-                if button == left
-                    @selected = false
                     return true
                 return false
+
+        @head.mousereleased = (x, y, button) =>
+            if button == left
+                @selected = false
+                pop_ref.focused = false -- clear our focus
+                return true
+            return false
 
     debugDraw: =>
         graphics.setLineWidth 0.5
@@ -127,18 +124,6 @@ class window extends element
         @window\move nil, @head\getHeight!
 
         return @
-
-    --update: =>
-        -- if selected, set position based on current mouse position relative to position it was when mousepressed
-
-    --mousemoved: (x, y, dx, dy) =>
-        -- if selected, set position based on new mouse position relative to position it was when mousepressed
-
-    --mousepressed: (x, y, button) =>
-        -- if button == "l" -> selected = true, mouse position saved
-
-    --mousereleased: (x, y, button) =>
-        -- if button == "l" -> set position based on position relative to when mousepressed, selected == false
 
     setSize: (w, h) =>
         x = 0
@@ -221,3 +206,6 @@ class window extends element
     setTitle: (title) =>
         @title\setText title
         return @
+
+    getTitle: =>
+        return @title\getText!

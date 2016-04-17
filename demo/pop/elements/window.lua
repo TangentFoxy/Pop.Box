@@ -1,5 +1,8 @@
-local graphics
-graphics = love.graphics
+local graphics, mouse
+do
+  local _obj_0 = love
+  graphics, mouse = _obj_0.graphics, _obj_0.mouse
+end
 local insert, remove
 do
   local _obj_0 = table
@@ -141,6 +144,9 @@ do
     setTitle = function(self, title)
       self.title:setText(title)
       return self
+    end,
+    getTitle = function(self)
+      return self.title:getText()
     end
   }
   _base_0.__index = _base_0
@@ -203,34 +209,30 @@ do
           end
           return false
         end
-        self.head.mousereleased = function(self, x, y, button)
-          if button == left then
-            self.selected = false
-            pop_ref.focused = false
-            return true
-          end
-          return false
-        end
       else
         self.head.mx = 0
         self.head.my = 0
         self.head.update = function(self)
-          return false
+          local x, y = mouse.getPosition()
+          return self:setPosition(x - mx, y - my)
         end
         self.head.mousepressed = function(self, x, y, button)
           if button == left then
             self.selected = true
             self.mx = x
             self.my = y
-          end
-        end
-        self.head.mousereleased = function(self, x, y, button)
-          if button == left then
-            self.selected = false
             return true
           end
           return false
         end
+      end
+      self.head.mousereleased = function(self, x, y, button)
+        if button == left then
+          self.selected = false
+          pop_ref.focused = false
+          return true
+        end
+        return false
       end
     end,
     __base = _base_0,

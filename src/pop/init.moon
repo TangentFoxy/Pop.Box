@@ -136,11 +136,11 @@ pop.mousereleased = (x, y, button) ->
     mousereleasedHandled = false
 
     if element = pop.events[button]
-        if element.clicked and (not element.excludeDraw) and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        if element.clicked and (not element.excludeDraw) --and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
             if clickedHandled = element\clicked x - element.x, y - element.y, button
                 pop.events[button] = nil
 
-        if element.mousereleased and (not element.excludeDraw)
+        if element.mousereleased
             if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
                 pop.events[button] = nil
 
@@ -148,15 +148,30 @@ pop.mousereleased = (x, y, button) ->
 
 pop.keypressed = (key) ->
     print "keypressed", key
-    return false --TODO event handlers return if they have handled the event!
+
+    element = pop.focused
+    if element and element.keypressed and (not element.excludeDraw)
+        return element.keypressed key
+
+    return false
 
 pop.keyreleased = (key) ->
     print "keyreleased", key
-    return false --TODO event handlers return if they have handled the event!
+
+    element = pop.focused
+    if element and element.keyreleased
+        return element.keyreleased key
+
+    return false
 
 pop.textinput = (text) ->
     print "textinput", text
-    return false --TODO event handlers return if they have handled the event!
+
+    element = pop.focused
+    if element and element.textinput and (not element.excludeDraw)
+        return element.textinput text
+
+    return false
 
 --TODO rewrite skin system to not rely on knowing internals of elements,
 --     instead call functions like setColor and setBackground
