@@ -1,5 +1,7 @@
 import graphics from love
 import floor from math
+import insert, remove from table
+tonumber = tonumber
 
 class element
     new: (parent) =>
@@ -38,10 +40,27 @@ class element
         return @
 
     addChild: (child) =>
-        @child[#@child+1] = child
+        -- make sure we don't duplicate references
+        if child.parent
+            child.parent\removeChild(child)
+
+        insert @child, child
         child.parent = @
 
         return @
+
+    -- remove child by index and return it OR remove child by reference
+    removeChild: (child) =>
+        if tonumber(child) == child
+            -- remove indexed child, return it
+            @child[child].parent = false
+            return remove @child, child
+        else
+            for k,v in ipairs @child
+                if v == child
+                    remove @child, k
+                    return @
+            error "Element \"#{child}\" is not a child of element \"#{@}\". Cannot remove it."
 
     getChildren: =>
         return @child
