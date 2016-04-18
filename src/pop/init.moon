@@ -11,7 +11,7 @@ pop = {}
 
 pop.elements = {}
 pop.skins = {}
-pop.events = {}
+--pop.events = {} --NOTE leave this commented out for now, as it may be needed again
 
 pop.screen = false  -- initialized in pop.load()
 pop.focused = false
@@ -116,16 +116,19 @@ pop.mousepressed = (x, y, button, element) ->
     handled = false
 
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-        if element.mousepressed and (not element.excludeDraw)
-            handled = element\mousepressed x - element.x, y - element.y, button
-        if handled
-            pop.focused = element
-            pop.events[button] = element
-        else
-            for i = #element.child, 1, -1
-                handled = pop.mousepressed x, y, button, element.child[i]
-                if handled
-                    break
+        for i = #element.child, 1, -1
+            handled = pop.mousepressed x, y, button, element.child[i]
+            if handled
+                break
+
+        unless handled
+            if element.mousepressed and (not element.excludeDraw)
+                if handled = element\mousepressed x - element.x, y - element.y, button
+                    pop.focused = element
+                    --NOTE this might end up being needed in the future
+                    --  if it is, add an ability for a mousepressed handler to cancel saving
+                    --  the event, and make sure the window element's area does this
+                    --pop.events[button] = element
 
     return handled
 
@@ -135,35 +138,33 @@ pop.mousereleased = (x, y, button, element) ->
 
     if element
         if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-            if element.clicked and (not element.excludeDraw)
-                clickedHandled = element\clicked x - element.x, y - element.y, button
-            if element.mousereleased
-                mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
+            for i = #element.child, 1, -1
+                clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
+                if clickedHandled or mousereleasedHandled
+                    break
 
-            if clickedHandled
-                pop.focused = element
+            unless clickedHandled or mousereleasedHandled
+                if element.clicked and (not element.excludeDraw)
+                    clickedHandled = element\clicked x - element.x, y - element.y, button
+                if element.mousereleased
+                    mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
 
-            if clickedHandled or mousereleasedHandled
-                return clickedHandled, mousereleasedHandled
-            else
-                for i = #element.child, 1, -1
-                    clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
-                    if clickedHandled or mousereleasedHandled
-                        break
+                if clickedHandled
+                    pop.focused = element
 
-    else
-        print "mousereleased", x, y, button
-        if element = pop.events[button]
-            if element.clicked and (not element.excludeDraw) --and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-                if clickedHandled = element\clicked x - element.x, y - element.y, button
-                    pop.events[button] = nil
+    --else
+    --    print "mousereleased", x, y, button
+    --    if element = pop.events[button]
+    --        if element.clicked and (not element.excludeDraw) --and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+    --            if clickedHandled = element\clicked x - element.x, y - element.y, button
+    --                pop.events[button] = nil
 
-            if element.mousereleased
-                if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
-                    pop.events[button] = nil
+    --        if element.mousereleased
+    --            if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
+    --                pop.events[button] = nil
 
-        if (not clickedHandled) and (not mousereleasedHandled)
-            clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, pop.screen
+    --    if (not clickedHandled) and (not mousereleasedHandled)
+    --        clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, pop.screen
 
     return clickedHandled, mousereleasedHandled
 
@@ -229,6 +230,24 @@ pop.debugDraw = (element=pop.screen) ->
 
     for i = 1, #element.child
         pop.debugDraw element.child[i]
+
+pop.printElementStack = (element=pop.screen, depth=0) ->
+    cls = element.__class.__name
+
+    if cls == "text"
+        cls = cls .. " (\"#{element\getText!\gsub "\n", "\\n"}\")"
+    elseif cls == "box"
+        bg = element\getBackground!
+
+        if type(bg) == "table"
+            bg = "#{bg[1]}, #{bg[2]}, #{bg[3]}, #{bg[4]}"
+
+        cls = cls .. " (#{bg})"
+
+    print string.rep("-", depth) .. " #{cls}"
+
+    for i = 1, #element.child
+        pop.printElementStack element.child[i], depth + 1
 
 pop.load!
 

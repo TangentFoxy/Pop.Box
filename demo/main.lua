@@ -60,6 +60,10 @@ function love.load()
 
     local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!")
     --window:addChild(pop.text("Welcome to Pop.Box()!"))
+    --window.window.clicked = function()
+    --    print("The proper window has been clicked!")
+    --    return true
+    --end
 
     pop.window():setClose(false):setClose(true)
 
@@ -67,6 +71,14 @@ function love.load()
     videoFile:play()
 
     --TODO make debugDraw better
+
+    --[[
+    local all = pop.box()
+    for k,v in pairs(all) do
+        print(k, v)
+    end
+    print(all.__class.__name)
+    --]]
 end
 
 function love.update(dt)
@@ -108,6 +120,18 @@ function love.keypressed(key)
     if (key == "w") and (not handled) then
         local w = pop.window()
         w.title:align("center")
+    end
+
+    if (key == "e") and (not handled) then
+        print("EVENTS:")
+        for k,v in pairs(pop.events) do
+            print(k, v)
+        end
+        print("END")
+    end
+
+    if (key == "p") and (not handled) then
+        pop.printElementStack()
     end
 
     if (key == "escape") and (not handled) then

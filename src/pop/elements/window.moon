@@ -55,6 +55,12 @@ class window extends element
 
         @titleOverflow = "trunicate" -- defaults to trunicating title to fit in window
 
+        -- window area steals mouse events to keep them from propagating under it
+        @window.mousepressed = ->
+            return true
+        @window.clicked = ->
+            return true
+
         @close.clicked = ->
             @delete!
             return true

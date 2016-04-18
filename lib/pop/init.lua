@@ -14,7 +14,6 @@ local path = ...
 local pop = { }
 pop.elements = { }
 pop.skins = { }
-pop.events = { }
 pop.screen = false
 pop.focused = false
 pop.load = function()
@@ -139,17 +138,19 @@ pop.mousepressed = function(x, y, button, element)
   end
   local handled = false
   if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
-    if element.mousepressed and (not element.excludeDraw) then
-      handled = element:mousepressed(x - element.x, y - element.y, button)
+    for i = #element.child, 1, -1 do
+      handled = pop.mousepressed(x, y, button, element.child[i])
+      if handled then
+        break
+      end
     end
-    if handled then
-      pop.focused = element
-      pop.events[button] = element
-    else
-      for i = #element.child, 1, -1 do
-        handled = pop.mousepressed(x, y, button, element.child[i])
-        if handled then
-          break
+    if not (handled) then
+      if element.mousepressed and (not element.excludeDraw) then
+        do
+          handled = element:mousepressed(x - element.x, y - element.y, button)
+          if handled then
+            pop.focused = element
+          end
         end
       end
     end
@@ -161,51 +162,23 @@ pop.mousereleased = function(x, y, button, element)
   local mousereleasedHandled = false
   if element then
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
-      if element.clicked and (not element.excludeDraw) then
-        clickedHandled = element:clicked(x - element.x, y - element.y, button)
-      end
-      if element.mousereleased then
-        mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
-      end
-      if clickedHandled then
-        pop.focused = element
-      end
-      if clickedHandled or mousereleasedHandled then
-        return clickedHandled, mousereleasedHandled
-      else
-        for i = #element.child, 1, -1 do
-          clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
-          if clickedHandled or mousereleasedHandled then
-            break
-          end
+      for i = #element.child, 1, -1 do
+        clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
+        if clickedHandled or mousereleasedHandled then
+          break
         end
       end
-    end
-  else
-    print("mousereleased", x, y, button)
-    do
-      element = pop.events[button]
-      if element then
+      if not (clickedHandled or mousereleasedHandled) then
         if element.clicked and (not element.excludeDraw) then
-          do
-            clickedHandled = element:clicked(x - element.x, y - element.y, button)
-            if clickedHandled then
-              pop.events[button] = nil
-            end
-          end
+          clickedHandled = element:clicked(x - element.x, y - element.y, button)
         end
         if element.mousereleased then
-          do
-            mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
-            if mousereleasedHandled then
-              pop.events[button] = nil
-            end
-          end
+          mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
+        end
+        if clickedHandled then
+          pop.focused = element
         end
       end
-    end
-    if (not clickedHandled) and (not mousereleasedHandled) then
-      clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, pop.screen)
     end
   end
   return clickedHandled, mousereleasedHandled
@@ -279,6 +252,28 @@ pop.debugDraw = function(element)
   end
   for i = 1, #element.child do
     pop.debugDraw(element.child[i])
+  end
+end
+pop.printElementStack = function(element, depth)
+  if element == nil then
+    element = pop.screen
+  end
+  if depth == nil then
+    depth = 0
+  end
+  local cls = element.__class.__name
+  if cls == "text" then
+    cls = cls .. " (\"" .. tostring(element:getText():gsub("\n", "\\n")) .. "\")"
+  elseif cls == "box" then
+    local bg = element:getBackground()
+    if type(bg) == "table" then
+      bg = tostring(bg[1]) .. ", " .. tostring(bg[2]) .. ", " .. tostring(bg[3]) .. ", " .. tostring(bg[4])
+    end
+    cls = cls .. " (" .. tostring(bg) .. ")"
+  end
+  print(string.rep("-", depth) .. " " .. tostring(cls))
+  for i = 1, #element.child do
+    pop.printElementStack(element.child[i], depth + 1)
   end
 end
 pop.load()

@@ -264,6 +264,12 @@ do
         self.close
       }
       self.titleOverflow = "trunicate"
+      self.window.mousepressed = function()
+        return true
+      end
+      self.window.clicked = function()
+        return true
+      end
       self.close.clicked = function()
         self:delete()
         return true
