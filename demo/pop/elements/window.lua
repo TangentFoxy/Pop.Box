@@ -17,12 +17,7 @@ local path = sub(..., 1, len(...) - len("/window"))
 local element = require(tostring(path) .. "/element")
 local box = require(tostring(path) .. "/box")
 local text = require(tostring(path) .. "/text")
-local closeImage = {
-  100,
-  0,
-  0,
-  80
-}
+local closeImage = graphics.newImage(tostring(path) .. "/img/close.png")
 local left = 1
 local mousemoved_event = true
 do
@@ -196,6 +191,10 @@ do
     setClose = function(self, enabled)
       if enabled then
         self.close = box(self, closeImage)
+        self.close.clicked = function()
+          self:delete()
+          return true
+        end
         local height = self.head:getHeight()
         self.close:align("right"):setSize(height, height)
         self.head:setWidth(self.w - height)
@@ -250,7 +249,7 @@ do
       end
       _class_0.__parent.__init(self, parent)
       self.head = box(self, tBackground)
-      self.title = text(self, title, tColor)
+      self.title = text(self.head, title, tColor)
       self.window = box(self, wBackground)
       self.close = box(self, closeImage)
       local height = self.title:getHeight()
@@ -266,7 +265,6 @@ do
       }
       self.titleOverflow = "trunicate"
       self.close.clicked = function()
-        print("CLOSE WAS CLICKED")
         self:delete()
         return true
       end

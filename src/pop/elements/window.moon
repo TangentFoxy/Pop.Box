@@ -7,7 +7,7 @@ element = require "#{path}/element"
 box = require "#{path}/box"
 text = require "#{path}/text"
 
-closeImage = {100, 0, 0, 80} --graphics.newImage "#{path}/img/close.png"
+closeImage = graphics.newImage "#{path}/img/close.png"
 
 -- version compatibility
 left = 1                -- what is the left mouse button?
@@ -34,10 +34,11 @@ class window extends element
     new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
         super parent
 
-        @head = box @, tBackground       -- title box at top
-        @title = text @, title, tColor   -- text at top
-        @window = box @, wBackground     -- main window area
-        @close = box @, closeImage       -- close button
+        -- NOTE @title having @head as its parent might break things horribly
+        @head = box @, tBackground         -- title box at top
+        @title = text @head, title, tColor -- text at top
+        @window = box @, wBackground       -- main window area
+        @close = box @, closeImage         -- close button
 
         -- correct placement / sizes of elements
         height = @title\getHeight!
@@ -55,7 +56,6 @@ class window extends element
         @titleOverflow = "trunicate" -- defaults to trunicating title to fit in window
 
         @close.clicked = ->
-            print "CLOSE WAS CLICKED"
             @delete!
             return true
 
@@ -261,15 +261,18 @@ class window extends element
     setClose: (enabled) =>
         if enabled
             @close = box @, closeImage
+            @close.clicked = ->
+                @delete!
+                return true
             height = @head\getHeight!
             @close\align("right")\setSize height, height
             @head\setWidth @w - height
-            @title\align! -- new might not be working?
+            @title\align!
             insert @child, @close
         else
             @close\delete!
             @head\setWidth @w
-            @title\align! -- new might not be working?
+            @title\align!
             @close = false
 
         return @

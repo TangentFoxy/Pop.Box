@@ -43,7 +43,6 @@ function love.load()
     w2:setClose(false)
     local t2 = pop.text("Click here to toggle close\nbutton on this window."):setMargin(10):setColor(0,0,0)
     t2.clicked = function()
-        print("CALLED") --NOTE not working!
         w2:setClose(not w2:hasClose())
         return true
     end
@@ -104,6 +103,11 @@ function love.keypressed(key)
 
     if (key == "d") and (not handled) then
         debugDraw = not debugDraw
+    end
+
+    if (key == "w") and (not handled) then
+        local w = pop.window()
+        w.title:align("center")
     end
 
     if (key == "escape") and (not handled) then
