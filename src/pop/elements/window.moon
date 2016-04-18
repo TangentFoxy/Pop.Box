@@ -7,6 +7,8 @@ element = require "#{path}/element"
 box = require "#{path}/box"
 text = require "#{path}/text"
 
+closeImage = {100, 0, 0, 80} --graphics.newImage "#{path}/img/close.png"
+
 -- version compatibility
 left = 1                -- what is the left mouse button?
 mousemoved_event = true -- is the mousemoved event available?
@@ -35,18 +37,27 @@ class window extends element
         @head = box @, tBackground       -- title box at top
         @title = text @, title, tColor   -- text at top
         @window = box @, wBackground     -- main window area
+        @close = box @, closeImage       -- close button
 
         -- correct placement / sizes of elements
         height = @title\getHeight!
-        @head\setSize @w, height
+        @head\setSize @w - height, height
         @window\move nil, height
+        @close\align("right")\setSize height, height
         @setSize 100, 80
 
         -- our child elements are still child elements
         --TODO change title to be a child of head ?
         @child = {
-            @head, @title, @window
+            @head, @title, @window, @close
         }
+
+        @titleOverflow = "trunicate" -- defaults to trunicating title to fit in window
+
+        @close.clicked = ->
+            print "CLOSE WAS CLICKED"
+            @delete!
+            return true
 
         @head.selected = false -- whether or not the window title (and thus, the window) has been selected
 
@@ -108,6 +119,12 @@ class window extends element
         result = @window\removeChild child
         if result == @window
             return @
+        elseif type(result) == "string"
+            for k,v in ipairs @child
+                if v == child
+                    remove @child, k
+                    return @
+            return "Element \"#{child}\" is not a child of window \"#{@}\". Cannot remove it."
         else
             return result
 
@@ -135,12 +152,19 @@ class window extends element
                 when "right"
                     x -= w - @w
 
-            @head\setWidth w
+            if @close
+                @head\setWidth w - @head\getHeight!
+            else
+                @head\setWidth w
+
             @window\setWidth w
             @w = w
             @x += x
 
             @title\align!
+
+            if @close
+                @close\align!
 
         if h
             h = h - @head\getHeight!
@@ -169,12 +193,19 @@ class window extends element
             when "right"
                 x -= w - @w
 
-        @head\setWidth w
+        if @close
+            @head\setWidth w - @head\getHeight!
+        else
+            @head\setWidth w
+
         @window\setWidth w
         @w = w
         @x += x
 
         @title\align!
+
+        if @close
+            @close\align!
 
         @head\move x
         --@title\move x
@@ -204,7 +235,47 @@ class window extends element
 
     setTitle: (title) =>
         @title\setText title
+
+        if @titleOverflow == "trunicate"
+            while @title\getWidth! > @head\getWidth!
+                title = title\sub 1, -3
+                @title\setText title .. "…"
+
+        elseif @titleOverflow == "resize"
+            if @title\getWidth! > @head\getWidth!
+                @setWidth @title\getWidth!
+
         return @
 
     getTitle: =>
         return @title\getText!
+
+    setTitleOverflow: (method) =>
+        @titleOverflow = method
+
+        return @
+
+    getTitleOverflow: =>
+        return @titleOverflow
+
+    setClose: (enabled) =>
+        if enabled
+            @close = box @, closeImage
+            height = @head\getHeight!
+            @close\align("right")\setSize height, height
+            @head\setWidth @w - height
+            @title\align! -- new might not be working?
+            insert @child, @close
+        else
+            @close\delete!
+            @head\setWidth @w
+            @title\align! -- new might not be working?
+            @close = false
+
+        return @
+
+    hasClose: =>
+        if @close
+            return true
+        else
+            return false

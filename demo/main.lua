@@ -2,6 +2,7 @@ local lg = love.graphics
 local pop, inspect
 
 local debugDraw = false
+local videoFile = lg.newVideo("test.ogv") -- so we can loop playback
 
 function love.load()
     print(love.getVersion())
@@ -30,7 +31,6 @@ function love.load()
     --b:margin(2) -- testing streamlined_get_set extension
     b:fill() -- testing fill!
 
-    ---[[
     w2 = pop.window(nil, "Window")
     w2:move(100, 100)
     w2:setWidth(500)
@@ -39,14 +39,15 @@ function love.load()
     w2:move(0, -175)
     w2.title:align("center")
     w2:position(0, 0)
-    --w2:setAlignment("right")
     w2:size(200, 120):position(90, 70)
-    --w2:align("center")
-    --w2:setAlignment("center"):align("center")
-
-    --w2.child[1]:setBackground {100, 100, 100, 255}
-    --w2.child[3]:setBackground {160, 140, 40, 255}
-    --]]
+    w2:setClose(false)
+    local t2 = pop.text("Click here to toggle close\nbutton on this window."):setMargin(10):setColor(0,0,0)
+    t2.clicked = function()
+        print("CALLED") --NOTE not working!
+        w2:setClose(not w2:hasClose())
+        return true
+    end
+    w2:addChild(t2)
 
     local test = lg.newImage("test.png")
     G = pop.element():align("right"):move(-2, 2)
@@ -58,14 +59,23 @@ function love.load()
     print(b.horizontal, b.vertical)
     print(c.horizontal, c.vertical)
 
-    local window = pop.window():align("center", "center"):setTitle("Welcome!")
+    local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!")
     --window:addChild(pop.text("Welcome to Pop.Box()!"))
+
+    pop.window():setClose(false):setClose(true)
+
+    local video = pop.box():align("right", "bottom"):setBackground(videoFile):setSize(320/2, 240/2):move(-20, -20)
+    videoFile:play()
 
     --TODO make debugDraw better
 end
 
 function love.update(dt)
     pop.update(dt)
+
+    if not videoFile:isPlaying() then
+        videoFile:rewind()
+    end
 end
 
 function love.draw()

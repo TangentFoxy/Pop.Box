@@ -156,29 +156,56 @@ pop.mousepressed = function(x, y, button, element)
   end
   return handled
 end
-pop.mousereleased = function(x, y, button)
-  print("mousereleased", x, y, button)
+pop.mousereleased = function(x, y, button, element)
   local clickedHandled = false
   local mousereleasedHandled = false
-  do
-    local element = pop.events[button]
-    if element then
+  if element then
+    if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
       if element.clicked and (not element.excludeDraw) then
-        do
-          clickedHandled = element:clicked(x - element.x, y - element.y, button)
-          if clickedHandled then
-            pop.events[button] = nil
-          end
-        end
+        clickedHandled = element:clicked(x - element.x, y - element.y, button)
       end
       if element.mousereleased then
-        do
-          mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
-          if mousereleasedHandled then
-            pop.events[button] = nil
+        mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
+      end
+      if clickedHandled then
+        pop.focused = element
+      end
+      if clickedHandled or mousereleasedHandled then
+        return clickedHandled, mousereleasedHandled
+      else
+        for i = 1, #element.child do
+          clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
+          if clickedHandled or mousereleasedHandled then
+            break
           end
         end
       end
+    end
+  else
+    print("mousereleased", x, y, button)
+    do
+      element = pop.events[button]
+      if element then
+        if element.clicked and (not element.excludeDraw) then
+          do
+            clickedHandled = element:clicked(x - element.x, y - element.y, button)
+            if clickedHandled then
+              pop.events[button] = nil
+            end
+          end
+        end
+        if element.mousereleased then
+          do
+            mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
+            if mousereleasedHandled then
+              pop.events[button] = nil
+            end
+          end
+        end
+      end
+    end
+    if (not clickedHandled) and (not mousereleasedHandled) then
+      clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, pop.screen)
     end
   end
   return clickedHandled, mousereleasedHandled

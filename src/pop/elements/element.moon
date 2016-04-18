@@ -47,6 +47,8 @@ class element
         insert @child, child
         child.parent = @
 
+        child\align! --NOTE not 100% sure if this is a good idea
+
         return @
 
     -- remove child by index and return it OR remove child by reference
@@ -60,7 +62,7 @@ class element
                 if v == child
                     remove @child, k
                     return @
-            error "Element \"#{child}\" is not a child of element \"#{@}\". Cannot remove it."
+            return "Element \"#{child}\" is not a child of element \"#{@}\". Cannot remove it."
 
     getChildren: =>
         return @child
@@ -259,3 +261,4 @@ class element
             v\delete!
 
         @parent\removeChild @
+        @ = nil

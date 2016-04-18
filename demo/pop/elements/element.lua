@@ -28,6 +28,7 @@ do
       end
       insert(self.child, child)
       child.parent = self
+      child:align()
       return self
     end,
     removeChild = function(self, child)
@@ -41,7 +42,7 @@ do
             return self
           end
         end
-        return error("Element \"" .. tostring(child) .. "\" is not a child of element \"" .. tostring(self) .. "\". Cannot remove it.")
+        return "Element \"" .. tostring(child) .. "\" is not a child of element \"" .. tostring(self) .. "\". Cannot remove it."
       end
     end,
     getChildren = function(self)
@@ -240,7 +241,8 @@ do
       for k, v in ipairs(self.child) do
         v:delete()
       end
-      return self.parent:removeChild(self)
+      self.parent:removeChild(self)
+      self = nil
     end
   }
   _base_0.__index = _base_0

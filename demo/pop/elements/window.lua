@@ -17,6 +17,12 @@ local path = sub(..., 1, len(...) - len("/window"))
 local element = require(tostring(path) .. "/element")
 local box = require(tostring(path) .. "/box")
 local text = require(tostring(path) .. "/text")
+local closeImage = {
+  100,
+  0,
+  0,
+  80
+}
 local left = 1
 local mousemoved_event = true
 do
@@ -60,6 +66,14 @@ do
       local result = self.window:removeChild(child)
       if result == self.window then
         return self
+      elseif type(result) == "string" then
+        for k, v in ipairs(self.child) do
+          if v == child then
+            remove(self.child, k)
+            return self
+          end
+        end
+        return "Element \"" .. tostring(child) .. "\" is not a child of window \"" .. tostring(self) .. "\". Cannot remove it."
       else
         return result
       end
@@ -85,11 +99,18 @@ do
         elseif "right" == _exp_0 then
           x = x - (w - self.w)
         end
-        self.head:setWidth(w)
+        if self.close then
+          self.head:setWidth(w - self.head:getHeight())
+        else
+          self.head:setWidth(w)
+        end
         self.window:setWidth(w)
         self.w = w
         self.x = self.x + x
         self.title:align()
+        if self.close then
+          self.close:align()
+        end
       end
       if h then
         h = h - self.head:getHeight()
@@ -115,11 +136,18 @@ do
       elseif "right" == _exp_0 then
         x = x - (w - self.w)
       end
-      self.head:setWidth(w)
+      if self.close then
+        self.head:setWidth(w - self.head:getHeight())
+      else
+        self.head:setWidth(w)
+      end
       self.window:setWidth(w)
       self.w = w
       self.x = self.x + x
       self.title:align()
+      if self.close then
+        self.close:align()
+      end
       self.head:move(x)
       self.window:move(x)
       return self
@@ -143,10 +171,50 @@ do
     end,
     setTitle = function(self, title)
       self.title:setText(title)
+      if self.titleOverflow == "trunicate" then
+        while self.title:getWidth() > self.head:getWidth() do
+          title = title:sub(1, -3)
+          self.title:setText(title .. "…")
+        end
+      elseif self.titleOverflow == "resize" then
+        if self.title:getWidth() > self.head:getWidth() then
+          self:setWidth(self.title:getWidth())
+        end
+      end
       return self
     end,
     getTitle = function(self)
       return self.title:getText()
+    end,
+    setTitleOverflow = function(self, method)
+      self.titleOverflow = method
+      return self
+    end,
+    getTitleOverflow = function(self)
+      return self.titleOverflow
+    end,
+    setClose = function(self, enabled)
+      if enabled then
+        self.close = box(self, closeImage)
+        local height = self.head:getHeight()
+        self.close:align("right"):setSize(height, height)
+        self.head:setWidth(self.w - height)
+        self.title:align()
+        insert(self.child, self.close)
+      else
+        self.close:delete()
+        self.head:setWidth(self.w)
+        self.title:align()
+        self.close = false
+      end
+      return self
+    end,
+    hasClose = function(self)
+      if self.close then
+        return true
+      else
+        return false
+      end
     end
   }
   _base_0.__index = _base_0
@@ -184,15 +252,24 @@ do
       self.head = box(self, tBackground)
       self.title = text(self, title, tColor)
       self.window = box(self, wBackground)
+      self.close = box(self, closeImage)
       local height = self.title:getHeight()
-      self.head:setSize(self.w, height)
+      self.head:setSize(self.w - height, height)
       self.window:move(nil, height)
+      self.close:align("right"):setSize(height, height)
       self:setSize(100, 80)
       self.child = {
         self.head,
         self.title,
-        self.window
+        self.window,
+        self.close
       }
+      self.titleOverflow = "trunicate"
+      self.close.clicked = function()
+        print("CLOSE WAS CLICKED")
+        self:delete()
+        return true
+      end
       self.head.selected = false
       if mousemoved_event then
         self.head.mousemoved = function(self, x, y, dx, dy)
