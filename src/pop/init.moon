@@ -122,7 +122,7 @@ pop.mousepressed = (x, y, button, element) ->
             pop.focused = element
             pop.events[button] = element
         else
-            for i = 1, #element.child
+            for i = #element.child, 1, -1
                 handled = pop.mousepressed x, y, button, element.child[i]
                 if handled
                     break
@@ -146,7 +146,7 @@ pop.mousereleased = (x, y, button, element) ->
             if clickedHandled or mousereleasedHandled
                 return clickedHandled, mousereleasedHandled
             else
-                for i = 1, #element.child
+                for i = #element.child, 1, -1
                     clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
                     if clickedHandled or mousereleasedHandled
                         break
