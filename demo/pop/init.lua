@@ -1,3 +1,10 @@
+local pop = {
+  _VERSION = 'Pop.Box v0.0.0',
+  _DESCRIPTION = 'GUI library for LOVE, designed for ease of use',
+  _URL = 'http://github.com/Guard13007/Pop.Box',
+  _LICENSE = 'The MIT License (MIT)',
+  _AUTHOR = 'Paul Liverman III'
+}
 if not (love.getVersion) then
   error("Pop.Box only supports LOVE versions >= 0.9.1")
 end
@@ -11,7 +18,6 @@ insert = table.insert
 local inheritsFromElement
 inheritsFromElement = require(tostring(...) .. "/util").inheritsFromElement
 local path = ...
-local pop = { }
 pop.elements = { }
 pop.skins = { }
 pop.screen = false
@@ -139,9 +145,11 @@ pop.mousepressed = function(x, y, button, element)
   local handled = false
   if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
     for i = #element.child, 1, -1 do
-      handled = pop.mousepressed(x, y, button, element.child[i])
-      if handled then
-        break
+      do
+        handled = pop.mousepressed(x, y, button, element.child[i])
+        if handled then
+          return handled
+        end
       end
     end
     if not (handled) then
@@ -165,7 +173,7 @@ pop.mousereleased = function(x, y, button, element)
       for i = #element.child, 1, -1 do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
         if clickedHandled or mousereleasedHandled then
-          break
+          return clickedHandled, mousereleasedHandled
         end
       end
       if not (clickedHandled or mousereleasedHandled) then
@@ -180,6 +188,9 @@ pop.mousereleased = function(x, y, button, element)
         end
       end
     end
+  else
+    print("mousereleased", x, y, button)
+    pop.mousereleased(x, y, button, pop.screen)
   end
   return clickedHandled, mousereleasedHandled
 end
@@ -254,7 +265,7 @@ pop.debugDraw = function(element)
     pop.debugDraw(element.child[i])
   end
 end
-pop.printElementStack = function(element, depth)
+pop.printElementTree = function(element, depth)
   if element == nil then
     element = pop.screen
   end

@@ -86,6 +86,7 @@ function love.update(dt)
 
     if not videoFile:isPlaying() then
         videoFile:rewind()
+        videoFile:play() -- sometimes rewinding at the end of play fails to start a loop
     end
 end
 
@@ -94,7 +95,6 @@ function love.draw()
 
     if debugDraw then
         pop.debugDraw()
-        --w2:debugDraw()
     end
 end
 
@@ -131,7 +131,7 @@ function love.keypressed(key)
     end
 
     if (key == "p") and (not handled) then
-        pop.printElementStack()
+        pop.printElementTree()
     end
 
     if (key == "escape") and (not handled) then

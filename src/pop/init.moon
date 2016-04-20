@@ -1,30 +1,9 @@
 pop = {
-    _VERSION = 'Pop.Box v0.0.0'
-    _DESCRIPTION = 'A GUI library for LOVE.'
-    _URL = 'http://github.com/Guard13007/Pop.Box'
-    _LICENSE = '
-        The MIT License (MIT)
-
-        Copyright (c) 2015-2016 Paul Liverman III
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-        in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        copies of the Software, and to permit persons to whom the Software is
-        furnished to do so, subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in all
-        copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        SOFTWARE.
-    '
+    _VERSION: 'Pop.Box v0.0.0'
+    _DESCRIPTION: 'GUI library for LOVE, designed for ease of use'
+    _URL: 'http://github.com/Guard13007/Pop.Box'
+    _LICENSE: 'The MIT License (MIT)'
+    _AUTHOR: 'Paul Liverman III'
 }
 
 unless love.getVersion
@@ -38,7 +17,6 @@ path = ...
 
 pop.elements = {}
 pop.skins = {}
---pop.events = {} --NOTE leave this commented out for now, as it may be needed again
 
 pop.screen = false  -- initialized in pop.load()
 pop.focused = false
@@ -71,7 +49,7 @@ pop.load = ->
 
             print "wrapper created: \"pop.#{name}()\""
 
-    -- works just like above, except no wrappers
+    -- works just like above, except no load calls or wrappers
     skins = filesystem.getDirectoryItems "#{path}/skins"
 
     for i = 1, #skins
@@ -83,7 +61,7 @@ pop.load = ->
 
         print "skin loaded: \"#{name}\""
 
-    -- load extensions by just running them via require
+    -- (again, similar) load extensions by just running them via require
     extensions = filesystem.getDirectoryItems "#{path}/extensions"
 
     for i = 1, #extensions
@@ -95,20 +73,20 @@ pop.load = ->
 
         print "extension loaded: \"#{name}\""
 
-    -- main window (called screen because there is a window element class)
+    -- GUI screen area
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
     print "created \"pop.screen\""
 
--- creates an element with specified parent (parent can be false or non-existent)
+-- creates an element (parent is an element, false, or nil (defaults to pop.screen))
 pop.create = (element, parent=pop.screen, ...) ->
-    -- if valid parent element (includes default of pop.screen when no parent has been passed)
+    -- if valid parent element
     if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
         insert parent.child, element
     -- if explicitly no parent
     elseif parent == false
         element = pop.elements[element](false, ...)
-    -- else we use pop.screen, and "parent" is actually first argument
+    -- else use pop.screen, and "parent" is actually first argument
     else
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
@@ -129,6 +107,7 @@ pop.draw = (element=pop.screen) ->
         for i = 1, #element.child
             pop.draw element.child[i]
 
+--TODO implement a way for an element to attach itself to mousemoved events
 pop.mousemoved = (x, y, dx, dy) ->
     if pop.focused and pop.focused.mousemoved
         return pop.focused\mousemoved x, y, dx, dy
@@ -136,68 +115,68 @@ pop.mousemoved = (x, y, dx, dy) ->
     return false
 
 pop.mousepressed = (x, y, button, element) ->
+    -- start at the screen, print that we received an event
     unless element
         print "mousepressed", x, y, button
         element = pop.screen
 
+    -- have we handled the event?
     handled = false
 
+    -- if it was inside the current element..
     if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        -- check its child elements in reverse order, returning if something handles it
         for i = #element.child, 1, -1
-            handled = pop.mousepressed x, y, button, element.child[i]
-            if handled
-                break
+            if handled = pop.mousepressed x, y, button, element.child[i]
+                return handled
 
+        -- if a child hasn't handled it yet
         unless handled
+            -- if we can handle it and are visible, try to handle it, and set pop.focused
             if element.mousepressed and (not element.excludeDraw)
                 if handled = element\mousepressed x - element.x, y - element.y, button
                     pop.focused = element
-                    --NOTE this might end up being needed in the future
-                    --  if it is, add an ability for a mousepressed handler to cancel saving
-                    --  the event, and make sure the window element's area does this
-                    --pop.events[button] = element
 
+    -- have we handled the event?
     return handled
 
 pop.mousereleased = (x, y, button, element) ->
+    -- we are trying to handle a clicked or mousereleased event
     clickedHandled = false
     mousereleasedHandled = false
 
+    -- if we have an element, and are within its bounds
     if element
         if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+            -- check its children in reverse for handling a clicked or mousereleased event
             for i = #element.child, 1, -1
                 clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
                 if clickedHandled or mousereleasedHandled
-                    break
+                    return clickedHandled, mousereleasedHandled
 
+            -- if that doesn't work, we try to handle it ourselves
             unless clickedHandled or mousereleasedHandled
+                -- clicked only happens on visible elements, mousereleased happens either way
                 if element.clicked and (not element.excludeDraw)
                     clickedHandled = element\clicked x - element.x, y - element.y, button
                 if element.mousereleased
                     mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
 
+                -- if we clicked, we're focused!
                 if clickedHandled
                     pop.focused = element
 
-    --else
-    --    print "mousereleased", x, y, button
-    --    if element = pop.events[button]
-    --        if element.clicked and (not element.excludeDraw) --and (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
-    --            if clickedHandled = element\clicked x - element.x, y - element.y, button
-    --                pop.events[button] = nil
-
-    --        if element.mousereleased
-    --            if mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
-    --                pop.events[button] = nil
-
-    --    if (not clickedHandled) and (not mousereleasedHandled)
-    --        clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, pop.screen
+    -- else, default to pop.screen to begin! (and print that we received an event)
+    else
+        print "mousereleased", x, y, button
+        pop.mousereleased x, y, button, pop.screen
 
     return clickedHandled, mousereleasedHandled
 
 pop.keypressed = (key) ->
     print "keypressed", key
 
+    -- keypressed events must be on visible elements
     element = pop.focused
     if element and element.keypressed and (not element.excludeDraw)
         return element.keypressed key
@@ -207,6 +186,7 @@ pop.keypressed = (key) ->
 pop.keyreleased = (key) ->
     print "keyreleased", key
 
+    -- keyreleased events are always called
     element = pop.focused
     if element and element.keyreleased
         return element.keyreleased key
@@ -216,6 +196,7 @@ pop.keyreleased = (key) ->
 pop.textinput = (text) ->
     print "textinput", text
 
+    -- textinput events must be on visible elements
     element = pop.focused
     if element and element.textinput and (not element.excludeDraw)
         return element.textinput text
@@ -258,7 +239,7 @@ pop.debugDraw = (element=pop.screen) ->
     for i = 1, #element.child
         pop.debugDraw element.child[i]
 
-pop.printElementStack = (element=pop.screen, depth=0) ->
+pop.printElementTree = (element=pop.screen, depth=0) ->
     cls = element.__class.__name
 
     if cls == "text"

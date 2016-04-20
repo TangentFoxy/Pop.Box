@@ -54,12 +54,12 @@ do
       return self
     end,
     addChild = function(self, child)
-      self.window:addChild(child)
+      self.area:addChild(child)
       return self
     end,
     removeChild = function(self, child)
-      local result = self.window:removeChild(child)
-      if result == self.window then
+      local result = self.area:removeChild(child)
+      if result == self.area then
         return self
       elseif type(result) == "string" then
         for k, v in ipairs(self.child) do
@@ -74,14 +74,14 @@ do
       end
     end,
     getChildren = function(self)
-      return self.window.child
+      return self.area.child
     end,
     align = function(self, horizontal, vertical, toPixel)
       _class_0.__parent.__base.align(self, horizontal, vertical, toPixel)
       for i = 1, #self.child do
         self.child[i]:align()
       end
-      self.window:move(nil, self.head:getHeight())
+      self.area:move(nil, self.head:getHeight())
       return self
     end,
     setSize = function(self, w, h)
@@ -99,7 +99,7 @@ do
         else
           self.head:setWidth(w)
         end
-        self.window:setWidth(w)
+        self.area:setWidth(w)
         self.w = w
         self.x = self.x + x
         self.title:align()
@@ -115,12 +115,12 @@ do
         elseif "right" == _exp_0 then
           y = y - (h - self.h)
         end
-        self.window:setHeight(h)
+        self.area:setHeight(h)
         self.h = h + self.head:getHeight()
         self.y = self.y + y
       end
       self.head:move(x, y)
-      self.window:move(x, y)
+      self.area:move(x, y)
       return self
     end,
     setWidth = function(self, w)
@@ -136,7 +136,7 @@ do
       else
         self.head:setWidth(w)
       end
-      self.window:setWidth(w)
+      self.area:setWidth(w)
       self.w = w
       self.x = self.x + x
       self.title:align()
@@ -144,7 +144,7 @@ do
         self.close:align()
       end
       self.head:move(x)
-      self.window:move(x)
+      self.area:move(x)
       return self
     end,
     setHeight = function(self, h)
@@ -156,12 +156,12 @@ do
       elseif "right" == _exp_0 then
         y = y - (h - self.h)
       end
-      self.window:setHeight(h)
+      self.area:setHeight(h)
       self.h = h + self.head:getHeight()
       self.y = self.y + y
       self.head:move(nil, y)
       self.title:move(nil, y)
-      self.window:move(nil, y)
+      self.area:move(nil, y)
       return self
     end,
     setTitle = function(self, title)
@@ -250,24 +250,24 @@ do
       _class_0.__parent.__init(self, parent)
       self.head = box(self, tBackground)
       self.title = text(self.head, title, tColor)
-      self.window = box(self, wBackground)
+      self.area = box(self, wBackground)
       self.close = box(self, closeImage)
       local height = self.title:getHeight()
       self.head:setSize(self.w - height, height)
-      self.window:move(nil, height)
+      self.area:move(nil, height)
       self.close:align("right"):setSize(height, height)
       self:setSize(100, 80)
       self.child = {
         self.head,
         self.title,
-        self.window,
+        self.area,
         self.close
       }
       self.titleOverflow = "trunicate"
-      self.window.mousepressed = function()
+      self.area.mousepressed = function()
         return true
       end
-      self.window.clicked = function()
+      self.area.clicked = function()
         return true
       end
       self.close.clicked = function()
