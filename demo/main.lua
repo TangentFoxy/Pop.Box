@@ -59,11 +59,6 @@ function love.load()
     print(c.horizontal, c.vertical)
 
     local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!")
-    --window:addChild(pop.text("Welcome to Pop.Box()!"))
-    --window.window.clicked = function()
-    --    print("The proper window has been clicked!")
-    --    return true
-    --end
 
     pop.window():setClose(false):setClose(true)
 

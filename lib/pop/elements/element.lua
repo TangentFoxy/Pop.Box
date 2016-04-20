@@ -243,6 +243,7 @@ do
       end
       self.parent:removeChild(self)
       self = nil
+      return nil
     end
   }
   _base_0.__index = _base_0

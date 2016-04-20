@@ -288,3 +288,11 @@ class window extends element
             return true
         else
             return false
+
+    delete: =>
+        super!
+        @head = nil
+        @title = nil
+        @area = nil
+        @close = nil
+        return

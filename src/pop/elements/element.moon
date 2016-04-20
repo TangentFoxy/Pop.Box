@@ -262,3 +262,4 @@ class element
 
         @parent\removeChild @
         @ = nil
+        return nil

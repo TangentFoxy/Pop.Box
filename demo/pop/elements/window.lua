@@ -214,6 +214,13 @@ do
       else
         return false
       end
+    end,
+    delete = function(self)
+      _class_0.__parent.__base.delete(self)
+      self.head = nil
+      self.title = nil
+      self.area = nil
+      self.close = nil
     end
   }
   _base_0.__index = _base_0
