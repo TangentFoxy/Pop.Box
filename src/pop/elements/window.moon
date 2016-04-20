@@ -37,28 +37,28 @@ class window extends element
         -- NOTE @title having @head as its parent might break things horribly
         @head = box @, tBackground         -- title box at top
         @title = text @head, title, tColor -- text at top
-        @window = box @, wBackground       -- main window area
+        @area = box @, wBackground       -- main window area
         @close = box @, closeImage         -- close button
 
         -- correct placement / sizes of elements
         height = @title\getHeight!
         @head\setSize @w - height, height
-        @window\move nil, height
+        @area\move nil, height
         @close\align("right")\setSize height, height
         @setSize 100, 80
 
         -- our child elements are still child elements
         --TODO change title to be a child of head ?
         @child = {
-            @head, @title, @window, @close
+            @head, @title, @area, @close
         }
 
         @titleOverflow = "trunicate" -- defaults to trunicating title to fit in window
 
         -- window area steals mouse events to keep them from propagating under it
-        @window.mousepressed = ->
+        @area.mousepressed = ->
             return true
-        @window.clicked = ->
+        @area.clicked = ->
             return true
 
         @close.clicked = ->
@@ -116,14 +116,14 @@ class window extends element
         return @
 
     addChild: (child) =>
-        @window\addChild child
+        @area\addChild child
 
         return @
 
     -- pass through to window, but return us if window returns itself
     removeChild: (child) =>
-        result = @window\removeChild child
-        if result == @window
+        result = @area\removeChild child
+        if result == @area
             return @
         elseif type(result) == "string"
             for k,v in ipairs @child
@@ -135,7 +135,7 @@ class window extends element
             return result
 
     getChildren: =>
-        return @window.child
+        return @area.child
 
     align: (horizontal, vertical, toPixel) =>
         super horizontal, vertical, toPixel
@@ -143,7 +143,7 @@ class window extends element
         for i = 1, #@child
             @child[i]\align!
 
-        @window\move nil, @head\getHeight!
+        @area\move nil, @head\getHeight!
 
         return @
 
@@ -163,7 +163,7 @@ class window extends element
             else
                 @head\setWidth w
 
-            @window\setWidth w
+            @area\setWidth w
             @w = w
             @x += x
 
@@ -180,13 +180,13 @@ class window extends element
                 when "right"
                     y -= h - @h
 
-            @window\setHeight h
+            @area\setHeight h
             @h = h + @head\getHeight!
             @y += y
 
         @head\move x, y
         --@title\move x, y
-        @window\move x, y
+        @area\move x, y
 
         return @
 
@@ -204,7 +204,7 @@ class window extends element
         else
             @head\setWidth w
 
-        @window\setWidth w
+        @area\setWidth w
         @w = w
         @x += x
 
@@ -215,7 +215,7 @@ class window extends element
 
         @head\move x
         --@title\move x
-        @window\move x
+        @area\move x
 
         return @
 
@@ -229,13 +229,13 @@ class window extends element
             when "right"
                 y -= h - @h
 
-        @window\setHeight h
+        @area\setHeight h
         @h = h + @head\getHeight!
         @y += y
 
         @head\move nil, y
         @title\move nil, y
-        @window\move nil, y
+        @area\move nil, y
 
         return @
 
