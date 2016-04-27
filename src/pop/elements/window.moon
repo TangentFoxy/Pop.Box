@@ -104,6 +104,10 @@ class window extends element
                 return true
             return false
 
+        --@head.focusChild = =>
+        --    @parent\focusChild @ -- nope
+        --    return @
+
     debugDraw: =>
         graphics.setLineWidth 0.5
         graphics.setColor 0, 0, 0, 100
@@ -136,6 +140,11 @@ class window extends element
 
     getChildren: =>
         return @area.child
+
+    --focusChild: =>
+    --    @parent\focusChild @
+    --    --NOTE might need to also actually focus the sub-element
+    --    return @
 
     align: (horizontal, vertical, toPixel) =>
         super horizontal, vertical, toPixel

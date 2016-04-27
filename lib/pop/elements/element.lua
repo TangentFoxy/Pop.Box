@@ -38,8 +38,7 @@ do
       else
         for k, v in ipairs(self.child) do
           if v == child then
-            remove(self.child, k)
-            return self
+            return remove(self.child, k)
           end
         end
         return "Element \"" .. tostring(child) .. "\" is not a child of element \"" .. tostring(self) .. "\". Cannot remove it."

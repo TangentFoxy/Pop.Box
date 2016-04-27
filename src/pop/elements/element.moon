@@ -51,7 +51,8 @@ class element
 
         return @
 
-    -- remove child by index and return it OR remove child by reference
+    -- remove child by index OR by reference and return it
+    --NOTE API CHANGE HERE MIGHT'VE FUCKED A THING
     removeChild: (child) =>
         if tonumber(child) == child
             -- remove indexed child, return it
@@ -60,12 +61,15 @@ class element
         else
             for k,v in ipairs @child
                 if v == child
-                    remove @child, k
-                    return @
+                    return remove @child, k
             return "Element \"#{child}\" is not a child of element \"#{@}\". Cannot remove it."
 
     getChildren: =>
         return @child
+
+    --focusChild: (child) =>
+    --    insert @child, 1, @removeChild(child)
+    --    return @
 
     move: (x, y) =>
         if x

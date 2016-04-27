@@ -137,7 +137,7 @@ pop.mousepressed = (x, y, button, element) ->
                 if handled = element\mousepressed x - element.x, y - element.y, button
                     pop.focused = element
 
-    -- have we handled the event?
+    -- return whether or not we have handled the event
     return handled
 
 pop.mousereleased = (x, y, button, element) ->
@@ -165,6 +165,10 @@ pop.mousereleased = (x, y, button, element) ->
                 -- if we clicked, we're focused!
                 if clickedHandled
                     pop.focused = element
+                    --NOTE this might cause an error in the above for loop!
+                    -- basically, move focused element to front of its parent's child
+                    --element.parent\focusChild element
+                    --table.insert element.parent, element.parent\removeChild(element),
 
     -- else, default to pop.screen to begin! (and print that we received an event)
     else
