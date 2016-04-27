@@ -35,13 +35,13 @@ do
       if "center" == _exp_0 then
         self.x = self.x - ((w - self.w) / 2)
       elseif "right" == _exp_0 then
-        self.x = self.x - (w - self.w - self.margin)
+        self.x = self.x - (w - self.w - self.spacing)
       end
       local _exp_1 = self.vertical
       if "center" == _exp_1 then
         self.y = self.y - ((h - self.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.y = self.y - (h - self.h - self.margin)
+        self.y = self.y - (h - self.h - self.spacing)
       end
       self.w = w
       self.h = h

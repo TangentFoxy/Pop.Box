@@ -180,19 +180,19 @@ do
       self.y = self.parent.y
       local _exp_0 = self.horizontal
       if "left" == _exp_0 then
-        self.x = self.x + self.margin
+        self.x = self.x + self.spacing
       elseif "center" == _exp_0 then
         self.x = self.x + ((self.parent.w - self.w) / 2)
       elseif "right" == _exp_0 then
-        self.x = self.x + (self.parent.w - self.w - self.margin)
+        self.x = self.x + (self.parent.w - self.w - self.spacing)
       end
       local _exp_1 = self.vertical
       if "top" == _exp_1 then
-        self.y = self.y + self.margin
+        self.y = self.y + self.spacing
       elseif "center" == _exp_1 then
         self.y = self.y + ((self.parent.h - self.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.y = self.y + (self.parent.h - self.h - self.margin)
+        self.y = self.y + (self.parent.h - self.h - self.spacing)
       end
       if toPixel then
         self.x = floor(self.x)
@@ -222,19 +222,19 @@ do
     getAlignment = function(self)
       return self.horizontal, self.vertical
     end,
-    setMargin = function(self, margin)
-      self.margin = margin
+    setMargin = function(self, spacing)
+      self.spacing = spacing
       self:align()
       return self
     end,
     getMargin = function(self)
-      return self.margin
+      return self.spacing
     end,
     fill = function(self)
-      self.x = self.parent.x + self.margin
-      self.y = self.parent.y + self.margin
-      self.w = self.parent.w - self.margin * 2
-      self.h = self.parent.h - self.margin * 2
+      self.x = self.parent.x + self.spacing
+      self.y = self.parent.y + self.spacing
+      self.w = self.parent.w - self.spacing * 2
+      self.h = self.parent.h - self.spacing * 2
     end,
     delete = function(self)
       for k, v in ipairs(self.child) do
@@ -252,7 +252,7 @@ do
       self.child = { }
       self.w = 0
       self.h = 0
-      self.margin = 0
+      self.spacing = 0
       if parent then
         self.x = parent.x
         self.y = parent.y

@@ -23,7 +23,7 @@ function love.load()
     pop.text(nil, "Here's some test text in the bottom right corner!"):align("right", "bottom")
     pop.skin(pop.text("Here's easier-to-code test text in the center!"):align("center", "center", true)) -- 'true' means align to pixel!
     w = pop.box(nil, {255, 255, 255, 255}):align(false, "bottom"):setSize(150, 150)
-    b = pop.box(w, {0, 0, 0, 255}):setMargin(5):setSize(100, 100)
+    b = pop.box(w, {0, 0, 0, 255}):margin(5):setSize(100, 100)
     --]]
 
     --c:move(100)

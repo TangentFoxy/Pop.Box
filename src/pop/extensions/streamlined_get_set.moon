@@ -39,23 +39,11 @@ element.__base.alignment = (horizontal, vertical) =>
     else
         return @getAlignment!
 
--- why is this bit here? Oo
 element.__base.margin = (m) =>
     if m
         return @setMargin m
     else
         return @getMargin!
-
---oldinit = element.__init
---
---element.__init = (...) ->
---    object = oldinit ...
---    value = object.margin
---
---    object.margin = setmetatable {:value}, {
---        __call: (...) ->
---            print ...
---    }
 
 element.__base.resize = element.__base.adjustSize
 

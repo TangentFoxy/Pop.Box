@@ -11,7 +11,7 @@ class element
         @w = 0
         @h = 0
 
-        @margin = 0
+        @spacing = 0
 
         if parent
             @x = parent.x
@@ -205,19 +205,19 @@ class element
 
         switch @horizontal
             when "left"
-                @x += @margin
+                @x += @spacing
             when "center"
                 @x += (@parent.w - @w)/2
             when "right"
-                @x += @parent.w - @w - @margin
+                @x += @parent.w - @w - @spacing
 
         switch @vertical
             when "top"
-                @y += @margin
+                @y += @spacing
             when "center"
                 @y += (@parent.h - @h)/2
             when "bottom"
-                @y += @parent.h - @h - @margin
+                @y += @parent.h - @h - @spacing
 
         if toPixel
             @x = floor @x
@@ -246,19 +246,19 @@ class element
     getAlignment: =>
         return @horizontal, @vertical
 
-    setMargin: (margin) =>
-        @margin = margin
+    setMargin: (spacing) =>
+        @spacing = spacing
         @align!
         return @
 
     getMargin: =>
-        return @margin
+        return @spacing
 
     fill: =>
-        @x = @parent.x + @margin
-        @y = @parent.y + @margin
-        @w = @parent.w - @margin*2
-        @h = @parent.h - @margin*2
+        @x = @parent.x + @spacing
+        @y = @parent.y + @spacing
+        @w = @parent.w - @spacing*2
+        @h = @parent.h - @spacing*2
 
     delete: =>
         for k,v in ipairs @child
