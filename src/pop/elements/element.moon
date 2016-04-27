@@ -28,6 +28,10 @@ class element
         @horizontal = "left"
         @vertical = "top"
 
+        @excludeDraw = false
+        @excludeUpdate = false
+        @excludeMovement = false
+
     debugDraw: =>
         graphics.setLineWidth 0.5
         graphics.setColor 0, 0, 0, 100
@@ -267,3 +271,17 @@ class element
         @parent\removeChild @
         @ = nil
         return nil
+
+    getVisibility: =>
+        return (not @excludeDraw)
+
+    setVisibility: (isVisible) =>
+        @excludeDraw = (not isVisible)
+        return @
+
+    getStatic: =>
+        return @excludeMovement
+
+    setStatic: (isStatic) =>
+        @excludeMovement = isStatic
+        return @

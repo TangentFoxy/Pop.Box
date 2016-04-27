@@ -52,6 +52,26 @@ element.__base.margin = function(self, m)
   end
 end
 element.__base.resize = element.__base.adjustSize
+element.__base.visibility = function(self, v)
+  if v ~= nil then
+    return self:setVisibility(v)
+  else
+    return self:getVisibility()
+  end
+end
+element.__base.show = function(self)
+  return self:setVisibility(true)
+end
+element.__base.hide = function(self)
+  return self:setVisibility(false)
+end
+element.__base.static = function(self, s)
+  if s ~= nil then
+    return self:setStatic(s)
+  else
+    return self:getStatic()
+  end
+end
 box.__base.color = function(self, r, g, b, a)
   if r or g or b or a then
     return self:setColor(r, g, b, a)

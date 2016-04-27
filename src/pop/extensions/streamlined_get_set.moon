@@ -47,6 +47,24 @@ element.__base.margin = (m) =>
 
 element.__base.resize = element.__base.adjustSize
 
+element.__base.visibility = (v) =>
+    if v != nil
+        return @setVisibility v
+    else
+        return @getVisibility!
+
+element.__base.show = =>
+    return @setVisibility true
+
+element.__base.hide = =>
+    return @setVisibility false
+
+element.__base.static = (s) =>
+    if s != nil
+        return @setStatic s
+    else
+        return @getStatic!
+
 -- box.__base.background -- can't be done!
 
 box.__base.color = (r, g, b, a) =>

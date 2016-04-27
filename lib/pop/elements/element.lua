@@ -243,6 +243,20 @@ do
       self.parent:removeChild(self)
       self = nil
       return nil
+    end,
+    getVisibility = function(self)
+      return (not self.excludeDraw)
+    end,
+    setVisibility = function(self, isVisible)
+      self.excludeDraw = (not isVisible)
+      return self
+    end,
+    getStatic = function(self)
+      return self.excludeMovement
+    end,
+    setStatic = function(self, isStatic)
+      self.excludeMovement = isStatic
+      return self
     end
   }
   _base_0.__index = _base_0
@@ -262,6 +276,9 @@ do
       end
       self.horizontal = "left"
       self.vertical = "top"
+      self.excludeDraw = false
+      self.excludeUpdate = false
+      self.excludeMovement = false
     end,
     __base = _base_0,
     __name = "element"
