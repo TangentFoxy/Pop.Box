@@ -12,7 +12,7 @@ function love.load()
     w2:move(-50, 80)
     w2:setHeight(500)
     w2:move(0, -175)
-    w2.title:align("center")
+    w2.data.title:align("center")
     w2:position(0, 0)
     w2:size(200, 120):position(90, 70)
     w2:setClose(false)
@@ -57,7 +57,7 @@ function love.keypressed(key)
 
     if (key == "w") and (not handled) then
         local w = pop.window()
-        w.title:align("center")
+        w.data.title:align("center")
     end
 
     if (key == "p") and (not handled) then
