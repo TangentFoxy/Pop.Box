@@ -15,150 +15,150 @@ do
     debugDraw = function(self)
       graphics.setLineWidth(0.5)
       graphics.setColor(0, 0, 0, 100)
-      graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(0, 200, 0, 200)
-      graphics.rectangle("line", self.x, self.y, self.w, self.h)
+      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 255, 200, 255)
-      graphics.print("e", self.x, self.y)
+      graphics.print("e", self.data.x, self.data.y)
       return self
     end,
     addChild = function(self, child)
-      if child.parent then
-        child.parent:removeChild(child)
+      if child.data.parent then
+        child.data.parent:removeChild(child)
       end
-      insert(self.child, child)
-      child.parent = self
+      insert(self.data.child, child)
+      child.data.parent = self
       child:align()
       return self
     end,
     removeChild = function(self, child)
       if tonumber(child) == child then
-        self.child[child].parent = false
-        return remove(self.child, child)
+        self.data.child[child].data.parent = false
+        return remove(self.data.child, child)
       else
-        for k, v in ipairs(self.child) do
+        for k, v in ipairs(self.data.child) do
           if v == child then
-            return remove(self.child, k)
+            return remove(self.data.child, k)
           end
         end
         return "Element \"" .. tostring(child) .. "\" is not a child of element \"" .. tostring(self) .. "\". Cannot remove it."
       end
     end,
     getChildren = function(self)
-      return self.child
+      return self.data.child
     end,
     move = function(self, x, y)
       if x then
-        self.x = self.x + x
+        self.data.x = self.data.x + x
       end
       if y then
-        self.y = self.y + y
+        self.data.y = self.data.y + y
       end
-      for i = 1, #self.child do
-        if not (self.child[i].excludeMovement) then
-          self.child[i]:move(x, y)
+      for i = 1, #self.data.child do
+        if self.data.child[i].data.move then
+          self.data.child[i]:move(x, y)
         end
       end
       return self
     end,
     setPosition = function(self, x, y)
-      local oldX = self.x
-      local oldY = self.y
+      local oldX = self.data.x
+      local oldY = self.data.y
       if x then
-        local _exp_0 = self.horizontal
+        local _exp_0 = self.data.horizontal
         if "left" == _exp_0 then
-          self.x = x
+          self.data.x = x
         elseif "center" == _exp_0 then
-          self.x = x - self.w / 2
+          self.data.x = x - self.data.w / 2
         elseif "right" == _exp_0 then
-          self.x = x - self.w
+          self.data.x = x - self.data.w
         end
       else
         x = oldX
       end
       if y then
-        local _exp_0 = self.vertical
+        local _exp_0 = self.data.vertical
         if "top" == _exp_0 then
-          self.y = y
+          self.data.y = y
         elseif "center" == _exp_0 then
-          self.y = y - self.h / 2
+          self.data.y = y - self.data.h / 2
         elseif "bottom" == _exp_0 then
-          self.y = y - self.h
+          self.data.y = y - self.data.h
         end
       else
         y = oldY
       end
-      for i = 1, #self.child do
-        self.child[i]:move(x - oldX, y - oldY)
+      for i = 1, #self.data.child do
+        self.data.child[i]:move(x - oldX, y - oldY)
       end
       return self
     end,
     getPosition = function(self)
-      local resultX = self.x
-      local resultY = self.y
-      local _exp_0 = self.horizontal
+      local resultX = self.data.x
+      local resultY = self.data.y
+      local _exp_0 = self.data.horizontal
       if "center" == _exp_0 then
-        resultX = resultX + (self.w / 2)
+        resultX = resultX + (self.data.w / 2)
       elseif "right" == _exp_0 then
-        resultY = resultY + self.w
+        resultY = resultY + self.data.w
       end
-      local _exp_1 = self.vertical
+      local _exp_1 = self.data.vertical
       if "center" == _exp_1 then
-        resultY = resultY + (self.h / 2)
+        resultY = resultY + (self.data.h / 2)
       elseif "bottom" == _exp_1 then
-        resultY = resultY + self.h
+        resultY = resultY + self.data.h
       end
       return resultX, resultY
     end,
     setSize = function(self, w, h)
       if w then
-        local _exp_0 = self.horizontal
+        local _exp_0 = self.data.horizontal
         if "center" == _exp_0 then
-          self.x = self.x - ((w - self.w) / 2)
+          self.data.x = self.data.x - ((w - self.data.w) / 2)
         elseif "right" == _exp_0 then
-          self.x = self.x - (w - self.w)
+          self.data.x = self.data.x - (w - self.data.w)
         end
-        self.w = w
+        self.data.w = w
       end
       if h then
-        local _exp_0 = self.vertical
+        local _exp_0 = self.data.vertical
         if "center" == _exp_0 then
-          self.y = self.y - ((h - self.h) / 2)
+          self.data.y = self.data.y - ((h - self.data.h) / 2)
         elseif "bottom" == _exp_0 then
-          self.y = self.y - (h - self.h)
+          self.data.y = self.data.y - (h - self.data.h)
         end
-        self.h = h
+        self.data.h = h
       end
       return self
     end,
     getSize = function(self)
-      return self.w, self.h
+      return self.data.w, self.data.h
     end,
     setWidth = function(self, w)
-      local _exp_0 = self.horizontal
+      local _exp_0 = self.data.horizontal
       if "center" == _exp_0 then
-        self.x = self.x - ((w - self.w) / 2)
+        self.data.x = self.data.x - ((w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        self.x = self.x - (w - self.w)
+        self.data.x = self.data.x - (w - self.data.w)
       end
-      self.w = w
+      self.data.w = w
       return self
     end,
     getWidth = function(self)
-      return self.w
+      return self.data.w
     end,
     setHeight = function(self, h)
-      local _exp_0 = self.vertical
+      local _exp_0 = self.data.vertical
       if "center" == _exp_0 then
-        self.y = self.y - ((h - self.h) / 2)
+        self.data.y = self.data.y - ((h - self.data.h) / 2)
       elseif "bottom" == _exp_0 then
-        self.y = self.y - (h - self.h)
+        self.data.y = self.data.y - (h - self.data.h)
       end
-      self.h = h
+      self.data.h = h
       return self
     end,
     getHeight = function(self)
-      return self.h
+      return self.data.h
     end,
     adjustSize = function(self, w, h)
       local W, H = self:getSize()
@@ -176,27 +176,27 @@ do
         toPixel = true
       end
       self:setAlignment(horizontal, vertical)
-      self.x = self.parent.x
-      self.y = self.parent.y
-      local _exp_0 = self.horizontal
+      self.data.x = self.data.parent.data.x
+      self.data.y = self.data.parent.data.y
+      local _exp_0 = self.data.horizontal
       if "left" == _exp_0 then
-        self.x = self.x + self.spacing
+        self.data.x = self.data.x + self.data.margin
       elseif "center" == _exp_0 then
-        self.x = self.x + ((self.parent.w - self.w) / 2)
+        self.data.x = self.data.x + ((self.data.parent.data.w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        self.x = self.x + (self.parent.w - self.w - self.spacing)
+        self.data.x = self.data.x + (self.data.parent.data.w - self.data.w - self.data.margin)
       end
-      local _exp_1 = self.vertical
+      local _exp_1 = self.data.vertical
       if "top" == _exp_1 then
-        self.y = self.y + self.spacing
+        self.data.y = self.data.y + self.data.margin
       elseif "center" == _exp_1 then
-        self.y = self.y + ((self.parent.h - self.h) / 2)
+        self.data.y = self.data.y + ((self.data.parent.data.h - self.data.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.y = self.y + (self.parent.h - self.h - self.spacing)
+        self.data.y = self.data.y + (self.data.parent.data.h - self.data.h - self.data.margin)
       end
       if toPixel then
-        self.x = floor(self.x)
-        self.y = floor(self.y)
+        self.data.x = floor(self.data.x)
+        self.data.y = floor(self.data.y)
       end
       return self
     end,
@@ -204,81 +204,82 @@ do
       if toPixel == nil then
         toPixel = true
       end
-      local parent = self.parent
-      self.parent = element
+      local parent = self.data.parent
+      self.data.parent = element
       self:align(horizontal, vertical, toPixel)
-      self.parent = parent
+      self.data.parent = parent
       return self
     end,
     setAlignment = function(self, horizontal, vertical)
       if horizontal then
-        self.horizontal = horizontal
+        self.data.horizontal = horizontal
       end
       if vertical then
-        self.vertical = vertical
+        self.data.vertical = vertical
       end
       return self
     end,
     getAlignment = function(self)
-      return self.horizontal, self.vertical
+      return self.data.horizontal, self.data.vertical
     end,
-    setMargin = function(self, spacing)
-      self.spacing = spacing
+    setMargin = function(self, margin)
+      self.data.margin = margin
       self:align()
       return self
     end,
     getMargin = function(self)
-      return self.spacing
+      return self.data.margin
     end,
     fill = function(self)
-      self.x = self.parent.x + self.spacing
-      self.y = self.parent.y + self.spacing
-      self.w = self.parent.w - self.spacing * 2
-      self.h = self.parent.h - self.spacing * 2
+      self.data.x = self.data.parent.data.x + self.data.margin
+      self.data.y = self.data.parent.data.y + self.data.margin
+      self.data.w = self.data.parent.data.w - self.data.margin * 2
+      self.data.h = self.data.parent.data.h - self.data.margin * 2
     end,
     delete = function(self)
-      for k, v in ipairs(self.child) do
+      for k, v in ipairs(self.data.child) do
         v:delete()
       end
-      self.parent:removeChild(self)
+      self.data.parent:removeChild(self)
       self = nil
       return nil
     end,
     getVisibility = function(self)
-      return (not self.excludeDraw)
+      return self.data.draw
     end,
     setVisibility = function(self, isVisible)
-      self.excludeDraw = (not isVisible)
+      self.data.draw = isVisible
       return self
     end,
     getStatic = function(self)
-      return self.excludeMovement
+      return (not self.data.move)
     end,
     setStatic = function(self, isStatic)
-      self.excludeMovement = isStatic
+      self.data.move = (not isStatic)
       return self
     end
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
     __init = function(self, parent)
-      self.parent = parent
-      self.child = { }
-      self.w = 0
-      self.h = 0
-      self.spacing = 0
+      self.data = {
+        parent = parent,
+        child = { },
+        w = 0,
+        h = 0,
+        x = 0,
+        y = 0,
+        horizontal = "left",
+        vertical = "top",
+        margin = 0,
+        draw = true,
+        update = true,
+        move = true
+      }
       if parent then
-        self.x = parent.x
-        self.y = parent.y
-      else
-        self.x = 0
-        self.y = 0
+        self.data.x = parent.data.x
+        self.data.y = parent.data.y
       end
-      self.horizontal = "left"
-      self.vertical = "top"
-      self.excludeDraw = false
-      self.excludeUpdate = false
-      self.excludeMovement = false
     end,
     __base = _base_0,
     __name = "element"

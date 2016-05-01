@@ -37,7 +37,7 @@ function love.load()
     w2:move(-50, 80)
     w2:setHeight(500)
     w2:move(0, -175)
-    w2.title:align("center")
+    w2.data.title:align("center")
     w2:position(0, 0)
     w2:size(200, 120):position(90, 70)
     w2:setClose(false)
@@ -54,9 +54,9 @@ function love.load()
     b = pop.box(G, test):align("right"):move(-25):setWidth(40)
     c = pop.box(G, test):align("right"):move(0, 25):setHeight(40)
 
-    print(a.horizontal, a.vertical)
-    print(b.horizontal, b.vertical)
-    print(c.horizontal, c.vertical)
+    print(a.data.horizontal, a.data.vertical)
+    print(b.data.horizontal, b.data.vertical)
+    print(c.data.horizontal, c.data.vertical)
 
     local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!")
 
@@ -114,9 +114,10 @@ function love.keypressed(key)
 
     if (key == "w") and (not handled) then
         local w = pop.window()
-        w.title:align("center")
+        w.data.title:align("center")
     end
 
+    --[[
     if (key == "e") and (not handled) then
         print("EVENTS:")
         for k,v in pairs(pop.events) do
@@ -124,6 +125,7 @@ function love.keypressed(key)
         end
         print("END")
     end
+    --]]
 
     if (key == "p") and (not handled) then
         pop.printElementTree()

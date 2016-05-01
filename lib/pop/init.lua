@@ -96,12 +96,12 @@ pop.create = function(element, parent, ...)
   end
   if inheritsFromElement(parent) then
     element = pop.elements[element](parent, ...)
-    insert(parent.child, element)
+    insert(parent.data.child, element)
   elseif parent == false then
     element = pop.elements[element](false, ...)
   else
     element = pop.elements[element](pop.screen, parent, ...)
-    insert(pop.screen.child, element)
+    insert(pop.screen.data.child, element)
   end
   return element
 end
@@ -109,12 +109,12 @@ pop.update = function(dt, element)
   if element == nil then
     element = pop.screen
   end
-  if not (element.excludeUpdate) then
+  if element.data.update then
     if element.update then
       element:update(dt)
     end
-    for i = 1, #element.child do
-      pop.update(dt, element.child[i])
+    for i = 1, #element.data.child do
+      pop.update(dt, element.data.child[i])
     end
   end
 end
@@ -122,12 +122,12 @@ pop.draw = function(element)
   if element == nil then
     element = pop.screen
   end
-  if not (element.excludeDraw) then
+  if element.data.draw then
     if element.draw then
       element:draw()
     end
-    for i = 1, #element.child do
-      pop.draw(element.child[i])
+    for i = 1, #element.data.child do
+      pop.draw(element.data.child[i])
     end
   end
 end
@@ -143,19 +143,19 @@ pop.mousepressed = function(x, y, button, element)
     element = pop.screen
   end
   local handled = false
-  if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
-    for i = #element.child, 1, -1 do
+  if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    for i = #element.data.child, 1, -1 do
       do
-        handled = pop.mousepressed(x, y, button, element.child[i])
+        handled = pop.mousepressed(x, y, button, element.data.child[i])
         if handled then
           return handled
         end
       end
     end
     if not (handled) then
-      if element.mousepressed and (not element.excludeDraw) then
+      if element.mousepressed and element.data.draw then
         do
-          handled = element:mousepressed(x - element.x, y - element.y, button)
+          handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
           if handled then
             pop.focused = element
           end
@@ -169,19 +169,19 @@ pop.mousereleased = function(x, y, button, element)
   local clickedHandled = false
   local mousereleasedHandled = false
   if element then
-    if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h) then
-      for i = #element.child, 1, -1 do
-        clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
+    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+      for i = #element.data.child, 1, -1 do
+        clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.data.child[i])
         if clickedHandled or mousereleasedHandled then
           return clickedHandled, mousereleasedHandled
         end
       end
       if not (clickedHandled or mousereleasedHandled) then
-        if element.clicked and (not element.excludeDraw) then
-          clickedHandled = element:clicked(x - element.x, y - element.y, button)
+        if element.clicked and element.data.draw then
+          clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
         end
         if element.mousereleased then
-          mousereleasedHandled = element:mousereleased(x - element.x, y - element.y, button)
+          mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
         end
         if clickedHandled then
           pop.focused = element
@@ -197,7 +197,7 @@ end
 pop.keypressed = function(key)
   print("keypressed", key)
   local element = pop.focused
-  if element and element.keypressed and (not element.excludeDraw) then
+  if element and element.keypressed and element.data.draw then
     return element.keypressed(key)
   end
   return false
@@ -213,7 +213,7 @@ end
 pop.textinput = function(text)
   print("textinput", text)
   local element = pop.focused
-  if element and element.textinput and (not element.excludeDraw) then
+  if element and element.textinput and element.data.draw then
     return element.textinput(text)
   end
   return false
@@ -225,23 +225,23 @@ pop.skin = function(element, skin, depth)
   if skin == nil then
     skin = pop.skins.default
   end
-  if element.background and skin.background then
-    element.background = skin.background
+  if element.data.background and skin.background then
+    element.data.background = skin.background
   end
-  if element.color and skin.color then
-    element.color = skin.color
+  if element.data.color and skin.color then
+    element.data.color = skin.color
   end
-  if element.font and skin.font then
-    element.font = skin.font
+  if element.data.font and skin.font then
+    element.data.font = skin.font
   end
   if not (depth or (depth == 0)) then
     if depth == tonumber(depth) then
-      for i = 1, #element.child do
-        pop.skin(element.child[i], skin, depth - 1)
+      for i = 1, #element.data.child do
+        pop.skin(element.data.child[i], skin, depth - 1)
       end
     else
-      for i = 1, #element.child do
-        pop.skin(element.child[i], skin, false)
+      for i = 1, #element.data.child do
+        pop.skin(element.data.child[i], skin, false)
       end
     end
   end
@@ -255,14 +255,14 @@ pop.debugDraw = function(element)
   else
     graphics.setLineWidth(1)
     graphics.setLineColor(0, 0, 0, 100)
-    graphics.rectangle("fill", element.x, element.y, element.w, element.h)
+    graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
     graphics.setColor(150, 150, 150, 150)
-    graphics.rectangle("line", element.x, element.y, element.w, element.h)
+    graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
     graphics.setColor(200, 200, 200, 255)
-    graphics.print(".", element.x, element.y)
+    graphics.print(".", element.data.x, element.data.y)
   end
-  for i = 1, #element.child do
-    pop.debugDraw(element.child[i])
+  for i = 1, #element.data.child do
+    pop.debugDraw(element.data.child[i])
   end
 end
 pop.printElementTree = function(element, depth)
@@ -283,8 +283,8 @@ pop.printElementTree = function(element, depth)
     cls = cls .. " (" .. tostring(bg) .. ")"
   end
   print(string.rep("-", depth) .. " " .. tostring(cls))
-  for i = 1, #element.child do
-    pop.printElementStack(element.child[i], depth + 1)
+  for i = 1, #element.data.child do
+    pop.printElementStack(element.data.child[i], depth + 1)
   end
 end
 pop.load()

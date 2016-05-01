@@ -8,53 +8,53 @@ class box extends element
     new: (parent, background=false) =>
         super parent
 
-        @w = 20
-        @h = 20
+        @data.w = 20
+        @data.h = 20
 
-        @background = background
+        @data.background = background
 
     draw: =>
-        if @background
-            if type(@background) == "table"
-                graphics.setColor @background
-                graphics.rectangle "fill", @x, @y, @w, @h
+        if @data.background
+            if type(@data.background) == "table"
+                graphics.setColor @data.background
+                graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
             else
-                w, h = @background\getDimensions!
-                w = @w / w
-                h = @h / h
+                w, h = @data.background\getDimensions!
+                w = @data.w / w
+                h = @data.h / h
                 graphics.setColor 255, 255, 255, 255
-                graphics.draw @background, @x, @y, 0, w, h
+                graphics.draw @data.background, @data.x, @data.y, 0, w, h
 
         return @
 
     debugDraw: =>
         graphics.setLineWidth 0.5
         graphics.setColor 0, 0, 0, 100
-        graphics.rectangle "fill", @x, @y, @w, @h
+        graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 0, 0, 200, 200
-        graphics.rectangle "line", @x, @y, @w, @h
+        graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 200, 200, 255, 255
-        graphics.print "b", @x, @y
+        graphics.print "b", @data.x, @data.y
 
         return @
 
     setBackground: (background) =>
-        @background = background
+        @data.background = background
         return @
 
     getBackground: =>
-        return @background
+        return @data.background
 
     setColor: (r, g, b, a=255) =>
         if type(r) == "table"
-            @background = r
+            @data.background = r
         else
-            @background = {r, g, b, a}
+            @data.background = {r, g, b, a}
 
         return @
 
     getColor: =>
-        if type(@background) == "table"
-            return unpack @background
+        if type(@data.background) == "table"
+            return unpack @data.background
         else
             error "Box \"#{@}\" doesn't have a color." --might be a bad idea

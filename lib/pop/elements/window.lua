@@ -34,37 +34,33 @@ do
     print("                 assuming LOVE version > 0.10.1  (there may be bugs)")
   end
 end
-local pop_ref = false
 local window
 do
   local _class_0
   local _parent_0 = element
   local _base_0 = {
-    load = function(pop)
-      pop_ref = pop
-    end,
     debugDraw = function(self)
       graphics.setLineWidth(0.5)
       graphics.setColor(0, 0, 0, 100)
-      graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 0, 200, 200)
-      graphics.rectangle("line", self.x, self.y, self.w, self.h)
+      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(255, 200, 255, 255)
-      graphics.print("w", self.x, self.y)
+      graphics.print("w", self.data.x, self.data.y)
       return self
     end,
     addChild = function(self, child)
-      self.area:addChild(child)
+      self.data.area:addChild(child)
       return self
     end,
     removeChild = function(self, child)
-      local result = self.area:removeChild(child)
-      if result == self.area then
+      local result = self.data.area:removeChild(child)
+      if result == self.data.area then
         return self
       elseif type(result) == "string" then
-        for k, v in ipairs(self.child) do
+        for k, v in ipairs(self.data.child) do
           if v == child then
-            remove(self.child, k)
+            remove(self.data.child, k)
             return self
           end
         end
@@ -74,142 +70,142 @@ do
       end
     end,
     getChildren = function(self)
-      return self.area.child
+      return self.data.area.child
     end,
     align = function(self, horizontal, vertical, toPixel)
       _class_0.__parent.__base.align(self, horizontal, vertical, toPixel)
-      for i = 1, #self.child do
-        self.child[i]:align()
+      for i = 1, #self.data.child do
+        self.data.child[i]:align()
       end
-      self.area:move(nil, self.head:getHeight())
+      self.data.area:move(nil, self.data.head:getHeight())
       return self
     end,
     setSize = function(self, w, h)
       local x = 0
       local y = 0
       if w then
-        local _exp_0 = self.horizontal
+        local _exp_0 = self.data.horizontal
         if "center" == _exp_0 then
-          x = x - ((w - self.w) / 2)
+          x = x - ((w - self.data.w) / 2)
         elseif "right" == _exp_0 then
-          x = x - (w - self.w)
+          x = x - (w - self.data.w)
         end
-        if self.close then
-          self.head:setWidth(w - self.head:getHeight())
+        if self.data.close then
+          self.data.head:setWidth(w - self.data.head:getHeight())
         else
-          self.head:setWidth(w)
+          self.data.head:setWidth(w)
         end
-        self.area:setWidth(w)
-        self.w = w
-        self.x = self.x + x
-        self.title:align()
-        if self.close then
-          self.close:align()
+        self.data.area:setWidth(w)
+        self.data.w = w
+        self.data.x = self.data.x + x
+        self.data.title:align()
+        if self.data.close then
+          self.data.close:align()
         end
       end
       if h then
-        h = h - self.head:getHeight()
-        local _exp_0 = self.vertical
+        h = h - self.data.head:getHeight()
+        local _exp_0 = self.data.vertical
         if "center" == _exp_0 then
-          y = y - ((h - self.h) / 2)
+          y = y - ((h - self.data.h) / 2)
         elseif "right" == _exp_0 then
-          y = y - (h - self.h)
+          y = y - (h - self.data.h)
         end
-        self.area:setHeight(h)
-        self.h = h + self.head:getHeight()
-        self.y = self.y + y
+        self.data.area:setHeight(h)
+        self.data.h = h + self.data.head:getHeight()
+        self.data.y = self.data.y + y
       end
-      self.head:move(x, y)
-      self.area:move(x, y)
+      self.data.head:move(x, y)
+      self.data.area:move(x, y)
       return self
     end,
     setWidth = function(self, w)
       local x = 0
-      local _exp_0 = self.horizontal
+      local _exp_0 = self.data.horizontal
       if "center" == _exp_0 then
-        x = x - ((w - self.w) / 2)
+        x = x - ((w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        x = x - (w - self.w)
+        x = x - (w - self.data.w)
       end
-      if self.close then
-        self.head:setWidth(w - self.head:getHeight())
+      if self.data.close then
+        self.data.head:setWidth(w - self.data.head:getHeight())
       else
-        self.head:setWidth(w)
+        self.data.head:setWidth(w)
       end
-      self.area:setWidth(w)
-      self.w = w
-      self.x = self.x + x
-      self.title:align()
-      if self.close then
-        self.close:align()
+      self.data.area:setWidth(w)
+      self.data.w = w
+      self.data.x = self.data.x + x
+      self.data.title:align()
+      if self.data.close then
+        self.data.close:align()
       end
-      self.head:move(x)
-      self.area:move(x)
+      self.data.head:move(x)
+      self.data.area:move(x)
       return self
     end,
     setHeight = function(self, h)
       local y = 0
-      h = h - self.head:getHeight()
-      local _exp_0 = self.vertical
+      h = h - self.data.head:getHeight()
+      local _exp_0 = self.data.vertical
       if "center" == _exp_0 then
-        y = y - ((h - self.h) / 2)
+        y = y - ((h - self.data.h) / 2)
       elseif "right" == _exp_0 then
-        y = y - (h - self.h)
+        y = y - (h - self.data.h)
       end
-      self.area:setHeight(h)
-      self.h = h + self.head:getHeight()
-      self.y = self.y + y
-      self.head:move(nil, y)
-      self.title:move(nil, y)
-      self.area:move(nil, y)
+      self.data.area:setHeight(h)
+      self.data.h = h + self.data.head:getHeight()
+      self.data.y = self.data.y + y
+      self.data.head:move(nil, y)
+      self.data.title:move(nil, y)
+      self.data.area:move(nil, y)
       return self
     end,
     setTitle = function(self, title)
-      self.title:setText(title)
-      if self.titleOverflow == "trunicate" then
-        while self.title:getWidth() > self.head:getWidth() do
+      self.data.title:setText(title)
+      if self.data.overflow == "trunicate" then
+        while self.data.title:getWidth() > self.data.head:getWidth() do
           title = title:sub(1, -3)
-          self.title:setText(title .. "…")
+          self.data.title:setText(title .. "…")
         end
-      elseif self.titleOverflow == "resize" then
-        if self.title:getWidth() > self.head:getWidth() then
-          self:setWidth(self.title:getWidth())
+      elseif self.data.overflow == "resize" then
+        if self.data.title:getWidth() > self.data.head:getWidth() then
+          self:setWidth(self.data.title:getWidth())
         end
       end
       return self
     end,
     getTitle = function(self)
-      return self.title:getText()
+      return self.data.title:getText()
     end,
     setTitleOverflow = function(self, method)
-      self.titleOverflow = method
+      self.data.overflow = method
       return self
     end,
     getTitleOverflow = function(self)
-      return self.titleOverflow
+      return self.data.overflow
     end,
     setClose = function(self, enabled)
       if enabled then
-        self.close = box(self, closeImage)
-        self.close.clicked = function()
+        self.data.close = box(self, closeImage)
+        self.data.close.clicked = function()
           self:delete()
           return true
         end
-        local height = self.head:getHeight()
-        self.close:align("right"):setSize(height, height)
-        self.head:setWidth(self.w - height)
-        self.title:align()
-        insert(self.child, self.close)
+        local height = self.data.head:getHeight()
+        self.data.close:align("right"):setSize(height, height)
+        self.data.head:setWidth(self.data.w - height)
+        self.data.title:align()
+        insert(self.data.child, self.data.close)
       else
-        self.close:delete()
-        self.head:setWidth(self.w)
-        self.title:align()
-        self.close = false
+        self.data.close:delete()
+        self.data.head:setWidth(self.data.w)
+        self.data.title:align()
+        self.data.close = false
       end
       return self
     end,
     hasClose = function(self)
-      if self.close then
+      if self.data.close then
         return true
       else
         return false
@@ -217,10 +213,10 @@ do
     end,
     delete = function(self)
       _class_0.__parent.__base.delete(self)
-      self.head = nil
-      self.title = nil
-      self.area = nil
-      self.close = nil
+      self.data.head = nil
+      self.data.title = nil
+      self.data.area = nil
+      self.data.close = nil
     end
   }
   _base_0.__index = _base_0
@@ -255,69 +251,68 @@ do
         }
       end
       _class_0.__parent.__init(self, parent)
-      self.head = box(self, tBackground)
-      self.title = text(self.head, title, tColor)
-      self.area = box(self, wBackground)
-      self.close = box(self, closeImage)
-      local height = self.title:getHeight()
-      self.head:setSize(self.w - height, height)
-      self.area:move(nil, height)
-      self.close:align("right"):setSize(height, height)
+      self.data.head = box(self, tBackground)
+      self.data.title = text(self.data.head, title, tColor)
+      self.data.area = box(self, wBackground)
+      self.data.close = box(self, closeImage)
+      local height = self.data.title:getHeight()
+      self.data.head:setSize(self.data.w - height, height)
+      self.data.area:move(nil, height)
+      self.data.close:align("right"):setSize(height, height)
       self:setSize(100, 80)
-      self.child = {
-        self.head,
-        self.title,
-        self.area,
-        self.close
+      self.data.child = {
+        self.data.head,
+        self.data.title,
+        self.data.area,
+        self.data.close
       }
-      self.titleOverflow = "trunicate"
-      self.area.mousepressed = function()
+      self.data.overflow = "trunicate"
+      self.data.area.mousepressed = function()
         return true
       end
-      self.area.clicked = function()
+      self.data.area.clicked = function()
         return true
       end
-      self.close.clicked = function()
+      self.data.close.clicked = function()
         self:delete()
         return true
       end
-      self.head.selected = false
+      self.data.head.data.selected = false
       if mousemoved_event then
-        self.head.mousemoved = function(self, x, y, dx, dy)
-          if self.selected then
-            self.parent:move(dx, dy)
+        self.data.head.mousemoved = function(self, x, y, dx, dy)
+          if self.data.selected then
+            self.data.parent:move(dx, dy)
             return true
           end
           return false
         end
-        self.head.mousepressed = function(self, x, y, button)
+        self.data.head.mousepressed = function(self, x, y, button)
           if button == left then
-            self.selected = true
+            self.data.selected = true
             return true
           end
           return false
         end
       else
-        self.head.mx = 0
-        self.head.my = 0
-        self.head.update = function(self)
+        self.data.head.data.mx = 0
+        self.data.head.data.my = 0
+        self.data.head.update = function(self)
           local x, y = mouse.getPosition()
-          return self:setPosition(x - mx, y - my)
+          return self:setPosition(x - self.data.mx, y - self.data.my)
         end
-        self.head.mousepressed = function(self, x, y, button)
+        self.data.head.mousepressed = function(self, x, y, button)
           if button == left then
-            self.selected = true
-            self.mx = x
-            self.my = y
+            self.data.selected = true
+            self.data.mx = x
+            self.data.my = y
             return true
           end
           return false
         end
       end
-      self.head.mousereleased = function(self, x, y, button)
+      self.data.head.mousereleased = function(self, x, y, button)
         if button == left then
-          self.selected = false
-          pop_ref.focused = false
+          self.data.selected = false
           return true
         end
         return false

@@ -56,6 +56,8 @@ pop.load = ->
         unless skins[i]\sub(-4) == ".lua"
             continue
 
+        --NOTE why not allow skins to have a load function that is passed a reference to pop?
+
         name = skins[i]\sub 1, -5
         pop.skins[name] = require "#{path}/skins/#{name}"
 
@@ -70,6 +72,7 @@ pop.load = ->
 
         name = extensions[i]\sub 1, -5
         require "#{path}/extensions/#{name}"
+        --TODO find out if there is a use case for actually having a reference to one of these when loaded
 
         print "extension loaded: \"#{name}\""
 
@@ -82,30 +85,32 @@ pop.create = (element, parent=pop.screen, ...) ->
     -- if valid parent element
     if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
-        insert parent.child, element
+        insert parent.data.child, element
     -- if explicitly no parent
     elseif parent == false
         element = pop.elements[element](false, ...)
     -- else use pop.screen, and "parent" is actually first argument
     else
         element = pop.elements[element](pop.screen, parent, ...)
-        insert pop.screen.child, element
+        insert pop.screen.data.child, element
 
     return element
 
 pop.update = (dt, element=pop.screen) ->
-    unless element.excludeUpdate
+    if element.data.update
         if element.update
             element\update dt
-        for i = 1, #element.child
-            pop.update dt, element.child[i]
+        for i = 1, #element.data.child
+            pop.update dt, element.data.child[i]
+        --for child in *element\getChildren!
+        --    pop.update dt, child
 
 pop.draw = (element=pop.screen) ->
-    unless element.excludeDraw
+    if element.data.draw
         if element.draw
             element\draw!
-        for i = 1, #element.child
-            pop.draw element.child[i]
+        for i = 1, #element.data.child
+            pop.draw element.data.child[i]
 
 --TODO implement a way for an element to attach itself to mousemoved events
 pop.mousemoved = (x, y, dx, dy) ->
@@ -124,17 +129,17 @@ pop.mousepressed = (x, y, button, element) ->
     handled = false
 
     -- if it was inside the current element..
-    if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- check its child elements in reverse order, returning if something handles it
-        for i = #element.child, 1, -1
-            if handled = pop.mousepressed x, y, button, element.child[i]
+        for i = #element.data.child, 1, -1
+            if handled = pop.mousepressed x, y, button, element.data.child[i]
                 return handled
 
         -- if a child hasn't handled it yet
         unless handled
             -- if we can handle it and are visible, try to handle it, and set pop.focused
-            if element.mousepressed and (not element.excludeDraw)
-                if handled = element\mousepressed x - element.x, y - element.y, button
+            if element.mousepressed and element.data.draw
+                if handled = element\mousepressed x - element.data.x, y - element.data.y, button
                     pop.focused = element
 
     -- return whether or not we have handled the event
@@ -147,28 +152,28 @@ pop.mousereleased = (x, y, button, element) ->
 
     -- if we have an element, and are within its bounds
     if element
-        if (x >= element.x) and (x <= element.x + element.w) and (y >= element.y) and (y <= element.y + element.h)
+        if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
             -- check its children in reverse for handling a clicked or mousereleased event
-            for i = #element.child, 1, -1
-                clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
+            for i = #element.data.child, 1, -1
+                clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.data.child[i]
                 if clickedHandled or mousereleasedHandled
                     return clickedHandled, mousereleasedHandled
 
             -- if that doesn't work, we try to handle it ourselves
             unless clickedHandled or mousereleasedHandled
                 -- clicked only happens on visible elements, mousereleased happens either way
-                if element.clicked and (not element.excludeDraw)
-                    clickedHandled = element\clicked x - element.x, y - element.y, button
+                if element.clicked and element.data.draw
+                    clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
                 if element.mousereleased
-                    mousereleasedHandled = element\mousereleased x - element.x, y - element.y, button
+                    mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
 
                 -- if we clicked, we're focused!
                 if clickedHandled
                     pop.focused = element
                     --NOTE this might cause an error in the above for loop!
                     -- basically, move focused element to front of its parent's child
-                    --element.parent\focusChild element
-                    --table.insert element.parent, element.parent\removeChild(element),
+                    --element.data.parent\focusChild element
+                    --table.insert element.data.parent, element.parent\removeChild(element),
 
     -- else, default to pop.screen to begin! (and print that we received an event)
     else
@@ -182,7 +187,7 @@ pop.keypressed = (key) ->
 
     -- keypressed events must be on visible elements
     element = pop.focused
-    if element and element.keypressed and (not element.excludeDraw)
+    if element and element.keypressed and element.data.draw
         return element.keypressed key
 
     return false
@@ -202,7 +207,7 @@ pop.textinput = (text) ->
 
     -- textinput events must be on visible elements
     element = pop.focused
-    if element and element.textinput and (not element.excludeDraw)
+    if element and element.textinput and element.data.draw
         return element.textinput text
 
     return false
@@ -213,20 +218,20 @@ pop.textinput = (text) ->
 --  depth can be an integer for how many levels to go down when skinning
 --  defaults to pop.screen and the default skin
 pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
-    if element.background and skin.background
-        element.background = skin.background
-    if element.color and skin.color
-        element.color = skin.color
-    if element.font and skin.font
-        element.font = skin.font
+    if element.data.background and skin.background
+        element.data.background = skin.background
+    if element.data.color and skin.color
+        element.data.color = skin.color
+    if element.data.font and skin.font
+        element.data.font = skin.font
 
     unless depth or (depth == 0)
         if depth == tonumber depth
-            for i = 1, #element.child
-                pop.skin element.child[i], skin, depth - 1
+            for i = 1, #element.data.child
+                pop.skin element.data.child[i], skin, depth - 1
         else
-            for i = 1, #element.child
-                pop.skin element.child[i], skin, false
+            for i = 1, #element.data.child
+                pop.skin element.data.child[i], skin, false
 
 pop.debugDraw = (element=pop.screen) ->
     if element.debugDraw
@@ -234,14 +239,14 @@ pop.debugDraw = (element=pop.screen) ->
     else
         graphics.setLineWidth 1
         graphics.setLineColor 0, 0, 0, 100
-        graphics.rectangle "fill", element.x, element.y, element.w, element.h
+        graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
         graphics.setColor 150, 150, 150, 150
-        graphics.rectangle "line", element.x, element.y, element.w, element.h
+        graphics.rectangle "line", element.data.x, element.data.y, element.data.w, element.data.h
         graphics.setColor 200, 200, 200, 255
-        graphics.print ".", element.x, element.y
+        graphics.print ".", element.data.x, element.data.y
 
-    for i = 1, #element.child
-        pop.debugDraw element.child[i]
+    for i = 1, #element.data.child
+        pop.debugDraw element.data.child[i]
 
 pop.printElementTree = (element=pop.screen, depth=0) ->
     cls = element.__class.__name
@@ -258,8 +263,8 @@ pop.printElementTree = (element=pop.screen, depth=0) ->
 
     print string.rep("-", depth) .. " #{cls}"
 
-    for i = 1, #element.child
-        pop.printElementStack element.child[i], depth + 1
+    for i = 1, #element.data.child
+        pop.printElementStack element.data.child[i], depth + 1
 
 pop.load!
 

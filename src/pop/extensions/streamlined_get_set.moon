@@ -65,13 +65,18 @@ element.__base.static = (s) =>
     else
         return @getStatic!
 
+--TODO implement this, as it now can be done!
 -- box.__base.background -- can't be done!
+
+--TODO implement anything else / more than could/should be implemented on element class!
 
 box.__base.color = (r, g, b, a) =>
     if r or g or b or a
         return @setColor r, g, b, a
     else
         return @getColor!
+
+--TODO see if anything else should be done for boxes!
 
 text.__base.text = (text) =>
     if text
@@ -90,3 +95,5 @@ text.__base.color = (r, g, b, a) =>
         return @setColor r, g, b, a
     else
         return @getColor!
+
+--TODO see if anything else should be done for boxes!

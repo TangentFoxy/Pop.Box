@@ -5,51 +5,50 @@ tonumber = tonumber
 
 class element
     new: (parent) =>
-        @parent = parent
-        @child = {}
 
-        @w = 0
-        @h = 0
+        @data = {
+            parent: parent
+            child: {}
 
-        @spacing = 0
+            w: 0
+            h: 0
+            x: 0
+            y: 0
+
+            horizontal: "left"
+            vertical: "top"
+            margin: 0
+
+            draw: true
+            update: true
+            move: true
+        }
 
         if parent
-            @x = parent.x
-            @y = parent.y
-            --@horizontal = parent.horizontal
-            --@vertical = parent.vertical
+            @data.x = parent.data.x
+            @data.y = parent.data.y
+            --@data.horizontal = parent.data.horizontal
+            --@data.vertical = parent.data.vertical
             --@align!
-        else
-            @x = 0
-            @y = 0
-            --@horizontal = "left"
-            --@vertical = "top"
-
-        @horizontal = "left"
-        @vertical = "top"
-
-        @excludeDraw = false
-        @excludeUpdate = false
-        @excludeMovement = false
 
     debugDraw: =>
         graphics.setLineWidth 0.5
         graphics.setColor 0, 0, 0, 100
-        graphics.rectangle "fill", @x, @y, @w, @h
+        graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 0, 200, 0, 200
-        graphics.rectangle "line", @x, @y, @w, @h
+        graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 200, 255, 200, 255
-        graphics.print "e", @x, @y
+        graphics.print "e", @data.x, @data.y
 
         return @
 
     addChild: (child) =>
         -- make sure we don't duplicate references
-        if child.parent
-            child.parent\removeChild child
+        if child.data.parent
+            child.data.parent\removeChild child
 
-        insert @child, child
-        child.parent = @
+        insert @data.child, child
+        child.data.parent = @
 
         child\align! --NOTE not 100% sure if this is a good idea
 
@@ -60,133 +59,135 @@ class element
     removeChild: (child) =>
         if tonumber(child) == child
             -- remove indexed child, return it
-            @child[child].parent = false
-            return remove @child, child
+            @data.child[child].data.parent = false
+            return remove @data.child, child
         else
-            for k,v in ipairs @child
+            for k,v in ipairs @data.child
                 if v == child
-                    return remove @child, k
+                    return remove @data.child, k --NOTE might break due to modifying table while indexing it? shouldn't as it returns...
             return "Element \"#{child}\" is not a child of element \"#{@}\". Cannot remove it."
+            -- returning an error string instead of erroring is kind of bad, but needed for window to function...
 
     getChildren: =>
-        return @child
+        return @data.child
 
     --focusChild: (child) =>
-    --    insert @child, 1, @removeChild(child)
+    --    insert @data.child, 1, @removeChild(child)
     --    return @
 
     move: (x, y) =>
         if x
-            @x = @x + x
+            @data.x = @data.x + x
         if y
-            @y = @y + y
+            @data.y = @data.y + y
 
-        for i = 1, #@child
-            unless @child[i].excludeMovement
-                @child[i]\move x, y
+        for i = 1, #@data.child
+            --unless @data.child[i].excludeMovement
+            if @data.child[i].data.move
+                @data.child[i]\move x, y
 
         return @
 
     setPosition: (x, y) =>
-        oldX = @x
-        oldY = @y
+        oldX = @data.x
+        oldY = @data.y
 
         if x
-            switch @horizontal
+            switch @data.horizontal
                 when "left"
-                    @x = x
+                    @data.x = x
                 when "center"
-                    @x = x - @w/2
+                    @data.x = x - @data.w/2
                 when "right"
-                    @x = x - @w
+                    @data.x = x - @data.w
         else
             x = oldX
 
         if y
-            switch @vertical
+            switch @data.vertical
                 when "top"
-                    @y = y
+                    @data.y = y
                 when "center"
-                    @y = y - @h/2
+                    @data.y = y - @data.h/2
                 when "bottom"
-                    @y = y - @h
+                    @data.y = y - @data.h
         else
             y = oldY
 
-        for i = 1, #@child
-            @child[i]\move x - oldX, y - oldY
+        for i = 1, #@data.child
+            @data.child[i]\move x - oldX, y - oldY
 
         return @
 
     getPosition: =>
-        resultX = @x
-        resultY = @y
+        resultX = @data.x
+        resultY = @data.y
 
-        switch @horizontal
+        switch @data.horizontal
             when "center"
-                resultX += @w/2
+                resultX += @data.w/2
             when "right"
-                resultY += @w
+                resultY += @data.w
 
-        switch @vertical
+        switch @data.vertical
             when "center"
-                resultY += @h/2
+                resultY += @data.h/2
             when "bottom"
-                resultY += @h
+                resultY += @data.h
 
         return resultX, resultY
 
     setSize: (w, h) =>
         if w
-            switch @horizontal
+            switch @data.horizontal
                 when "center"
-                    @x -= (w - @w)/2
+                    @data.x -= (w - @data.w)/2
                 when "right"
-                    @x -= w - @w
+                    @data.x -= w - @data.w
 
-            @w = w
+            @data.w = w
 
         if h
-            switch @vertical
+            switch @data.vertical
                 when "center"
-                    @y -= (h - @h)/2
+                    @data.y -= (h - @data.h)/2
                 when "bottom"
-                    @y -= h - @h
+                    @data.y -= h - @data.h
 
-            @h = h
+            @data.h = h
 
         return @
 
     getSize: =>
-        return @w, @h
+        return @data.w, @data.h
 
     setWidth: (w) =>
-        switch @horizontal
+        switch @data.horizontal
             when "center"
-                @x -= (w - @w)/2
+                @data.x -= (w - @data.w)/2
             when "right"
-                @x -= w - @w
+                @data.x -= w - @data.w
 
-        @w = w
+        @data.w = w
 
         return @
 
     getWidth: =>
-        return @w
+        return @data.w
 
     setHeight: (h) =>
-        switch @vertical
+        switch @data.vertical
             when "center"
-                @y -= (h - @h)/2
+                @data.y -= (h - @data.h)/2
             when "bottom"
-                @y -= h - @h
+                @data.y -= h - @data.h
 
-        @h = h
+        @data.h = h
 
         return @
 
     getHeight: =>
-        return @h
+        return @data.h
 
     adjustSize: (w, h) =>
         W, H = @getSize!
@@ -204,84 +205,88 @@ class element
     align: (horizontal, vertical, toPixel=true) =>
         @setAlignment horizontal, vertical
 
-        @x = @parent.x
-        @y = @parent.y
+        @data.x = @data.parent.data.x
+        @data.y = @data.parent.data.y
 
-        switch @horizontal
+        switch @data.horizontal
             when "left"
-                @x += @spacing
+                @data.x += @data.margin
             when "center"
-                @x += (@parent.w - @w)/2
+                @data.x += (@data.parent.data.w - @data.w)/2
             when "right"
-                @x += @parent.w - @w - @spacing
+                @data.x += @data.parent.data.w - @data.w - @data.margin
 
-        switch @vertical
+        switch @data.vertical
             when "top"
-                @y += @spacing
+                @data.y += @data.margin
             when "center"
-                @y += (@parent.h - @h)/2
+                @data.y += (@data.parent.data.h - @data.h)/2
             when "bottom"
-                @y += @parent.h - @h - @spacing
+                @data.y += @data.parent.data.h - @data.h - @data.margin
 
         if toPixel
-            @x = floor @x
-            @y = floor @y
+            @data.x = floor @data.x
+            @data.y = floor @data.y
+
+        --NOTE why does align not move or align children? maybe it's good that it doesn't, maybe it's bad
 
         return @
 
     alignTo: (element, horizontal, vertical, toPixel=true) =>
-        parent = @parent
-        @parent = element
+        parent = @data.parent
+        @data.parent = element
 
         @align horizontal, vertical, toPixel
 
-        @parent = parent
+        @data.parent = parent
 
         return @
 
     setAlignment: (horizontal, vertical) =>
         if horizontal
-            @horizontal = horizontal
+            @data.horizontal = horizontal
         if vertical
-            @vertical = vertical
+            @data.vertical = vertical
 
         return @
 
     getAlignment: =>
-        return @horizontal, @vertical
+        return @data.horizontal, @data.vertical
 
-    setMargin: (spacing) =>
-        @spacing = spacing
+    setMargin: (margin) =>
+        @data.margin = margin
         @align!
         return @
 
     getMargin: =>
-        return @spacing
+        return @data.margin
 
     fill: =>
-        @x = @parent.x + @spacing
-        @y = @parent.y + @spacing
-        @w = @parent.w - @spacing*2
-        @h = @parent.h - @spacing*2
+        @data.x = @data.parent.data.x + @data.margin
+        @data.y = @data.parent.data.y + @data.margin
+        @data.w = @data.parent.data.w - @data.margin*2
+        @data.h = @data.parent.data.h - @data.margin*2
 
     delete: =>
-        for k,v in ipairs @child
+        for k,v in ipairs @data.child
             v\delete!
 
-        @parent\removeChild @
+        @data.parent\removeChild @
+        --@data.child = nil --not 100% sure if this is needed
+        --@data = nil       -- pretty sure this .. actually has no effect for why I added it
         @ = nil
         return nil
 
     getVisibility: =>
-        return (not @excludeDraw)
+        return @data.draw
 
     setVisibility: (isVisible) =>
-        @excludeDraw = (not isVisible)
+        @data.draw = isVisible
         return @
 
     getStatic: =>
-        return @excludeMovement
+        return (not @data.move)
 
     setStatic: (isStatic) =>
-        @excludeMovement = isStatic
+        @data.move = (not isStatic)
         return @

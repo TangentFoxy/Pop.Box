@@ -13,38 +13,38 @@ do
   local _parent_0 = element
   local _base_0 = {
     draw = function(self)
-      graphics.setColor(self.color)
-      graphics.setFont(self.font)
-      graphics.print(self.txt, self.x, self.y)
+      graphics.setColor(self.data.color)
+      graphics.setFont(self.data.font)
+      graphics.print(self.data.text, self.data.x, self.data.y)
       return self
     end,
     debugDraw = function(self)
       graphics.setLineWidth(0.5)
       graphics.setColor(0, 0, 0, 100)
-      graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 0, 0, 200)
-      graphics.rectangle("line", self.x, self.y, self.w, self.h)
+      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(255, 200, 200, 255)
-      graphics.print("t", self.x, self.y)
+      graphics.print("t", self.data.x, self.data.y)
       return self
     end,
     setSize = function(self)
-      local w = self.font:getWidth(self.txt)
-      local h = self.font:getHeight() * (select(2, self.txt:gsub("\n", "\n")) + 1)
-      local _exp_0 = self.horizontal
+      local w = self.data.font:getWidth(self.data.text)
+      local h = self.data.font:getHeight() * (select(2, self.data.text:gsub("\n", "\n")) + 1)
+      local _exp_0 = self.data.horizontal
       if "center" == _exp_0 then
-        self.x = self.x - ((w - self.w) / 2)
+        self.data.x = self.data.x - ((w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        self.x = self.x - (w - self.w - self.spacing)
+        self.data.x = self.data.x - (w - self.data.w - self.data.margin)
       end
       local _exp_1 = self.vertical
       if "center" == _exp_1 then
-        self.y = self.y - ((h - self.h) / 2)
+        self.data.y = self.data.y - ((h - self.data.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.y = self.y - (h - self.h - self.spacing)
+        self.data.y = self.data.y - (h - self.data.h - self.data.margin)
       end
-      self.w = w
-      self.h = h
+      self.data.w = w
+      self.data.h = h
       return self
     end,
     setWidth = function(self)
@@ -59,29 +59,29 @@ do
       if text == nil then
         text = ""
       end
-      self.txt = text
+      self.data.text = text
       self:setSize()
       return self
     end,
     getText = function(self)
-      return self.txt
+      return self.data.text
     end,
     setFont = function(self, font)
-      self.font = font
+      self.data.font = font
       self:setSize()
       return self
     end,
     getFont = function(self)
-      return self.font
+      return self.data.font
     end,
     setColor = function(self, r, g, b, a)
       if a == nil then
         a = 255
       end
       if type(r) == "table" then
-        self.color = r
+        self.data.color = r
       else
-        self.color = {
+        self.data.color = {
           r,
           g,
           b,
@@ -91,7 +91,7 @@ do
       return self
     end,
     getColor = function(self)
-      return unpack(self.color)
+      return unpack(self.data.color)
     end
   }
   _base_0.__index = _base_0
@@ -110,9 +110,9 @@ do
         }
       end
       _class_0.__parent.__init(self, parent)
-      self.font = graphics.newFont(14)
+      self.data.font = graphics.newFont(14)
       self:setText(text)
-      self.color = color
+      self.data.color = color
     end,
     __base = _base_0,
     __name = "text",

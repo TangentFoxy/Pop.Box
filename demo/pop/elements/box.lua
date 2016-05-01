@@ -13,16 +13,16 @@ do
   local _parent_0 = element
   local _base_0 = {
     draw = function(self)
-      if self.background then
-        if type(self.background) == "table" then
-          graphics.setColor(self.background)
-          graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+      if self.data.background then
+        if type(self.data.background) == "table" then
+          graphics.setColor(self.data.background)
+          graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
         else
-          local w, h = self.background:getDimensions()
-          w = self.w / w
-          h = self.h / h
+          local w, h = self.data.background:getDimensions()
+          w = self.data.w / w
+          h = self.data.h / h
           graphics.setColor(255, 255, 255, 255)
-          graphics.draw(self.background, self.x, self.y, 0, w, h)
+          graphics.draw(self.data.background, self.data.x, self.data.y, 0, w, h)
         end
       end
       return self
@@ -30,28 +30,28 @@ do
     debugDraw = function(self)
       graphics.setLineWidth(0.5)
       graphics.setColor(0, 0, 0, 100)
-      graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(0, 0, 200, 200)
-      graphics.rectangle("line", self.x, self.y, self.w, self.h)
+      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 200, 255, 255)
-      graphics.print("b", self.x, self.y)
+      graphics.print("b", self.data.x, self.data.y)
       return self
     end,
     setBackground = function(self, background)
-      self.background = background
+      self.data.background = background
       return self
     end,
     getBackground = function(self)
-      return self.background
+      return self.data.background
     end,
     setColor = function(self, r, g, b, a)
       if a == nil then
         a = 255
       end
       if type(r) == "table" then
-        self.background = r
+        self.data.background = r
       else
-        self.background = {
+        self.data.background = {
           r,
           g,
           b,
@@ -61,8 +61,8 @@ do
       return self
     end,
     getColor = function(self)
-      if type(self.background) == "table" then
-        return unpack(self.background)
+      if type(self.data.background) == "table" then
+        return unpack(self.data.background)
       else
         return error("Box \"" .. tostring(self) .. "\" doesn't have a color.")
       end
@@ -76,9 +76,9 @@ do
         background = false
       end
       _class_0.__parent.__init(self, parent)
-      self.w = 20
-      self.h = 20
-      self.background = background
+      self.data.w = 20
+      self.data.h = 20
+      self.data.background = background
     end,
     __base = _base_0,
     __name = "box",

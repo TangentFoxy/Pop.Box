@@ -25,134 +25,139 @@ do
         print "elements/window: unrecognized LOVE version: #{major}.#{minor}.#{revision}"
         print "                 assuming LOVE version > 0.10.1  (there may be bugs)"
 
-pop_ref = false -- reference to pop, loaded by pop.load!
+--pop_ref = false -- reference to pop, loaded by pop.load!
+-- turns out we don't need it...?
 
 class window extends element
-    load: (pop) ->
-        pop_ref = pop
+    --TODO IMPLEMENT THIS COMMENTED OUT CHANGE. IT SHOULD WORK THE SAME EXCEPT BE BETTER.
+    --@load = (pop) ->
+    --load: (pop) ->
+    --    pop_ref = pop
 
     new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
         super parent
 
-        -- NOTE @title having @head as its parent might break things horribly
-        @head = box @, tBackground         -- title box at top
-        @title = text @head, title, tColor -- text at top
-        @area = box @, wBackground       -- main window area
-        @close = box @, closeImage         -- close button
+        -- NOTE @data.title having @data.head as its parent might break things horribly
+        @data.head = box @, tBackground              -- title box at top
+        @data.title = text @data.head, title, tColor -- text at top
+        @data.area = box @, wBackground              -- main window area
+        @data.close = box @, closeImage              -- close button
 
         -- correct placement / sizes of elements
-        height = @title\getHeight!
-        @head\setSize @w - height, height
-        @area\move nil, height
-        @close\align("right")\setSize height, height
+        height = @data.title\getHeight!
+        @data.head\setSize @data.w - height, height
+        @data.area\move nil, height
+        @data.close\align("right")\setSize height, height
         @setSize 100, 80
 
         -- our child elements are still child elements
-        --TODO change title to be a child of head ?
-        @child = {
-            @head, @title, @area, @close
+        --NOTE this is needed anywhere an element creates its own children (aka is NOT called through pop.create)
+        --     TODO put this note in the dev docs!
+        --TODO change title to be a child of head ? title already thinks that head is its parent (look above!)
+        @data.child = {
+            @data.head, @data.title, @data.area, @data.close
         }
 
-        @titleOverflow = "trunicate" -- defaults to trunicating title to fit in window
+        @data.overflow = "trunicate" -- defaults to trunicating title to fit in window
 
         -- window area steals mouse events to keep them from propagating under it
-        @area.mousepressed = ->
+        @data.area.mousepressed = ->
             return true
-        @area.clicked = ->
+        @data.area.clicked = ->
             return true
 
-        @close.clicked = ->
+        @data.close.clicked = ->
             @delete!
             return true
 
-        @head.selected = false -- whether or not the window title (and thus, the window) has been selected
+        @data.head.data.selected = false -- whether or not the window title (and thus, the window) has been selected
 
         if mousemoved_event
-            @head.mousemoved = (x, y, dx, dy) =>
-                if @selected
-                    @parent\move dx, dy
+            @data.head.mousemoved = (x, y, dx, dy) =>
+                if @data.selected
+                    @data.parent\move dx, dy
                     return true
                 return false
 
-            @head.mousepressed = (x, y, button) =>
+            @data.head.mousepressed = (x, y, button) =>
                 if button == left
-                    @selected = true
+                    @data.selected = true
                     return true
                 return false
 
         else
-            @head.mx = 0           -- local mouse coordinates when selected
-            @head.my = 0
+            @data.head.data.mx = 0      -- local mouse coordinates when selected
+            @data.head.data.my = 0
 
-            @head.update = =>
+            @data.head.update = =>
                 x, y = mouse.getPosition!
-                @setPosition x - mx, y - my
-                --return false -- why?
+                @setPosition x - @data.mx, y - @data.my
 
-            @head.mousepressed = (x, y, button) =>
+            @data.head.mousepressed = (x, y, button) =>
                 if button == left
-                    @selected = true
-                    @mx = x
-                    @my = y
+                    @data.selected = true
+                    @data.mx = x
+                    @data.my = y
                     return true
                 return false
 
-        @head.mousereleased = (x, y, button) =>
+        @data.head.mousereleased = (x, y, button) =>
             if button == left
-                @selected = false
-                pop_ref.focused = false -- clear our focus
+                @data.selected = false
+                --pop_ref.focused = false -- clear our focus (should this be done? I think not)
                 return true
             return false
 
-        --@head.focusChild = =>
-        --    @parent\focusChild @ -- nope
+        --@data.head.focusChild = =>
+        --    @data.parent\focusChild @ -- nope
         --    return @
 
     debugDraw: =>
         graphics.setLineWidth 0.5
         graphics.setColor 0, 0, 0, 100
-        graphics.rectangle "fill", @x, @y, @w, @h
+        graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 200, 0, 200, 200
-        graphics.rectangle "line", @x, @y, @w, @h
+        graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 255, 200, 255, 255
-        graphics.print "w", @x, @y
+        graphics.print "w", @data.x, @data.y
 
         return @
 
     addChild: (child) =>
-        @area\addChild child
+        @data.area\addChild child
 
         return @
 
-    -- pass through to window, but return us if window returns itself
+    -- pass through to window, but return us if @data.area returns itself
+    --TODO check if that's even possible, with the API change to removeChild, it shouldn't be happening EVER
     removeChild: (child) =>
-        result = @area\removeChild child
-        if result == @area
+        result = @data.area\removeChild child
+        if result == @data.area
             return @
         elseif type(result) == "string"
-            for k,v in ipairs @child
+            for k,v in ipairs @data.child
                 if v == child
-                    remove @child, k
+                    remove @data.child, k
                     return @
             return "Element \"#{child}\" is not a child of window \"#{@}\". Cannot remove it."
         else
             return result
 
     getChildren: =>
-        return @area.child
+        return @data.area.child
 
     --focusChild: =>
-    --    @parent\focusChild @
+    --    @data.parent\focusChild @
     --    --NOTE might need to also actually focus the sub-element
     --    return @
 
     align: (horizontal, vertical, toPixel) =>
         super horizontal, vertical, toPixel
 
-        for i = 1, #@child
-            @child[i]\align!
+        for i = 1, #@data.child
+            @data.child[i]\align!
 
-        @area\move nil, @head\getHeight!
+        @data.area\move nil, @data.head\getHeight!
 
         return @
 
@@ -161,147 +166,150 @@ class window extends element
         y = 0
 
         if w
-            switch @horizontal
+            switch @data.horizontal
                 when "center"
-                    x -= (w - @w)/2
+                    x -= (w - @data.w)/2
                 when "right"
-                    x -= w - @w
+                    x -= w - @data.w
 
-            if @close
-                @head\setWidth w - @head\getHeight!
+            if @data.close
+                @data.head\setWidth w - @data.head\getHeight!
             else
-                @head\setWidth w
+                @data.head\setWidth w
 
-            @area\setWidth w
-            @w = w
-            @x += x
+            @data.area\setWidth w
+            @data.w = w
+            @data.x += x
 
-            @title\align!
+            @data.title\align!
 
-            if @close
-                @close\align!
+            if @data.close
+                @data.close\align!
 
         if h
-            h = h - @head\getHeight!
-            switch @vertical
+            h = h - @data.head\getHeight!
+            switch @data.vertical
                 when "center"
-                    y -= (h - @h)/2
+                    y -= (h - @data.h)/2
                 when "right"
-                    y -= h - @h
+                    y -= h - @data.h
 
-            @area\setHeight h
-            @h = h + @head\getHeight!
-            @y += y
+            @data.area\setHeight h
+            @data.h = h + @data.head\getHeight!
+            @data.y += y
 
-        @head\move x, y
-        --@title\move x, y
-        @area\move x, y
+        @data.head\move x, y
+        --@data.title\move x, y
+        @data.area\move x, y
 
         return @
 
     setWidth: (w) =>
         x = 0
 
-        switch @horizontal
+        switch @data.horizontal
             when "center"
-                x -= (w - @w)/2
+                x -= (w - @data.w)/2
             when "right"
-                x -= w - @w
+                x -= w - @data.w
 
-        if @close
-            @head\setWidth w - @head\getHeight!
+        if @data.close
+            @data.head\setWidth w - @data.head\getHeight!
         else
-            @head\setWidth w
+            @data.head\setWidth w
 
-        @area\setWidth w
-        @w = w
-        @x += x
+        @data.area\setWidth w
+        @data.w = w
+        @data.x += x
 
-        @title\align!
+        @data.title\align!
 
-        if @close
-            @close\align!
+        if @data.close
+            @data.close\align!
 
-        @head\move x
-        --@title\move x
-        @area\move x
+        @data.head\move x
+        --@data.title\move x
+        @data.area\move x
 
         return @
 
     setHeight: (h) =>
         y = 0
 
-        h = h - @head\getHeight!
-        switch @vertical
+        h = h - @data.head\getHeight!
+        switch @data.vertical
             when "center"
-                y -= (h - @h)/2
+                y -= (h - @data.h)/2
             when "right"
-                y -= h - @h
+                y -= h - @data.h
 
-        @area\setHeight h
-        @h = h + @head\getHeight!
-        @y += y
+        @data.area\setHeight h
+        @data.h = h + @data.head\getHeight!
+        @data.y += y
 
-        @head\move nil, y
-        @title\move nil, y
-        @area\move nil, y
+        @data.head\move nil, y
+        @data.title\move nil, y
+        @data.area\move nil, y
 
         return @
 
     setTitle: (title) =>
-        @title\setText title
+        @data.title\setText title
 
-        if @titleOverflow == "trunicate"
-            while @title\getWidth! > @head\getWidth!
+        --NOTE when the entire window is resized, these checks do not get performed..this is probably a bad thing
+        --TODO make sure they always get checked, and that a trunicated title is saved so it can be un-trunicated when able
+        if @data.overflow == "trunicate"
+            while @data.title\getWidth! > @data.head\getWidth!
                 title = title\sub 1, -3
-                @title\setText title .. "…"
+                @data.title\setText title .. "…"
 
-        elseif @titleOverflow == "resize"
-            if @title\getWidth! > @head\getWidth!
-                @setWidth @title\getWidth!
+        elseif @data.overflow == "resize"
+            if @data.title\getWidth! > @data.head\getWidth!
+                @setWidth @data.title\getWidth!
 
         return @
 
     getTitle: =>
-        return @title\getText!
+        return @data.title\getText!
 
     setTitleOverflow: (method) =>
-        @titleOverflow = method
+        @data.overflow = method
 
         return @
 
     getTitleOverflow: =>
-        return @titleOverflow
+        return @data.overflow
 
+    --TODO make the constructor call this instead of having these methods defined twice...
     setClose: (enabled) =>
         if enabled
-            @close = box @, closeImage
-            @close.clicked = ->
+            @data.close = box @, closeImage
+            @data.close.clicked = ->
                 @delete!
                 return true
-            height = @head\getHeight!
-            @close\align("right")\setSize height, height
-            @head\setWidth @w - height
-            @title\align!
-            insert @child, @close
+            height = @data.head\getHeight!
+            @data.close\align("right")\setSize height, height
+            @data.head\setWidth @data.w - height
+            @data.title\align!
+            insert @data.child, @data.close
         else
-            @close\delete!
-            @head\setWidth @w
-            @title\align!
-            @close = false
+            @data.close\delete!
+            @data.head\setWidth @data.w
+            @data.title\align!
+            @data.close = false
 
         return @
 
     hasClose: =>
-        if @close
+        if @data.close
             return true
         else
             return false
 
     delete: =>
         super!
-        @head = nil
-        @title = nil
-        @area = nil
-        @close = nil
+        @data.head = nil
+        @data.title = nil
+        @data.area = nil
+        @data.close = nil
         return
