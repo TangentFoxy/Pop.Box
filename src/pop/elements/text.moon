@@ -14,11 +14,20 @@ class text extends element
                 return pop.create("text", parent, ...)
 
     new: (parent, text="", color={255,255,255,255}) =>
-        super parent
+        if type(text) == "table"
+            super parent, text
+        else
+            super parent
 
-        @data.font = graphics.newFont 14
-        @setText text
-        @data.color = color
+        if not @data.font
+            @data.font = graphics.newFont 14
+        if not @data.color
+            @data.color = color
+
+        if type(text) == "string"
+            @setText text
+        else
+            @setSize! -- if the user put invalid data in a table, we fix it
 
     draw: =>
         graphics.setColor @data.color

@@ -6,12 +6,31 @@ element = require "#{path}/element"
 
 class box extends element
     new: (parent, background=false) =>
+        --TODO clean this up (duplicated code is buggy and annoying!)
+
+        -- if table, check that it is exactly only 3 or 4 numeric values, anything else is data
+        if type(background) == "table"
+            for k,v in pairs background
+                if type(k) != "number"
+                    super parent, background -- background is actually a data table!
+                    if not background.w
+                        @data.w = 20
+                    if not background.h
+                        @data.h = 20
+                    if not @data.background
+                        @data.background = false
+                    return
+            --if #background < 3 or #background > 4
+            --    super parent, background     -- background has too many or too few values to be a color...though this makes NO SENSE
+            --    -- would need to do the same things as above here, but it makes no sense to have this, even though it is possible, it MUST be user error
+
         super parent
-
-        @data.w = 20
-        @data.h = 20
-
-        @data.background = background
+        if not background.w
+            @data.w = 20
+        if not background.h
+            @data.h = 20
+        if not @data.background
+            @data.background = background -- we can only assume it is userdata (some LOVE object) or a color table (or the false default)
 
     draw: =>
         if @data.background

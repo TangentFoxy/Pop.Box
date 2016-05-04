@@ -35,6 +35,9 @@ class window extends element
     --    pop_ref = pop
 
     new: (parent, title="window", tBackground={25, 180, 230, 255}, tColor={255, 255, 255, 255}, wBackground={200, 200, 210, 255}) =>
+        --TODO title could be a data table, rewrite this to accomidate that
+        --NOTE we don't care if the data table already had a head, title, area, or close value, we're wiping them out
+        --NOTE it may be better to move the internal elements of a window out of the data...?
         super parent
 
         -- NOTE @data.title having @data.head as its parent might break things horribly

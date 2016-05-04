@@ -4,9 +4,9 @@ import insert, remove from table
 tonumber = tonumber
 
 class element
-    new: (parent) =>
+    new: (parent, data) =>
 
-        @data = {
+        default = {
             parent: parent
             child: {}
 
@@ -24,9 +24,17 @@ class element
             move: true
         }
 
-        if parent
-            @data.x = parent.data.x
-            @data.y = parent.data.y
+        if type(data) == "table"
+            @data = data
+            for k, v in pairs default
+                if type(@data[k]) == "nil"
+                    @data[k] = v
+        else
+            @data = default
+
+        if @data.parent
+            @data.x = @data.parent.data.x
+            @data.y = @data.parent.data.y
             --@data.horizontal = parent.data.horizontal
             --@data.vertical = parent.data.vertical
             --@align!
