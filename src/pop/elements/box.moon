@@ -17,20 +17,20 @@ class box extends element
                         @data.w = 20
                     if not background.h
                         @data.h = 20
-                    if not @data.background
+                    if @data.background == nil --is this correct?
                         @data.background = false
                     return
             --if #background < 3 or #background > 4
             --    super parent, background     -- background has too many or too few values to be a color...though this makes NO SENSE
             --    -- would need to do the same things as above here, but it makes no sense to have this, even though it is possible, it MUST be user error
-
-        super parent
-        if not background.w
-            @data.w = 20
-        if not background.h
-            @data.h = 20
-        if not @data.background
-            @data.background = background -- we can only assume it is userdata (some LOVE object) or a color table (or the false default)
+        else
+            super parent
+            if not @data.w
+                @data.w = 20
+            if not @data.h
+                @data.h = 20
+            if not @data.background
+                @data.background = background -- we can only assume it is userdata (some LOVE object) or a color table (or the false default)
 
     draw: =>
         if @data.background

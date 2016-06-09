@@ -75,10 +75,34 @@ do
       if background == nil then
         background = false
       end
-      _class_0.__parent.__init(self, parent)
-      self.data.w = 20
-      self.data.h = 20
-      self.data.background = background
+      if type(background) == "table" then
+        for k, v in pairs(background) do
+          if type(k) ~= "number" then
+            _class_0.__parent.__init(self, parent, background)
+            if not background.w then
+              self.data.w = 20
+            end
+            if not background.h then
+              self.data.h = 20
+            end
+            if self.data.background == nil then
+              self.data.background = false
+            end
+            return 
+          end
+        end
+      else
+        _class_0.__parent.__init(self, parent)
+        if not self.data.w then
+          self.data.w = 20
+        end
+        if not self.data.h then
+          self.data.h = 20
+        end
+        if not self.data.background then
+          self.data.background = background
+        end
+      end
     end,
     __base = _base_0,
     __name = "box",

@@ -109,10 +109,22 @@ do
           255
         }
       end
-      _class_0.__parent.__init(self, parent)
-      self.data.font = graphics.newFont(14)
-      self:setText(text)
-      self.data.color = color
+      if type(text) == "table" then
+        _class_0.__parent.__init(self, parent, text)
+      else
+        _class_0.__parent.__init(self, parent)
+      end
+      if not self.data.font then
+        self.data.font = graphics.newFont(14)
+      end
+      if not self.data.color then
+        self.data.color = color
+      end
+      if type(text) == "string" then
+        return self:setText(text)
+      else
+        return self:setSize()
+      end
     end,
     __base = _base_0,
     __name = "text",

@@ -261,8 +261,8 @@ do
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
-    __init = function(self, parent)
-      self.data = {
+    __init = function(self, parent, data)
+      local default = {
         parent = parent,
         child = { },
         w = 0,
@@ -276,9 +276,19 @@ do
         update = true,
         move = true
       }
-      if parent then
-        self.data.x = parent.data.x
-        self.data.y = parent.data.y
+      if type(data) == "table" then
+        self.data = data
+        for k, v in pairs(default) do
+          if type(self.data[k]) == "nil" then
+            self.data[k] = v
+          end
+        end
+      else
+        self.data = default
+      end
+      if self.data.parent then
+        self.data.x = self.data.parent.data.x
+        self.data.y = self.data.parent.data.y
       end
     end,
     __base = _base_0,

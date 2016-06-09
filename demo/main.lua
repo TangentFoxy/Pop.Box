@@ -1,5 +1,5 @@
 local lg = love.graphics
-local pop, inspect
+local pop, inspect, patchy
 
 local debugDraw = false
 local videoFile = lg.newVideo("test.ogv") -- so we can loop playback
@@ -9,6 +9,7 @@ function love.load()
 
     inspect = require "debug-lib/inspect"
     pop = require "pop"
+    patchy = require "pop.third-party.patchy"
     ---[[
     local c = pop.box():align("center", "center"):setSize(300, 300)
     pop.box(c, {255, 0, 0, 255}):setSize(100, 50)
@@ -58,7 +59,7 @@ function love.load()
     print(b.data.horizontal, b.data.vertical)
     print(c.data.horizontal, c.data.vertical)
 
-    local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!")
+    local window = pop.window():align("center", "center"):setTitle("Welcome! This title is far too big!"):resize(200)
 
     pop.window():setClose(false):setClose(true)
 
@@ -74,6 +75,8 @@ function love.load()
     end
     print(all.__class.__name)
     --]]
+
+    button = patchy.load("button.9.png")
 end
 
 function love.update(dt)
@@ -87,6 +90,8 @@ end
 
 function love.draw()
     pop.draw()
+
+    button:draw(50, 50, 150, 50)
 
     if debugDraw then
         pop.debugDraw()
