@@ -136,7 +136,7 @@ pop.create = (element, parent=pop.screen, ...) ->
 
 
 
---- Event handler for `love.update()` events.
+--- Event handler for `love.update()`.
 --- @function update
 --- @param dt The amount of time passed since the last call to update, in seconds.
 --- @param element *Optional* The element to update. Defaults to `pop.screen` (and loops through all its children).
@@ -152,7 +152,7 @@ pop.update = (dt, element=pop.screen) ->
 
 
 
---- Event handler for `love.draw()` events.
+--- Event handler for `love.draw()`.
 --- @function draw
 --- @param element *Optional* The element to draw. Defaults to `pop.screen` (and loops through all its children).
 --- @todo @see Elements
@@ -167,7 +167,7 @@ pop.draw = (element=pop.screen) ->
 
 
 
---- Event handler for `love.mousemoved()` events. (*LÖVE >= 0.10.0*)
+--- Event handler for `love.mousemoved()`. (*LÖVE >= 0.10.0*)
 --- @function mousemoved
 --- @param x The x coordinate of the mouse.
 --- @param y The y coordinate of the mouse.
@@ -184,7 +184,7 @@ pop.mousemoved = (x, y, dx, dy) ->
 
 
 
---- Event handler for `love.mousepressed()` events.
+--- Event handler for `love.mousepressed()`.
 --- @function mousepressed
 --- @param x The x coordinate of the mouse press.
 --- @param y The y coordinate of the mouse press.
@@ -220,7 +220,7 @@ pop.mousepressed = (x, y, button, element) ->
 
 
 
---- Event handler for `love.mousereleased()` events.
+--- Event handler for `love.mousereleased()`.
 --- @function mousereleased
 --- @param x The x coordinate of the mouse release.
 --- @param y The y coordinate of the mouse release.
@@ -268,15 +268,29 @@ pop.mousereleased = (x, y, button, element) ->
 
     return clickedHandled, mousereleasedHandled
 
+
+
+--- Event handler for `love.keypressed()`.
+--- @function keypressed
+--- @param key The key that was pressed.
+--- @return `true` / `false`: Was the event handled?
+
 pop.keypressed = (key) ->
     print "keypressed", key
 
     -- keypressed events must be on visible elements
     element = pop.focused
-    if element and element.keypressed and (not element.excludeDraw)
+    if element and element.keypressed and element.data.draw
         return element.keypressed key
 
     return false
+
+
+
+--- Event handler for `love.keyreleased()`.
+--- @function keyreleased
+--- @param key The key that was released.
+--- @return `true` / `false`: Was the event handled?
 
 pop.keyreleased = (key) ->
     print "keyreleased", key
@@ -288,15 +302,30 @@ pop.keyreleased = (key) ->
 
     return false
 
+
+
+--- Event handler for `love.textinput()`.
+--- @function textinput
+--- @param text The text that was typed.
+--- @return `true` / `false`: Was the text input handled?
+
 pop.textinput = (text) ->
     print "textinput", text
 
     -- textinput events must be on visible elements
     element = pop.focused
-    if element and element.textinput and (not element.excludeDraw)
+    if element and element.textinput and element.data.draw
         return element.textinput text
 
     return false
+
+
+
+--- Applies skins to elements. (**NOTE^*: This function will be rewritten and change at some point...)
+--- @function skin
+--- @param element The element to skin. Defaults to `pop.screen` (and loops through all its children).
+--- @param skin The skin to use, can be a string or an actual skin object, defaults to a default skin that is part of Pop.Box.
+--- @param depth Can be an integer for how many levels to go skinning. Alternately, if `true`, will skin all children.
 
 --TODO rewrite skin system to not rely on knowing internals of elements,
 --     instead call functions like setColor and setBackground
