@@ -73,15 +73,39 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#update">update (dt, element)</a></td>
-	<td class="summary">Event handler for <code>love.update()</code> events.</td>
+	<td class="summary">Event handler for <code>love.update()</code>.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#draw">draw (element)</a></td>
-	<td class="summary">Event handler for <code>love.draw()</code> events.</td>
+	<td class="summary">Event handler for <code>love.draw()</code>.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#mousemoved">mousemoved (x, y, dx, dy)</a></td>
-	<td class="summary">Event handler for <code>love.mousemoved()</code> events.</td>
+	<td class="summary">Event handler for <code>love.mousemoved()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousepressed">mousepressed (x, y, button, element)</a></td>
+	<td class="summary">Event handler for <code>love.mousepressed()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousereleased">mousereleased (x, y, button, element)</a></td>
+	<td class="summary">Event handler for <code>love.mousereleased()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#keypressed">keypressed (key)</a></td>
+	<td class="summary">Event handler for <code>love.keypressed()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#keyreleased">keyreleased (key)</a></td>
+	<td class="summary">Event handler for <code>love.keyreleased()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textinput">textinput (text)</a></td>
+	<td class="summary">Event handler for <code>love.textinput()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#skin">skin (element, skin, depth)</a></td>
+	<td class="summary">Applies skins to elements.</td>
 	</tr>
 </table>
 <h2><a href="#Tables">Tables</a></h2>
@@ -107,6 +131,15 @@
 	<tr>
 	<td class="name" nowrap><a href="#mousemoved-todo3">mousemoved-todo3</a></td>
 	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousereleased-todo4">mousereleased-todo4</a></td>
+	<td class="summary"> Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+ (If I do it right here, the for loop above may break! I need to test/figure this out.)
+NOTE this might cause an error in the above for loop!
+ basically, move focused element to front of its parent's child
+element.parent\focusChild element
+table.insert element.parent, element.parent\removeChild(element),</td>
 	</tr>
 </table>
 
@@ -168,7 +201,7 @@
     <strong>update (dt, element)</strong>
     </dt>
     <dd>
-    Event handler for <code>love.update()</code> events.
+    Event handler for <code>love.update()</code>.
 
 
     <h3>Parameters:</h3>
@@ -191,7 +224,7 @@
     <strong>draw (element)</strong>
     </dt>
     <dd>
-    Event handler for <code>love.draw()</code> events.
+    Event handler for <code>love.draw()</code>.
 
 
     <h3>Parameters:</h3>
@@ -211,7 +244,7 @@
     <strong>mousemoved (x, y, dx, dy)</strong>
     </dt>
     <dd>
-    Event handler for <code>love.mousemoved()</code> events.  (*LÖVE >= 0.10.0*)
+    Event handler for <code>love.mousemoved()</code>.  (*LÖVE >= 0.10.0*)
 
 
     <h3>Parameters:</h3>
@@ -227,6 +260,182 @@
         </li>
         <li><span class="parameter">dy</span>
          The distance on the y axis the mouse was moved.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> / <code>false</code>: Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousepressed"></a>
+    <strong>mousepressed (x, y, button, element)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.mousepressed()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         The x coordinate of the mouse press.
+        </li>
+        <li><span class="parameter">y</span>
+         The y coordinate of the mouse press.
+        </li>
+        <li><span class="parameter">button</span>
+         The mouse button pressed.
+        </li>
+        <li><span class="parameter">element</span>
+         <em>Optional</em> The element to check for event handling. Defaults to <code>pop.screen</code> (and loops through all its children).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> / <code>false</code>: Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousereleased"></a>
+    <strong>mousereleased (x, y, button, element)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.mousereleased()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         The x coordinate of the mouse release.
+        </li>
+        <li><span class="parameter">y</span>
+         The y coordinate of the mouse release.
+        </li>
+        <li><span class="parameter">button</span>
+         The mouse button released.
+        </li>
+        <li><span class="parameter">element</span>
+         <em>Optional</em> The element to check for event handling. Defaults to <code>pop.screen</code> (and loops through all its children).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        <code>true</code> / <code>false</code>: Was a click handled?</li>
+        <li>
+        <code>true</code> / <code>false</code>: Was a mouse release handled?</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "keypressed"></a>
+    <strong>keypressed (key)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.keypressed()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+         The key that was pressed.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> / <code>false</code>: Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "keyreleased"></a>
+    <strong>keyreleased (key)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.keyreleased()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+         The key that was released.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> / <code>false</code>: Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textinput"></a>
+    <strong>textinput (text)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.textinput()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">text</span>
+         The text that was typed.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> / <code>false</code>: Was the text input handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "skin"></a>
+    <strong>skin (element, skin, depth)</strong>
+    </dt>
+    <dd>
+    Applies skins to elements.  (<em>*NOTE^</em>: This function will be rewritten and change at some point...)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">element</span>
+         The element to skin. Defaults to <code>pop.screen</code> (and loops through all its children).
+        </li>
+        <li><span class="parameter">skin</span>
+         The skin to use, can be a string or an actual skin object, defaults to a default skin that is part of Pop.Box.
+        </li>
+        <li><span class="parameter">depth</span>
+         Can be an integer for how many levels to go skinning. Alternately, if <code>true</code>, will skin all children.
         </li>
     </ul>
 
@@ -321,6 +530,25 @@
 
 
 </dd>
+    <dt>
+    <a name = "mousereleased-todo4"></a>
+    <strong>mousereleased-todo4</strong>
+    </dt>
+    <dd>
+     Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+ (If I do it right here, the for loop above may break! I need to test/figure this out.)
+NOTE this might cause an error in the above for loop!
+ basically, move focused element to front of its parent's child
+element.parent\focusChild element
+table.insert element.parent, element.parent\removeChild(element),
+
+
+
+
+
+
+
+</dd>
 </dl>
 
 
@@ -328,7 +556,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-06-20 22:28:27 </i>
+<i style="float:right;">Last updated 2016-06-21 00:58:10 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
