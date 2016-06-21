@@ -326,6 +326,7 @@ pop.textinput = (text) ->
 --- @param element The element to skin. Defaults to `pop.screen` (and loops through all its children).
 --- @param skin The skin to use, can be a string or an actual skin object, defaults to a default skin that is part of Pop.Box.
 --- @param depth Can be an integer for how many levels to go skinning. Alternately, if `true`, will skin all children.
+--- @todo Rewrite the skin function taking advantage of data block / whatever else is needed.
 
 --TODO rewrite skin system to not rely on knowing internals of elements,
 --     instead call functions like setColor and setBackground
@@ -348,6 +349,13 @@ pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
             for i = 1, #element.child
                 pop.skin element.child[i], skin, false
 
+
+
+--- Draws simple rectangle outlines to debug placement of elements.
+--- @function debugDraw
+--- @param element The element to draw. Defaults to `pop.screen` (and loops through all its children).
+--- @todo Make this better in the future when different element types have been created and whatnot.
+
 pop.debugDraw = (element=pop.screen) ->
     if element.debugDraw
         element\debugDraw!
@@ -362,6 +370,13 @@ pop.debugDraw = (element=pop.screen) ->
 
     for i = 1, #element.child
         pop.debugDraw element.child[i]
+
+
+
+--- Prints a basic structure of GUI elements with minimal info.
+--- @function printElementTree
+--- @param element The element to start at. Defaults to `pop.screen` (and loops through all its children).
+--- @todo Correct this once elements are reimplemented if it needs correction.
 
 pop.printElementTree = (element=pop.screen, depth=0) ->
     cls = element.__class.__name
@@ -379,8 +394,10 @@ pop.printElementTree = (element=pop.screen, depth=0) ->
     print string.rep("-", depth) .. " #{cls}"
 
     for i = 1, #element.child
-        pop.printElementStack element.child[i], depth + 1
+        pop.printElementTree element.child[i], depth + 1
 
+
+
+-- finally, load is called and pop returned
 pop.load!
-
 return pop
