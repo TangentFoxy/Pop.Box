@@ -13,6 +13,10 @@ to make it easy to experiment with GUIs during development.
 
 Supports LÖVE versions 0.9.1 and higher.
 
+
+
+**Note**: Currently rewriting and redesigning Pop.Box. The following info is out of date until I finish:
+
 ## Features
 
 - Quickly set up and align GUI elements.

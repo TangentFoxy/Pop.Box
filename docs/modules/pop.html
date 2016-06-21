@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Pop.Box()</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Issues">Issues</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>pop</strong></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>pop</code></h1>
+<p>The Pop.Box GUI itself.</p>
+<p>
+
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: Paul Liverman III (2015-2016)</li>
+        <li><strong>Release</strong>: v0.0.0</li>
+        <li><strong>License</strong>: The MIT License (MIT)</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#load">load ()</a></td>
+	<td class="summary">Loads elements, skins, extensions, and initializes <code>pop.screen</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#create">create (element, parent)</a></td>
+	<td class="summary">Creates an element.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#update">update (dt, element)</a></td>
+	<td class="summary">Event handler for <code>love.update()</code> events.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#draw">draw (element)</a></td>
+	<td class="summary">Event handler for <code>love.draw()</code> events.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousemoved">mousemoved (x, y, dx, dy)</a></td>
+	<td class="summary">Event handler for <code>love.mousemoved()</code> events.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#pop">pop</a></td>
+	<td class="summary">
+
+</td>
+	</tr>
+</table>
+<h2><a href="#Issues">Issues</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#pop-todo1">pop-todo1</a></td>
+	<td class="summary">Find out what happens if someone requires the <code>init.lua</code> / <code>init.moon</code> file instead of the directory, add an error message for this.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#load-todo2">load-todo2</a></td>
+	<td class="summary">Determine if extensions should have a reference saved (and the possibility of a load function?)
+ require into pop.extensions by filename</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousemoved-todo3">mousemoved-todo3</a></td>
+	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "load"></a>
+    <strong>load ()</strong>
+    </dt>
+    <dd>
+    Loads elements, skins, extensions, and initializes <code>pop.screen</code>.  <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called when you require Pop.Box.
+
+
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/pop.html#">pop</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "create"></a>
+    <strong>create (element, parent)</strong>
+    </dt>
+    <dd>
+    Creates an element.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">element</span>
+         A string naming the element class to use.
+        </li>
+        <li><span class="parameter">parent</span>
+         <em>Optional</em> The parent element. If <code>false</code>, an element is created with no parent. If <code>nil</code>, defaults to <code>pop.screen</code>.
+ (<strong>Note</strong>: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/pop.html#">pop</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "update"></a>
+    <strong>update (dt, element)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.update()</code> events.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dt</span>
+         The amount of time passed since the last call to update, in seconds.
+        </li>
+        <li><span class="parameter">element</span>
+         <em>Optional</em> The element to update. Defaults to <code>pop.screen</code> (and loops through all its children).
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "draw"></a>
+    <strong>draw (element)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.draw()</code> events.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">element</span>
+         <em>Optional</em> The element to draw. Defaults to <code>pop.screen</code> (and loops through all its children).
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousemoved"></a>
+    <strong>mousemoved (x, y, dx, dy)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.mousemoved()</code> events.  (*LÖVE >= 0.10.0*)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         The x coordinate of the mouse.
+        </li>
+        <li><span class="parameter">y</span>
+         The y coordinate of the mouse.
+        </li>
+        <li><span class="parameter">dx</span>
+         The distance on the x axis the mouse was moved.
+        </li>
+        <li><span class="parameter">dy</span>
+         The distance on the y axis the mouse was moved.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "pop"></a>
+    <strong>pop</strong>
+    </dt>
+    <dd>
+
+
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">elements</span>
+         All GUI classes are stored here.
+        </li>
+        <li><span class="parameter">skins</span>
+         All skins are stored here.
+        </li>
+        <li><span class="parameter">screen</span>
+         The top level GUI element. Represents the game screen. Initialized in <code>pop.load()</code>
+        </li>
+        <li><span class="parameter">focused</span>
+         The currently focused GUI element (or false if none is focused).
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/pop.html#load">pop.load</a>
+    </ul>
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Issues"></a>Issues</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "pop-todo1"></a>
+    <strong>pop-todo1</strong>
+    </dt>
+    <dd>
+    Find out what happens if someone requires the <code>init.lua</code> / <code>init.moon</code> file instead of the directory, add an error message for this.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "load-todo2"></a>
+    <strong>load-todo2</strong>
+    </dt>
+    <dd>
+    Determine if extensions should have a reference saved (and the possibility of a load function?)
+ require into pop.extensions by filename
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousemoved-todo3"></a>
+    <strong>mousemoved-todo3</strong>
+    </dt>
+    <dd>
+    Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-06-20 22:28:27 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
