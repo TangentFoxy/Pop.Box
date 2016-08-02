@@ -1,5 +1,6 @@
 file = {
     "init.moon",
+    "main.moon",
     "util.moon",
 }
 

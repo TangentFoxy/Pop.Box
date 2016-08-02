@@ -1,5 +1,5 @@
 local pop = {
-  _VERSION = 'Pop.Box v0.0.0',
+  _VERSION = '0.0.0',
   _DESCRIPTION = 'GUI library for LOVE, designed for ease of use',
   _URL = 'http://github.com/Guard13007/Pop.Box',
   _LICENSE = 'The MIT License (MIT)',
@@ -8,6 +8,10 @@ local pop = {
 if not (love.getVersion) then
   error("Pop.Box only supports LOVE versions >= 0.9.1")
 end
+if (...):sub(-4) == "init" then
+  error("Pop.Box must be required by its containing folder")
+end
+local path = ...
 local filesystem, graphics
 do
   local _obj_0 = love
@@ -16,8 +20,7 @@ end
 local insert
 insert = table.insert
 local inheritsFromElement
-inheritsFromElement = require(tostring(...) .. "/util").inheritsFromElement
-local path = ...
+inheritsFromElement = require(tostring(path) .. "/util").inheritsFromElement
 pop.elements = { }
 pop.skins = { }
 pop.screen = false

@@ -39,23 +39,22 @@
 <h2>Modules</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><a href="../modules/pop.html">pop</a></li>
-  <li><a href="../modules/main.html">main</a></li>
-  <li><strong>util</strong></li>
+  <li><strong>main</strong></li>
+  <li><a href="../modules/util.html">util</a></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>util</code></h1>
-<p>Utility functions, intended for internal use only.</p>
+<h1>Module <code>main</code></h1>
+<p>A demo program for Pop.Box.</p>
 <p>
 
 </p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Copyright</strong>: Paul Liverman III (2015-2016)</li>
-        <li><strong>Release</strong>: v0.0.0</li>
+        <li><strong>Copyright</strong>: Paul Liverman III (2016)</li>
         <li><strong>License</strong>: The MIT License (MIT)</li>
     </ul>
 
@@ -63,7 +62,7 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#inheritsFromElement">inheritsFromElement (object)</a></td>
+	<td class="name" nowrap><a href="#pop">pop ()</a></td>
 	<td class="summary">
 
 </td>
@@ -78,8 +77,8 @@
 
     <dl class="function">
     <dt>
-    <a name = "inheritsFromElement"></a>
-    <strong>inheritsFromElement (object)</strong>
+    <a name = "pop"></a>
+    <strong>pop ()</strong>
     </dt>
     <dd>
 
@@ -87,21 +86,8 @@
 
 
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">object</span>
-         A table (MoonScript object expected) to be checked for inheritence from the "element" element.
-        </li>
-    </ul>
 
-    <h3>Returns:</h3>
-    <ol>
 
-        <code>true</code> / <code>false</code>: Is the table an object inherting from "element"?
-    </ol>
-
-    <h3>Raises:</h3>
-    Can error if the table has a similar structure to a MoonScript object without being the same structure.
 
 
 

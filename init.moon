@@ -2,10 +2,10 @@
 --- @module pop
 --- @copyright Paul Liverman III (2015-2016)
 --- @license The MIT License (MIT)
---- @release v0.0.0
+--- @release 0.0.0
 
 pop = {
-    _VERSION: 'Pop.Box v0.0.0'
+    _VERSION: '0.0.0'
     _DESCRIPTION: 'GUI library for LOVE, designed for ease of use'
     _URL: 'http://github.com/Guard13007/Pop.Box'
     _LICENSE: 'The MIT License (MIT)'
@@ -15,13 +15,14 @@ pop = {
 unless love.getVersion
     error "Pop.Box only supports LOVE versions >= 0.9.1"
 
---- @todo Find out what happens if someone requires the `init.lua` / `init.moon` file instead of the directory, add an error message for this.
+if (...)\sub(-4) == "init"
+    error "Pop.Box must be required by its containing folder"
+
+path = ...
 
 import filesystem, graphics from love
 import insert from table
-import inheritsFromElement from require "#{...}/util"
-
-path = ...
+import inheritsFromElement from require "#{path}/util"
 
 --- @table pop
 --- @field elements All GUI classes are stored here.
