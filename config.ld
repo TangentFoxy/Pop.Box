@@ -1,7 +1,9 @@
 file = {
     "init.moon",
-    --"main.moon",
+    "elements/element.moon",
+    "main.moon",
     "util.moon",
+    "Element.luadoc",
 }
 
 project = "Pop.Box()"

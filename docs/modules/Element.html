@@ -1,0 +1,402 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Pop.Box()</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/pop.html">pop</a></li>
+  <li><a href="../modules/main.html">main</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+  <li><strong>Element</strong></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/element.html">element</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>Element</code></h1>
+<p>This is a description of what is expected in an element class.</p>
+<p> <strong>IMPORTANT</strong>: Your class should inherit from <em>the</em> element class. This
+ means that any methods defined on that class need to be compatible with or
+ overridden by your class!</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#load">load (pop)</a></td>
+	<td class="summary"><strong>Optional</strong>: Called during <code>pop.load()</code> with a reference to Pop.Box.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#wrap">wrap (pop)</a></td>
+	<td class="summary"><strong>Optional</strong>: Called during <code>pop.load()</code> to allow a custom wrapper function
+ to be created for your element class.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#update">update (dt)</a></td>
+	<td class="summary"><strong>Optional</strong>: Called from <code>pop.update()</code> if <code>data.update</code> and a child of
+ <code>pop.screen</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#draw">draw ()</a></td>
+	<td class="summary"><strong>Optional</strong>: Called from <code>pop.draw()</code> if <code>data.draw</code> and a child of
+ <code>pop.screen</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousemoved">mousemoved (x, y, dx, dy)</a></td>
+	<td class="summary"><strong>Optional</strong>: Called from <code>pop.mousemoved()</code> if in LOVE >= 0.10.0 and your
+ element is focused.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousepressed">mousepressed (x, y, button)</a></td>
+	<td class="summary"><strong>Optional</strong>: Called from <code>pop.mousepressed()</code> if a mouse button was pressed
+ over your element.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#data">data</a></td>
+	<td class="summary">Every object has a data field with pre-defined values.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#parent">parent</a></td>
+	<td class="summary">The parent element of this element.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#child">child</a></td>
+	<td class="summary">The child elements of this element.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "load"></a>
+    <strong>load (pop)</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called during <code>pop.load()</code> with a reference to Pop.Box.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pop</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#pdf-module">module</a></span>
+         The Pop.Box module.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "wrap"></a>
+    <strong>wrap (pop)</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called during <code>pop.load()</code> to allow a custom wrapper function
+ to be created for your element class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pop</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#pdf-module">module</a></span>
+         The Pop.Box module.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">function</span></span>
+        wrapper A function to be called to create an element of
+ this class instead of using <code>pop.create()</code>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "update"></a>
+    <strong>update (dt)</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called from <code>pop.update()</code> if <code>data.update</code> and a child of
+ <code>pop.screen</code>.  Use it for any time-based updates your element may need.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dt</span>
+            <span class="types"><span class="type">number</span></span>
+         The amount of time elapsed since <a href="../modules/Element.html#update">update</a> was last called.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "draw"></a>
+    <strong>draw ()</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called from <code>pop.draw()</code> if <code>data.draw</code> and a child of
+ <code>pop.screen</code>.  Use it to draw your element.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousemoved"></a>
+    <strong>mousemoved (x, y, dx, dy)</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called from <code>pop.mousemoved()</code> if in LOVE >= 0.10.0 and your
+ element is focused.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
+         The x coordinate of the mouse.
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
+         The y coordinate of the mouse.
+        </li>
+        <li><span class="parameter">dx</span>
+            <span class="types"><span class="type">number</span></span>
+         The distance on the x axis the mouse was moved.
+        </li>
+        <li><span class="parameter">dy</span>
+            <span class="types"><span class="type">number</span></span>
+         The distance on the y axis the mouse was moved.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousepressed"></a>
+    <strong>mousepressed (x, y, button)</strong>
+    </dt>
+    <dd>
+    <strong>Optional</strong>: Called from <code>pop.mousepressed()</code> if a mouse button was pressed
+ over your element. </p>
+
+<p> <strong>Note</strong>: Your element must be visible (<code>data.draw</code> is true) for this method
+ to be called.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
+         The x coordinate of the mouse press.
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
+         The y coordinate of the mouse press.
+        </li>
+        <li><span class="parameter">button</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">integer</span></span>
+         The mouse button pressed. (Type varies by
+ LÖVE version.)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "data"></a>
+    <strong>data</strong>
+    </dt>
+    <dd>
+    Every object has a data field with pre-defined values.  Any serializable data
+ should be saved in this field. Ideally, any Pop.Box element can be
+ reconstructed from its data field.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">parent</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a> or <span class="type">false</span></span>
+         The parent of this element's data field. This
+ will <strong>not</strong> be serialized. This is the <em>only</em> exception to all data being
+ serialized.
+        </li>
+        <li><span class="parameter">child</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         All child elements' data fields.
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
+         The left edge of your element.
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
+         The top edge of your element.
+        </li>
+        <li><span class="parameter">w</span>
+            <span class="types"><span class="type">integer</span></span>
+         The width of your element.
+        </li>
+        <li><span class="parameter">h</span>
+            <span class="types"><span class="type">integer</span></span>
+         The height of your element.
+        </li>
+        <li><span class="parameter">update</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to update this element (and its
+ children).
+        </li>
+        <li><span class="parameter">draw</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to draw this element (and its children).
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "parent"></a>
+    <strong>parent</strong>
+    </dt>
+    <dd>
+    The parent element of this element.
+
+
+    <ul>
+        <li><span class="parameter">parent</span>
+            <span class="types"><span class="type">Element</span> or <span class="type">false</span></span>
+         Parent element.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "child"></a>
+    <strong>child</strong>
+    </dt>
+    <dd>
+    The child elements of this element.
+
+
+    <ul>
+        <li><span class="parameter">child</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         All child elements.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-08-21 00:47:30 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

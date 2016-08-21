@@ -34,13 +34,20 @@
 <ul>
 <li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
+<li><a href="#Issues">Issues</a></li>
 </ul>
 
 
 <h2>Modules</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><strong>pop</strong></li>
+  <li><a href="../modules/main.html">main</a></li>
   <li><a href="../modules/util.html">util</a></li>
+  <li><a href="../modules/Element.html">Element</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/element.html">element</a></li>
 </ul>
 
 </div>
@@ -103,10 +110,6 @@
 	<td class="summary">Event handler for <code>love.textinput()</code>.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#skin">skin (element, skin, depth)</a></td>
-	<td class="summary">Applies skins to elements.</td>
-	</tr>
-	<tr>
 	<td class="name" nowrap><a href="#debugDraw">debugDraw (element)</a></td>
 	<td class="summary">Draws simple rectangle outlines to debug placement of elements.</td>
 	</tr>
@@ -124,6 +127,31 @@
 </td>
 	</tr>
 </table>
+<h2><a href="#Issues">Issues</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#update-todo1">update-todo1</a></td>
+	<td class="summary">Define Elements and @ see that documentation from here. Generic documentation, not specifically element!
+ data.update boolean controls an element and its children being updated</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousemoved-todo2">mousemoved-todo2</a></td>
+	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mousereleased-todo3">mousereleased-todo3</a></td>
+	<td class="summary"> Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+ (If I do it right here, the for loop above may break! I need to test/figure this out.)
+NOTE this might cause an error in the above for loop!
+ basically, move focused element to front of its parent's child
+element.parent\focusChild element
+table.insert element.parent, element.parent\removeChild(element),</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#printElementTree-todo4">printElementTree-todo4</a></td>
+	<td class="summary">Correct this once elements are reimplemented if it needs correction.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
@@ -139,7 +167,8 @@
     <dd>
     Loads elements, skins, extensions, and initializes <code>pop.screen</code>. </p>
 
-<p> <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called when you require Pop.Box.
+<p> <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called
+ when you require Pop.Box.
 
 
 
@@ -147,7 +176,8 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/pop.html#">pop</a>
+         <li><a href="../modules/pop.html#">pop</a></li>
+         <li><a href="../modules/Element.html#">Element</a></li>
     </ul>
 
 
@@ -163,15 +193,20 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         A string naming the element class to use.
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The element class to use.
         </li>
         <li><span class="parameter">parent</span>
-        [opt] The parent element. If <code>false</code>, an element is created with no parent. If <code>nil</code>, defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span>, <span class="type">false</span> or <span class="type">nil</span></span>
+        [opt] The parent element. If <code>false</code>, an
+ element is created with no parent. If <code>nil</code>, defaults to <code>pop.screen</code>.
         </li>
         <li><span class="parameter">...</span>
-        [opt] Any number of parameters can be passed to the constructor for the element.</p>
+        [opt] Any number of parameters can be passed to the constructor
+ for the element.</p>
 
-<p> (<strong>Note</strong>: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
+<p> (<strong>Note</strong>: An element with no parent will not be handled by Pop.Box's event
+ handlers unless you handle it explicitly.)
         </li>
     </ul>
 
@@ -179,7 +214,8 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/pop.html#">pop</a>
+         <li><a href="../modules/pop.html#">pop</a></li>
+         <li><a href="../modules/Element.html#">Element</a></li>
     </ul>
 
 
@@ -195,15 +231,23 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">dt</span>
-         The amount of time passed since the last call to update, in seconds.
+            <span class="types"><span class="type">number</span></span>
+         The amount of time passed since the last call to update,
+ in seconds.
         </li>
         <li><span class="parameter">element</span>
-        [opt] The element to update (will update all its children as well). Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to update (will update all its
+ children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -218,12 +262,18 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-        [opt] The element to draw (will draw all its children as well). Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to draw (will draw all its children
+ as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -232,21 +282,25 @@
     <strong>mousemoved (x, y, dx, dy)</strong>
     </dt>
     <dd>
-    Event handler for <code>love.mousemoved()</code>.  (*LÖVE >= 0.10.0*)
+    Event handler for <code>love.mousemoved()</code>.  (LÖVE >= 0.10.0)
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
          The x coordinate of the mouse.
         </li>
         <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
          The y coordinate of the mouse.
         </li>
         <li><span class="parameter">dx</span>
+            <span class="types"><span class="type">number</span></span>
          The distance on the x axis the mouse was moved.
         </li>
         <li><span class="parameter">dy</span>
+            <span class="types"><span class="type">number</span></span>
          The distance on the y axis the mouse was moved.
         </li>
     </ul>
@@ -254,7 +308,8 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> / <code>false</code>: Was the event handled?
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
     </ol>
 
 
@@ -272,26 +327,37 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
          The x coordinate of the mouse press.
         </li>
         <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
          The y coordinate of the mouse press.
         </li>
         <li><span class="parameter">button</span>
-         The mouse button pressed.
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">integer</span></span>
+         The mouse button pressed. (Type varies by
+ LÖVE version.)
         </li>
         <li><span class="parameter">element</span>
-        [opt] The element to check for event handling (will check its children as well). Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to check for event handling (will
+ check its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> / <code>false</code>: Was the event handled?
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
     </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -306,28 +372,40 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">x</span>
+            <span class="types"><span class="type">integer</span></span>
          The x coordinate of the mouse release.
         </li>
         <li><span class="parameter">y</span>
+            <span class="types"><span class="type">integer</span></span>
          The y coordinate of the mouse release.
         </li>
         <li><span class="parameter">button</span>
-         The mouse button released.
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">integer</span></span>
+         The mouse button released. (Type varies by
+ LÖVE version.)
         </li>
         <li><span class="parameter">element</span>
-        [opt] The element to check for event handling (will check its children as well). Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to check for event handling (will
+ check its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
         <li>
-        <code>true</code> / <code>false</code>: Was a click handled?</li>
+           <span class="types"><span class="type">boolean</span></span>
+        Was a click handled?</li>
         <li>
-        <code>true</code> / <code>false</code>: Was a mouse release handled?</li>
+           <span class="types"><span class="type">boolean</span></span>
+        Was a mouse release handled?</li>
     </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -342,6 +420,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          The key that was pressed.
         </li>
     </ul>
@@ -349,7 +428,8 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> / <code>false</code>: Was the event handled?
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
     </ol>
 
 
@@ -367,6 +447,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          The key that was released.
         </li>
     </ul>
@@ -374,7 +455,8 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> / <code>false</code>: Was the event handled?
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
     </ol>
 
 
@@ -392,6 +474,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">text</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          The text that was typed.
         </li>
     </ul>
@@ -399,34 +482,9 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> / <code>false</code>: Was the text input handled?
+           <span class="types"><span class="type">boolean</span></span>
+        Was the text input handled?
     </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "skin"></a>
-    <strong>skin (element, skin, depth)</strong>
-    </dt>
-    <dd>
-    Applies skins to elements.  (<strong>NOTE</strong>: This function will be rewritten and change at some point...)
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">element</span>
-         The element to skin (will also be applied to children). Defaults to <code>pop.screen</code>.
-        </li>
-        <li><span class="parameter">skin</span>
-         The skin to use, can be a string or an actual skin object, defaults to the default skin included with Pop.Box.
-        </li>
-        <li><span class="parameter">depth</span>
-        [opt] An integer for how many child levels to skin, OR, if <code>true</code>, will skin all children.
-        </li>
-    </ul>
-
 
 
 
@@ -443,12 +501,18 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         The element to draw (will draw its children as well). Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to draw (will draw its children as
+ well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -463,12 +527,18 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         The element to start at. Defaults to <code>pop.screen</code>.
+            <span class="types"><span class="type">Element</span></span>
+        [opt] The element to start at. Defaults to
+ <code>pop.screen</code>.
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/Element.html#">Element</a>
+    </ul>
 
 
 </dd>
@@ -489,19 +559,26 @@
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">elements</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
          All GUI classes are stored here.
         </li>
         <li><span class="parameter">skins</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
          All skins are stored here.
         </li>
         <li><span class="parameter">extensions</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
          All extensions are loaded here.
         </li>
         <li><span class="parameter">screen</span>
-         The top level GUI element. Represents the game screen. Initialized in <code>pop.load()</code>
+            <span class="types"><span class="type">Element</span></span>
+         The top level GUI element. Represents the game
+ screen. Initialized in <code>pop.load()</code>
         </li>
         <li><span class="parameter">focused</span>
-         The currently focused GUI element (or <code>false</code> if none is focused).
+            <span class="types"><span class="type">Element</span> or <span class="type">false</span></span>
+         The currently focused GUI element (or <code>false</code>
+ if none is focused).
         </li>
     </ul>
 
@@ -509,8 +586,75 @@
 
     <h3>See also:</h3>
     <ul>
-         <a href="../modules/pop.html#load">pop.load</a>
+         <li><a href="../modules/pop.html#load">pop.load</a></li>
+         <li><a href="../modules/Element.html#">Element</a></li>
     </ul>
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Issues"></a>Issues</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "update-todo1"></a>
+    <strong>update-todo1</strong>
+    </dt>
+    <dd>
+    Define Elements and @ see that documentation from here. Generic documentation, not specifically element!
+ data.update boolean controls an element and its children being updated
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousemoved-todo2"></a>
+    <strong>mousemoved-todo2</strong>
+    </dt>
+    <dd>
+    Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mousereleased-todo3"></a>
+    <strong>mousereleased-todo3</strong>
+    </dt>
+    <dd>
+     Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+ (If I do it right here, the for loop above may break! I need to test/figure this out.)
+NOTE this might cause an error in the above for loop!
+ basically, move focused element to front of its parent's child
+element.parent\focusChild element
+table.insert element.parent, element.parent\removeChild(element),
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "printElementTree-todo4"></a>
+    <strong>printElementTree-todo4</strong>
+    </dt>
+    <dd>
+    Correct this once elements are reimplemented if it needs correction.
+
+
+
+
+
 
 
 </dd>
@@ -521,7 +665,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-08-20 21:29:17 </i>
+<i style="float:right;">Last updated 2016-08-21 00:47:30 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

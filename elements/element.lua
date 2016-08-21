@@ -6,7 +6,7 @@ do
   }
   _base_0.__index = _base_0
   _class_0 = setmetatable({
-    __init = function(self) end,
+    __init = function(self, parent) end,
     __base = _base_0,
     __name = "element"
   }, {

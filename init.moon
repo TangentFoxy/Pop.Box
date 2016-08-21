@@ -27,12 +27,15 @@ import insert from table
 import inheritsFromElement from require "#{path}/util"
 
 --- @table pop
---- @field elements All GUI classes are stored here.
---- @field skins All skins are stored here.
---- @field extensions All extensions are loaded here.
---- @field screen The top level GUI element. Represents the game screen. Initialized in `pop.load()`
+--- @tfield table elements All GUI classes are stored here.
+--- @tfield table skins All skins are stored here.
+--- @tfield table extensions All extensions are loaded here.
+--- @tfield Element screen The top level GUI element. Represents the game
+--- screen. Initialized in `pop.load()`
+--- @tfield ?Element|false focused The currently focused GUI element (or `false`
+--- if none is focused).
 --- @see pop.load
---- @field focused The currently focused GUI element (or `false` if none is focused).
+--- @see Element
 
 pop.elements = {}
 pop.skins = {}
@@ -44,12 +47,13 @@ pop.focused = false
 
 --- Loads elements, skins, extensions, and initializes `pop.screen`.
 ---
---- **IMPORTANT**: Intended to only be called once, and is automatically called when you require Pop.Box.
+--- **IMPORTANT**: Intended to only be called once, and is automatically called
+--- when you require Pop.Box.
 --- @function load
 --- @see pop
+--- @see Element
 
 pop.load = ->
-    --@todo @ see Elements
     --@todo @ see Skins
     --@todo @ see Extensions
     elements = filesystem.getDirectoryItems "#{path}/elements"
@@ -121,28 +125,37 @@ pop.load = ->
 
 --- Creates an element.
 --- @function create
---- @param element A string naming the element class to use.
---- @param parent[opt] The parent element. If `false`, an element is created with no parent. If `nil`, defaults to `pop.screen`.
---- @param ...[opt] Any number of parameters can be passed to the constructor for the element.
+--- @tparam string element The element class to use.
+--- @tparam ?Element|false|nil parent[opt] The parent element. If `false`, an
+--- element is created with no parent. If `nil`, defaults to `pop.screen`.
+--- @param ...[opt] Any number of parameters can be passed to the constructor
+--- for the element.
 ---
---- (**Note**: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
+--- (**Note**: An element with no parent will not be handled by Pop.Box's event
+--- handlers unless you handle it explicitly.)
 --- @see pop
+--- @see Element
 
 pop.create = (element, parent=pop.screen, ...) ->
-    --@todo @ see Elements
     -- if valid parent element, use it
     if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
         insert parent.child, element
         insert parent.data.child, element.data
+        element.parent = parent
+        element.data.parent = parent.data
     -- if explicitly no parent, just create the element
     elseif parent == false
         element = pop.elements[element](false, ...)
+        element.parent = false
+        element.data.parent = false
     -- else use pop.screen (and "parent" is actually the first argument)
     else
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
         insert pop.screen.data.child, element.data
+        element.parent = pop.screen
+        element.data.parent = pop.screen.data
 
     return element
 
@@ -150,11 +163,14 @@ pop.create = (element, parent=pop.screen, ...) ->
 
 --- Event handler for `love.update()`.
 --- @function update
---- @param dt The amount of time passed since the last call to update, in seconds.
---- @param element[opt] The element to update (will update all its children as well). Defaults to `pop.screen`.
+--- @tparam number dt The amount of time passed since the last call to update,
+--- in seconds.
+--- @tparam Element element[opt] The element to update (will update all its
+--- children as well). Defaults to `pop.screen`.
+--- @see Element
 
 pop.update = (dt, element=pop.screen) ->
-    --@todo Define Elements and @ see that documentation from here. Generic documentation, not specifically element!
+    --- @todo Define Elements and @ see that documentation from here. Generic documentation, not specifically element!
     -- data.update boolean controls an element and its children being updated
     if element.data.update
         if element.update
@@ -166,10 +182,11 @@ pop.update = (dt, element=pop.screen) ->
 
 --- Event handler for `love.draw()`.
 --- @function draw
---- @param element[opt] The element to draw (will draw all its children as well). Defaults to `pop.screen`.
+--- @tparam Element element[opt] The element to draw (will draw all its children
+--- as well). Defaults to `pop.screen`.
+--- @see Element
 
 pop.draw = (element=pop.screen) ->
-    --@todo @ see Elements
     -- data.draw boolean controls an element and its children being drawn
     if element.data.draw
         if element.draw
@@ -179,16 +196,16 @@ pop.draw = (element=pop.screen) ->
 
 
 
---- Event handler for `love.mousemoved()`. (*LÖVE >= 0.10.0*)
+--- Event handler for `love.mousemoved()`. (LÖVE >= 0.10.0)
 --- @function mousemoved
---- @param x The x coordinate of the mouse.
---- @param y The y coordinate of the mouse.
---- @param dx The distance on the x axis the mouse was moved.
---- @param dy The distance on the y axis the mouse was moved.
---- @return `true` / `false`: Was the event handled?
+--- @tparam integer x The x coordinate of the mouse.
+--- @tparam integer y The y coordinate of the mouse.
+--- @tparam number dx The distance on the x axis the mouse was moved.
+--- @tparam number dy The distance on the y axis the mouse was moved.
+--- @treturn boolean Was the event handled?
 
 pop.mousemoved = (x, y, dx, dy) ->
-    --@todo Implement a way for an element to attach itself to `love.mousemoved()` events?
+    --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
     if pop.focused and pop.focused.mousemoved
         return pop.focused\mousemoved x, y, dx, dy
 
@@ -198,11 +215,14 @@ pop.mousemoved = (x, y, dx, dy) ->
 
 --- Event handler for `love.mousepressed()`.
 --- @function mousepressed
---- @param x The x coordinate of the mouse press.
---- @param y The y coordinate of the mouse press.
---- @param button The mouse button pressed.
---- @param element[opt] The element to check for event handling (will check its children as well). Defaults to `pop.screen`.
---- @return `true` / `false`: Was the event handled?
+--- @tparam integer x The x coordinate of the mouse press.
+--- @tparam integer y The y coordinate of the mouse press.
+--- @tparam ?string|integer button The mouse button pressed. (Type varies by
+--- LÖVE version.)
+--- @tparam Element element[opt] The element to check for event handling (will
+--- check its children as well). Defaults to `pop.screen`.
+--- @treturn boolean Was the event handled?
+--- @see Element
 
 pop.mousepressed = (x, y, button, element) ->
     -- start at the screen, print that we received an event
@@ -234,12 +254,15 @@ pop.mousepressed = (x, y, button, element) ->
 
 --- Event handler for `love.mousereleased()`.
 --- @function mousereleased
---- @param x The x coordinate of the mouse release.
---- @param y The y coordinate of the mouse release.
---- @param button The mouse button released.
---- @param element[opt] The element to check for event handling (will check its children as well). Defaults to `pop.screen`.
---- @return `true` / `false`: Was a click handled?
---- @return `true` / `false`: Was a mouse release handled?
+--- @tparam integer x The x coordinate of the mouse release.
+--- @tparam integer y The y coordinate of the mouse release.
+--- @tparam ?string|integer button The mouse button released. (Type varies by
+--- LÖVE version.)
+--- @tparam Element element[opt] The element to check for event handling (will
+--- check its children as well). Defaults to `pop.screen`.
+--- @treturn boolean Was a click handled?
+--- @treturn boolean Was a mouse release handled?
+--- @see Element
 
 pop.mousereleased = (x, y, button, element) ->
     -- we are trying to handle a clicked or mousereleased event
@@ -266,7 +289,7 @@ pop.mousereleased = (x, y, button, element) ->
                 -- if we clicked, we're focused!
                 if clickedHandled
                     pop.focused = element
-                    --@todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+                    --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
                     --- (If I do it right here, the for loop above may break! I need to test/figure this out.)
                     --NOTE this might cause an error in the above for loop!
                     -- basically, move focused element to front of its parent's child
@@ -284,8 +307,8 @@ pop.mousereleased = (x, y, button, element) ->
 
 --- Event handler for `love.keypressed()`.
 --- @function keypressed
---- @param key The key that was pressed.
---- @return `true` / `false`: Was the event handled?
+--- @tparam string key The key that was pressed.
+--- @treturn boolean Was the event handled?
 
 pop.keypressed = (key) ->
     print "keypressed", key
@@ -301,8 +324,8 @@ pop.keypressed = (key) ->
 
 --- Event handler for `love.keyreleased()`.
 --- @function keyreleased
---- @param key The key that was released.
---- @return `true` / `false`: Was the event handled?
+--- @tparam string key The key that was released.
+--- @treturn boolean Was the event handled?
 
 pop.keyreleased = (key) ->
     print "keyreleased", key
@@ -318,8 +341,8 @@ pop.keyreleased = (key) ->
 
 --- Event handler for `love.textinput()`.
 --- @function textinput
---- @param text The text that was typed.
---- @return `true` / `false`: Was the text input handled?
+--- @tparam string text The text that was typed.
+--- @treturn boolean Was the text input handled?
 
 pop.textinput = (text) ->
     print "textinput", text
@@ -333,39 +356,11 @@ pop.textinput = (text) ->
 
 
 
---- Applies skins to elements. (**NOTE**: This function will be rewritten and change at some point...)
---- @function skin
---- @param element The element to skin (will also be applied to children). Defaults to `pop.screen`.
---- @param skin The skin to use, can be a string or an actual skin object, defaults to the default skin included with Pop.Box.
---- @param depth[opt] An integer for how many child levels to skin, OR, if `true`, will skin all children.
-
---TODO rewrite skin system to not rely on knowing internals of elements,
---     instead call functions like setColor and setBackground
--- skins an element (and its children unless depth == true or 0)
---  depth can be an integer for how many levels to go down when skinning
---  defaults to pop.screen and the default skin
-pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
-    --@todo Rewrite the skin function taking advantage of data block / whatever else is needed.
-    if element.background and skin.background
-        element.background = skin.background
-    if element.color and skin.color
-        element.color = skin.color
-    if element.font and skin.font
-        element.font = skin.font
-
-    unless depth or (depth == 0)
-        if depth == tonumber depth
-            for i = 1, #element.child
-                pop.skin element.child[i], skin, depth - 1
-        else
-            for i = 1, #element.child
-                pop.skin element.child[i], skin, true
-
-
-
 --- Draws simple rectangle outlines to debug placement of elements.
 --- @function debugDraw
---- @param element The element to draw (will draw its children as well). Defaults to `pop.screen`.
+--- @tparam Element element[opt] The element to draw (will draw its children as
+--- well). Defaults to `pop.screen`.
+--- @see Element
 
 pop.debugDraw = (element=pop.screen) ->
     --@todo Make this better in the future when different element types have been created and whatnot.
@@ -387,10 +382,12 @@ pop.debugDraw = (element=pop.screen) ->
 
 --- Prints a basic structure of GUI elements with minimal info.
 --- @function printElementTree
---- @param element The element to start at. Defaults to `pop.screen`.
+--- @tparam Element element[opt] The element to start at. Defaults to
+--- `pop.screen`.
+--- @see Element
 
 pop.printElementTree = (element=pop.screen, depth=0) ->
-    --@todo Correct this once elements are reimplemented if it needs correction.
+    --- @todo Correct this once elements are reimplemented if it needs correction.
     cls = element.__class.__name
 
     if cls == "text"

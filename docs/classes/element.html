@@ -32,45 +32,43 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
 </ul>
 
 
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>element</strong></li>
+</ul>
 <h2>Modules</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><a href="../modules/pop.html">pop</a></li>
   <li><a href="../modules/main.html">main</a></li>
-  <li><strong>util</strong></li>
+  <li><a href="../modules/util.html">util</a></li>
   <li><a href="../modules/Element.html">Element</a></li>
-</ul>
-<h2>Classes</h2>
-<ul class="$(kind=='Topics' and '' or 'nowrap'">
-  <li><a href="../classes/element.html">element</a></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>util</code></h1>
-<p>Utility functions, intended for internal use only.</p>
+<h1>Class <code>element</code></h1>
+<p>A generic element every element must inherit from.</p>
 <p>
 
 </p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Copyright</strong>: Paul Liverman III (2015-2016)</li>
+        <li><strong>Copyright</strong>: Paul Liverman III (2016)</li>
         <li><strong>License</strong>: The MIT License (MIT)</li>
     </ul>
 
 
-<h2><a href="#Functions">Functions</a></h2>
+<h2><a href="#Methods">Methods</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#inheritsFromElement">inheritsFromElement (object)</a></td>
-	<td class="summary">
-
-</td>
+	<td class="name" nowrap><a href="#element.new">element.new (self, parent)</a></td>
+	<td class="summary">Constructor expects nothing?</td>
 	</tr>
 </table>
 
@@ -78,43 +76,33 @@
 <br/>
 
 
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
 
     <dl class="function">
     <dt>
-    <a name = "inheritsFromElement"></a>
-    <strong>inheritsFromElement (object)</strong>
+    <a name = "element.new"></a>
+    <strong>element.new (self, parent)</strong>
     </dt>
     <dd>
-
-
-
+    Constructor expects nothing?
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">object</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-         MoonScript object to be checked for inheritence from
- the "element" element.
+        <li><span class="parameter">self</span>
+
+
+
+        </li>
+        <li><span class="parameter">parent</span>
+
+
+
         </li>
     </ul>
 
-    <h3>Returns:</h3>
-    <ol>
 
-           <span class="types"><span class="type">boolean</span></span>
-        Is the table an object inherting from "element"?
-    </ol>
 
-    <h3>Raises:</h3>
-    Can error if the table has a similar structure to a MoonScript object
- without being the same structure.
-
-    <h3>See also:</h3>
-    <ul>
-         <a href="../modules/Element.html#">Element</a>
-    </ul>
 
 
 </dd>

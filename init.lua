@@ -111,12 +111,18 @@ pop.create = function(element, parent, ...)
     element = pop.elements[element](parent, ...)
     insert(parent.child, element)
     insert(parent.data.child, element.data)
+    element.parent = parent
+    element.data.parent = parent.data
   elseif parent == false then
     element = pop.elements[element](false, ...)
+    element.parent = false
+    element.data.parent = false
   else
     element = pop.elements[element](pop.screen, parent, ...)
     insert(pop.screen.child, element)
     insert(pop.screen.data.child, element.data)
+    element.parent = pop.screen
+    element.data.parent = pop.screen.data
   end
   return element
 end
@@ -232,34 +238,6 @@ pop.textinput = function(text)
     return element.textinput(text)
   end
   return false
-end
-pop.skin = function(element, skin, depth)
-  if element == nil then
-    element = pop.screen
-  end
-  if skin == nil then
-    skin = pop.skins.default
-  end
-  if element.background and skin.background then
-    element.background = skin.background
-  end
-  if element.color and skin.color then
-    element.color = skin.color
-  end
-  if element.font and skin.font then
-    element.font = skin.font
-  end
-  if not (depth or (depth == 0)) then
-    if depth == tonumber(depth) then
-      for i = 1, #element.child do
-        pop.skin(element.child[i], skin, depth - 1)
-      end
-    else
-      for i = 1, #element.child do
-        pop.skin(element.child[i], skin, true)
-      end
-    end
-  end
 end
 pop.debugDraw = function(element)
   if element == nil then

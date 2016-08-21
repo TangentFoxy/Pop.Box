@@ -1,0 +1,150 @@
+--- This is a description of what is expected in an element class.
+---
+--- **IMPORTANT**: Your class should inherit from *the* element class. This
+--- means that any methods defined on that class need to be compatible with or
+--- overridden by your class!
+--- @see element
+
+
+
+--- **Optional**: Called during `pop.load()` with a reference to Pop.Box.
+--- @function load
+--- @tparam module pop The Pop.Box module.
+
+--- **Optional**: Called during `pop.load()` to allow a custom wrapper function
+--- to be created for your element class.
+--- @function wrap
+--- @tparam module pop The Pop.Box module.
+--- @treturn function wrapper A function to be called to create an element of
+--- this class instead of using `pop.create()`.
+
+--- **Optional**: Called from `pop.update()` if `data.update` and a child of
+--- `pop.screen`. Use it for any time-based updates your element may need.
+--- @function update
+--- @tparam number dt The amount of time elapsed since `update` was last called.
+
+--- **Optional**: Called from `pop.draw()` if `data.draw` and a child of
+--- `pop.screen`. Use it to draw your element.
+--- @function draw
+
+--- **Optional**: Called from `pop.mousemoved()` if in LOVE >= 0.10.0 and your
+--- element is focused.
+--- @function mousemoved
+--- @tparam integer x The x coordinate of the mouse.
+--- @tparam integer y The y coordinate of the mouse.
+--- @tparam number dx The distance on the x axis the mouse was moved.
+--- @tparam number dy The distance on the y axis the mouse was moved.
+--- @treturn boolean Was the event handled?
+
+--- **Optional**: Called from `pop.mousepressed()` if a mouse button was pressed
+--- over your element.
+---
+--- **Note**: Your element must be visible (`data.draw` is true) for this method
+--- to be called.
+--- @function mousepressed
+--- @tparam integer x The x coordinate of the mouse press.
+--- @tparam integer y The y coordinate of the mouse press.
+--- @tparam ?string|integer button The mouse button pressed. (Type varies by
+--- LÖVE version.)
+--- @treturn boolean Was the event handled?
+
+
+
+--- The parent element of this element.
+--- @tfield ?Element|false parent Parent element.
+
+--- The child elements of this element.
+--- @tfield table child All child elements.
+
+
+
+--- Every object has a data field with pre-defined values. Any serializable data
+--- should be saved in this field. Ideally, any Pop.Box element can be
+--- reconstructed from its data field.
+--- @table data
+--- @tfield ?table|false parent The parent of this element's data field. This
+--- will **not** be serialized. This is the *only* exception to all data being
+--- serialized.
+--- @tfield table child All child elements' data fields.
+--- @tfield integer x The left edge of your element.
+--- @tfield integer y The top edge of your element.
+--- @tfield integer w The width of your element.
+--- @tfield integer h The height of your element.
+--- @tfield boolean update Whether or not to update this element (and its
+--- children).
+--- @tfield boolean draw Whether or not to draw this element (and its children).
+
+
+
+pop.mousereleased = (x, y, button, element) ->
+                if element.clicked and element.data.draw
+                    clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
+                if element.mousereleased
+                    mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
+
+                -- if we clicked, we're focused!
+                if clickedHandled
+                    pop.focused = element
+
+pop.keypressed = (key) ->
+    print "keypressed", key
+
+    -- keypressed events must be on visible elements
+    element = pop.focused
+    if element and element.keypressed and element.data.draw
+        return element.keypressed key
+
+    return false
+
+pop.keyreleased = (key) ->
+    print "keyreleased", key
+
+    -- keyreleased events are always called
+    element = pop.focused
+    if element and element.keyreleased
+        return element.keyreleased key
+
+    return false
+
+pop.textinput = (text) ->
+    print "textinput", text
+
+    -- textinput events must be on visible elements
+    element = pop.focused
+    if element and element.textinput and element.data.draw
+        return element.textinput text
+
+    return false
+
+pop.debugDraw = (element=pop.screen) ->
+    if element.debugDraw
+        element\debugDraw!
+    else
+        graphics.setLineWidth 1
+        graphics.setLineColor 0, 0, 0, 100
+        graphics.rectangle "fill", element.x, element.y, element.w, element.h
+        graphics.setColor 150, 150, 150, 150
+        graphics.rectangle "line", element.x, element.y, element.w, element.h
+        graphics.setColor 200, 200, 200, 255
+        graphics.print ".", element.x, element.y
+
+    for i = 1, #element.child
+        pop.debugDraw element.child[i]
+
+pop.printElementTree = (element=pop.screen, depth=0) ->
+    cls = element.__class.__name
+
+    if cls == "text"
+        cls = cls .. " (\"#{element\getText!\gsub "\n", "\\n"}\")"
+    elseif cls == "box"
+        bg = element\getBackground!
+
+        if type(bg) == "table"
+            bg = "#{bg[1]}, #{bg[2]}, #{bg[3]}, #{bg[4]}"
+
+        cls = cls .. " (#{bg})"
+
+    print string.rep("-", depth) .. " #{cls}"
+
+    for i = 1, #element.child
+        pop.printElementTree element.child[i], depth + 1
