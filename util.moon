@@ -2,7 +2,7 @@
 --- @module util
 --- @copyright Paul Liverman III (2015-2016)
 --- @license The MIT License (MIT)
---- @release v0.0.0
+--- @release 0.0.0
 
 --- @function inheritsFromElement
 --- @param object A table (MoonScript object expected) to be checked for inheritence from the "element" element.

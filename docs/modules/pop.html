@@ -34,14 +34,12 @@
 <ul>
 <li><a href="#Functions">Functions</a></li>
 <li><a href="#Tables">Tables</a></li>
-<li><a href="#Issues">Issues</a></li>
 </ul>
 
 
 <h2>Modules</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><strong>pop</strong></li>
-  <li><a href="../modules/main.html">main</a></li>
   <li><a href="../modules/util.html">util</a></li>
 </ul>
 
@@ -69,7 +67,7 @@
 	<td class="summary">Loads elements, skins, extensions, and initializes <code>pop.screen</code>.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#create">create (element, parent)</a></td>
+	<td class="name" nowrap><a href="#create">create (element, parent, ...)</a></td>
 	<td class="summary">Creates an element.</td>
 	</tr>
 	<tr>
@@ -126,27 +124,6 @@
 </td>
 	</tr>
 </table>
-<h2><a href="#Issues">Issues</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#load-todo1">load-todo1</a></td>
-	<td class="summary">Determine if extensions should have a reference saved (and the possibility of a load function?)
- require into pop.extensions by filename</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mousemoved-todo2">mousemoved-todo2</a></td>
-	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mousereleased-todo3">mousereleased-todo3</a></td>
-	<td class="summary"> Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
- (If I do it right here, the for loop above may break! I need to test/figure this out.)
-NOTE this might cause an error in the above for loop!
- basically, move focused element to front of its parent's child
-element.parent\focusChild element
-table.insert element.parent, element.parent\removeChild(element),</td>
-	</tr>
-</table>
 
 <br/>
 <br/>
@@ -160,7 +137,9 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <strong>load ()</strong>
     </dt>
     <dd>
-    Loads elements, skins, extensions, and initializes <code>pop.screen</code>.  <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called when you require Pop.Box.
+    Loads elements, skins, extensions, and initializes <code>pop.screen</code>. </p>
+
+<p> <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called when you require Pop.Box.
 
 
 
@@ -175,7 +154,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
 </dd>
     <dt>
     <a name = "create"></a>
-    <strong>create (element, parent)</strong>
+    <strong>create (element, parent, ...)</strong>
     </dt>
     <dd>
     Creates an element.
@@ -187,8 +166,12 @@ table.insert element.parent, element.parent\removeChild(element),</td>
          A string naming the element class to use.
         </li>
         <li><span class="parameter">parent</span>
-         <em>Optional</em> The parent element. If <code>false</code>, an element is created with no parent. If <code>nil</code>, defaults to <code>pop.screen</code>.
- (<strong>Note</strong>: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
+        [opt] The parent element. If <code>false</code>, an element is created with no parent. If <code>nil</code>, defaults to <code>pop.screen</code>.
+        </li>
+        <li><span class="parameter">...</span>
+        [opt] Any number of parameters can be passed to the constructor for the element.</p>
+
+<p> (<strong>Note</strong>: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
         </li>
     </ul>
 
@@ -215,7 +198,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
          The amount of time passed since the last call to update, in seconds.
         </li>
         <li><span class="parameter">element</span>
-         <em>Optional</em> The element to update. Defaults to <code>pop.screen</code> (and loops through all its children).
+        [opt] The element to update (will update all its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -235,7 +218,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         <em>Optional</em> The element to draw. Defaults to <code>pop.screen</code> (and loops through all its children).
+        [opt] The element to draw (will draw all its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -298,7 +281,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
          The mouse button pressed.
         </li>
         <li><span class="parameter">element</span>
-         <em>Optional</em> The element to check for event handling. Defaults to <code>pop.screen</code> (and loops through all its children).
+        [opt] The element to check for event handling (will check its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -332,7 +315,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
          The mouse button released.
         </li>
         <li><span class="parameter">element</span>
-         <em>Optional</em> The element to check for event handling. Defaults to <code>pop.screen</code> (and loops through all its children).
+        [opt] The element to check for event handling (will check its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -428,19 +411,19 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <strong>skin (element, skin, depth)</strong>
     </dt>
     <dd>
-    Applies skins to elements.  (<em>*NOTE^</em>: This function will be rewritten and change at some point...)
+    Applies skins to elements.  (<strong>NOTE</strong>: This function will be rewritten and change at some point...)
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         The element to skin. Defaults to <code>pop.screen</code> (and loops through all its children).
+         The element to skin (will also be applied to children). Defaults to <code>pop.screen</code>.
         </li>
         <li><span class="parameter">skin</span>
-         The skin to use, can be a string or an actual skin object, defaults to a default skin that is part of Pop.Box.
+         The skin to use, can be a string or an actual skin object, defaults to the default skin included with Pop.Box.
         </li>
         <li><span class="parameter">depth</span>
-         Can be an integer for how many levels to go skinning. Alternately, if <code>true</code>, will skin all children.
+        [opt] An integer for how many child levels to skin, OR, if <code>true</code>, will skin all children.
         </li>
     </ul>
 
@@ -460,7 +443,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         The element to draw. Defaults to <code>pop.screen</code> (and loops through all its children).
+         The element to draw (will draw its children as well). Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -480,7 +463,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">element</span>
-         The element to start at. Defaults to <code>pop.screen</code> (and loops through all its children).
+         The element to start at. Defaults to <code>pop.screen</code>.
         </li>
     </ul>
 
@@ -511,11 +494,14 @@ table.insert element.parent, element.parent\removeChild(element),</td>
         <li><span class="parameter">skins</span>
          All skins are stored here.
         </li>
+        <li><span class="parameter">extensions</span>
+         All extensions are loaded here.
+        </li>
         <li><span class="parameter">screen</span>
          The top level GUI element. Represents the game screen. Initialized in <code>pop.load()</code>
         </li>
         <li><span class="parameter">focused</span>
-         The currently focused GUI element (or false if none is focused).
+         The currently focused GUI element (or <code>false</code> if none is focused).
         </li>
     </ul>
 
@@ -529,65 +515,13 @@ table.insert element.parent, element.parent\removeChild(element),</td>
 
 </dd>
 </dl>
-    <h2 class="section-header "><a name="Issues"></a>Issues</h2>
-
-    <dl class="function">
-    <dt>
-    <a name = "load-todo1"></a>
-    <strong>load-todo1</strong>
-    </dt>
-    <dd>
-    Determine if extensions should have a reference saved (and the possibility of a load function?)
- require into pop.extensions by filename
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "mousemoved-todo2"></a>
-    <strong>mousemoved-todo2</strong>
-    </dt>
-    <dd>
-    Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "mousereleased-todo3"></a>
-    <strong>mousereleased-todo3</strong>
-    </dt>
-    <dd>
-     Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
- (If I do it right here, the for loop above may break! I need to test/figure this out.)
-NOTE this might cause an error in the above for loop!
- basically, move focused element to front of its parent's child
-element.parent\focusChild element
-table.insert element.parent, element.parent\removeChild(element),
-
-
-
-
-
-
-
-</dd>
-</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-08-02 16:30:36 </i>
+<i style="float:right;">Last updated 2016-08-20 21:29:17 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

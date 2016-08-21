@@ -1,3 +1,4 @@
 lua51.dll
 moon*.exe
 moonscript.dll
+spec/*.lua

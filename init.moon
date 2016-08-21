@@ -15,10 +15,12 @@ pop = {
 unless love.getVersion
     error "Pop.Box only supports LOVE versions >= 0.9.1"
 
-if (...)\sub(-4) == "init"
-    error "Pop.Box must be required by its containing folder"
-
 path = ...
+
+if (...)\sub(-4) == "init"
+    path = (...)\sub 1, -5
+    unless path
+        path = "."
 
 import filesystem, graphics from love
 import insert from table
@@ -27,25 +29,29 @@ import inheritsFromElement from require "#{path}/util"
 --- @table pop
 --- @field elements All GUI classes are stored here.
 --- @field skins All skins are stored here.
+--- @field extensions All extensions are loaded here.
 --- @field screen The top level GUI element. Represents the game screen. Initialized in `pop.load()`
 --- @see pop.load
---- @field focused The currently focused GUI element (or false if none is focused).
+--- @field focused The currently focused GUI element (or `false` if none is focused).
 
 pop.elements = {}
 pop.skins = {}
+pop.extensions = {}
 pop.screen = false
 pop.focused = false
 
 
 
---- Loads elements, skins, extensions, and initializes `pop.screen`. **IMPORTANT**: Intended to only be called once, and is automatically called when you require Pop.Box.
+--- Loads elements, skins, extensions, and initializes `pop.screen`.
+---
+--- **IMPORTANT**: Intended to only be called once, and is automatically called when you require Pop.Box.
 --- @function load
 --- @see pop
---- @todo @see Elements
---- @todo @see Skins
---- @todo @see Extensions
 
 pop.load = ->
+    --@todo @ see Elements
+    --@todo @ see Skins
+    --@todo @ see Extensions
     elements = filesystem.getDirectoryItems "#{path}/elements"
     for i = 1, #elements
         -- ignore non-Lua files
@@ -96,10 +102,13 @@ pop.load = ->
         unless extensions[i]\sub(-4) == ".lua"
             continue
 
-        --- @todo Determine if extensions should have a reference saved (and the possibility of a load function?)
         -- require into pop.extensions by filename
         name = extensions[i]\sub 1, -5
-        require "#{path}/extensions/#{name}"
+        pop.extensions[name] = require "#{path}/extensions/#{name}"
+
+        -- call the extension's load function if it exists
+        if pop.extensions[name].load
+            pop.extensions[name].load pop
 
         print "extension loaded: \"#{name}\""
 
@@ -113,12 +122,14 @@ pop.load = ->
 --- Creates an element.
 --- @function create
 --- @param element A string naming the element class to use.
---- @param parent *Optional* The parent element. If `false`, an element is created with no parent. If `nil`, defaults to `pop.screen`.
+--- @param parent[opt] The parent element. If `false`, an element is created with no parent. If `nil`, defaults to `pop.screen`.
+--- @param ...[opt] Any number of parameters can be passed to the constructor for the element.
+---
 --- (**Note**: An element with no parent will not be handled by Pop.Box's event handlers unless you handle it explicitly.)
 --- @see pop
---- @todo @see Elements
 
 pop.create = (element, parent=pop.screen, ...) ->
+    --@todo @ see Elements
     -- if valid parent element, use it
     if inheritsFromElement parent
         element = pop.elements[element](parent, ...)
@@ -140,10 +151,10 @@ pop.create = (element, parent=pop.screen, ...) ->
 --- Event handler for `love.update()`.
 --- @function update
 --- @param dt The amount of time passed since the last call to update, in seconds.
---- @param element *Optional* The element to update. Defaults to `pop.screen` (and loops through all its children).
---- @todo Define Elements and @see that documentation from here. Generic documentation, not specifically element!
+--- @param element[opt] The element to update (will update all its children as well). Defaults to `pop.screen`.
 
 pop.update = (dt, element=pop.screen) ->
+    --@todo Define Elements and @ see that documentation from here. Generic documentation, not specifically element!
     -- data.update boolean controls an element and its children being updated
     if element.data.update
         if element.update
@@ -155,10 +166,10 @@ pop.update = (dt, element=pop.screen) ->
 
 --- Event handler for `love.draw()`.
 --- @function draw
---- @param element *Optional* The element to draw. Defaults to `pop.screen` (and loops through all its children).
---- @todo @see Elements
+--- @param element[opt] The element to draw (will draw all its children as well). Defaults to `pop.screen`.
 
 pop.draw = (element=pop.screen) ->
+    --@todo @ see Elements
     -- data.draw boolean controls an element and its children being drawn
     if element.data.draw
         if element.draw
@@ -176,8 +187,8 @@ pop.draw = (element=pop.screen) ->
 --- @param dy The distance on the y axis the mouse was moved.
 --- @return `true` / `false`: Was the event handled?
 
---- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
 pop.mousemoved = (x, y, dx, dy) ->
+    --@todo Implement a way for an element to attach itself to `love.mousemoved()` events?
     if pop.focused and pop.focused.mousemoved
         return pop.focused\mousemoved x, y, dx, dy
 
@@ -190,7 +201,7 @@ pop.mousemoved = (x, y, dx, dy) ->
 --- @param x The x coordinate of the mouse press.
 --- @param y The y coordinate of the mouse press.
 --- @param button The mouse button pressed.
---- @param element *Optional* The element to check for event handling. Defaults to `pop.screen` (and loops through all its children).
+--- @param element[opt] The element to check for event handling (will check its children as well). Defaults to `pop.screen`.
 --- @return `true` / `false`: Was the event handled?
 
 pop.mousepressed = (x, y, button, element) ->
@@ -226,7 +237,7 @@ pop.mousepressed = (x, y, button, element) ->
 --- @param x The x coordinate of the mouse release.
 --- @param y The y coordinate of the mouse release.
 --- @param button The mouse button released.
---- @param element *Optional* The element to check for event handling. Defaults to `pop.screen` (and loops through all its children).
+--- @param element[opt] The element to check for event handling (will check its children as well). Defaults to `pop.screen`.
 --- @return `true` / `false`: Was a click handled?
 --- @return `true` / `false`: Was a mouse release handled?
 
@@ -255,7 +266,7 @@ pop.mousereleased = (x, y, button, element) ->
                 -- if we clicked, we're focused!
                 if clickedHandled
                     pop.focused = element
-                    --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+                    --@todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
                     --- (If I do it right here, the for loop above may break! I need to test/figure this out.)
                     --NOTE this might cause an error in the above for loop!
                     -- basically, move focused element to front of its parent's child
@@ -322,12 +333,11 @@ pop.textinput = (text) ->
 
 
 
---- Applies skins to elements. (**NOTE^*: This function will be rewritten and change at some point...)
+--- Applies skins to elements. (**NOTE**: This function will be rewritten and change at some point...)
 --- @function skin
---- @param element The element to skin. Defaults to `pop.screen` (and loops through all its children).
---- @param skin The skin to use, can be a string or an actual skin object, defaults to a default skin that is part of Pop.Box.
---- @param depth Can be an integer for how many levels to go skinning. Alternately, if `true`, will skin all children.
---- @todo Rewrite the skin function taking advantage of data block / whatever else is needed.
+--- @param element The element to skin (will also be applied to children). Defaults to `pop.screen`.
+--- @param skin The skin to use, can be a string or an actual skin object, defaults to the default skin included with Pop.Box.
+--- @param depth[opt] An integer for how many child levels to skin, OR, if `true`, will skin all children.
 
 --TODO rewrite skin system to not rely on knowing internals of elements,
 --     instead call functions like setColor and setBackground
@@ -335,6 +345,7 @@ pop.textinput = (text) ->
 --  depth can be an integer for how many levels to go down when skinning
 --  defaults to pop.screen and the default skin
 pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
+    --@todo Rewrite the skin function taking advantage of data block / whatever else is needed.
     if element.background and skin.background
         element.background = skin.background
     if element.color and skin.color
@@ -348,16 +359,16 @@ pop.skin = (element=pop.screen, skin=pop.skins.default, depth) ->
                 pop.skin element.child[i], skin, depth - 1
         else
             for i = 1, #element.child
-                pop.skin element.child[i], skin, false
+                pop.skin element.child[i], skin, true
 
 
 
 --- Draws simple rectangle outlines to debug placement of elements.
 --- @function debugDraw
---- @param element The element to draw. Defaults to `pop.screen` (and loops through all its children).
---- @todo Make this better in the future when different element types have been created and whatnot.
+--- @param element The element to draw (will draw its children as well). Defaults to `pop.screen`.
 
 pop.debugDraw = (element=pop.screen) ->
+    --@todo Make this better in the future when different element types have been created and whatnot.
     if element.debugDraw
         element\debugDraw!
     else
@@ -376,10 +387,10 @@ pop.debugDraw = (element=pop.screen) ->
 
 --- Prints a basic structure of GUI elements with minimal info.
 --- @function printElementTree
---- @param element The element to start at. Defaults to `pop.screen` (and loops through all its children).
---- @todo Correct this once elements are reimplemented if it needs correction.
+--- @param element The element to start at. Defaults to `pop.screen`.
 
 pop.printElementTree = (element=pop.screen, depth=0) ->
+    --@todo Correct this once elements are reimplemented if it needs correction.
     cls = element.__class.__name
 
     if cls == "text"

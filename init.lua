@@ -8,10 +8,13 @@ local pop = {
 if not (love.getVersion) then
   error("Pop.Box only supports LOVE versions >= 0.9.1")
 end
-if (...):sub(-4) == "init" then
-  error("Pop.Box must be required by its containing folder")
-end
 local path = ...
+if (...):sub(-4) == "init" then
+  path = (...):sub(1, -5)
+  if not (path) then
+    path = "."
+  end
+end
 local filesystem, graphics
 do
   local _obj_0 = love
@@ -23,6 +26,7 @@ local inheritsFromElement
 inheritsFromElement = require(tostring(path) .. "/util").inheritsFromElement
 pop.elements = { }
 pop.skins = { }
+pop.extensions = { }
 pop.screen = false
 pop.focused = false
 pop.load = function()
@@ -85,7 +89,10 @@ pop.load = function()
         break
       end
       local name = extensions[i]:sub(1, -5)
-      require(tostring(path) .. "/extensions/" .. tostring(name))
+      pop.extensions[name] = require(tostring(path) .. "/extensions/" .. tostring(name))
+      if pop.extensions[name].load then
+        pop.extensions[name].load(pop)
+      end
       print("extension loaded: \"" .. tostring(name) .. "\"")
       _continue_0 = true
     until true
@@ -249,7 +256,7 @@ pop.skin = function(element, skin, depth)
       end
     else
       for i = 1, #element.child do
-        pop.skin(element.child[i], skin, false)
+        pop.skin(element.child[i], skin, true)
       end
     end
   end
