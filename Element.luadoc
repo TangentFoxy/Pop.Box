@@ -48,6 +48,31 @@
 --- LÖVE version.)
 --- @treturn boolean Was the event handled?
 
+--- **Optional**: Called from `pop.mousereleased()` if a mouse button was
+--- pressed and then released over your element.
+---
+--- **Note**: Your element must be visible (`data.draw` is true) for this method
+--- to be called.
+--- @function clicked
+--- @tparam integer x The x coordinate of the mouse click relative to the
+--- element.
+--- @tparam integer y The y coordinate of the mouse click relative to the
+--- element.
+--- @tparam ?string|integer button The mouse button clicked. (Type varies by
+--- LÖVE version.)
+--- @treturn boolean Was the event handled?
+
+--- **Optional**: Called from `pop.mousereleased()` if a mouse button was
+--- released over your element.
+--- @function mousereleased
+--- @tparam integer x The x coordinate of the mouse release relative to the
+--- element.
+--- @tparam integer y The y coordinate of the mouse release relative to the
+--- element.
+--- @tparam ?string|integer button The mouse button released. (Type varies by
+--- LÖVE version.)
+--- @treturn boolean Was the event handled?
+
 
 
 --- The parent element of this element.
@@ -76,15 +101,10 @@
 
 
 
-pop.mousereleased = (x, y, button, element) ->
-                if element.clicked and element.data.draw
-                    clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
-                if element.mousereleased
-                    mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
-
-                -- if we clicked, we're focused!
-                if clickedHandled
-                    pop.focused = element
+-- @todo Document keypressed method
+-- @todo Document keyreleased method
+-- @todo Document textinput method
+-- @todo Document debugDraw method
 
 pop.keypressed = (key) ->
     print "keypressed", key
@@ -119,32 +139,3 @@ pop.textinput = (text) ->
 pop.debugDraw = (element=pop.screen) ->
     if element.debugDraw
         element\debugDraw!
-    else
-        graphics.setLineWidth 1
-        graphics.setLineColor 0, 0, 0, 100
-        graphics.rectangle "fill", element.x, element.y, element.w, element.h
-        graphics.setColor 150, 150, 150, 150
-        graphics.rectangle "line", element.x, element.y, element.w, element.h
-        graphics.setColor 200, 200, 200, 255
-        graphics.print ".", element.x, element.y
-
-    for i = 1, #element.child
-        pop.debugDraw element.child[i]
-
-pop.printElementTree = (element=pop.screen, depth=0) ->
-    cls = element.__class.__name
-
-    if cls == "text"
-        cls = cls .. " (\"#{element\getText!\gsub "\n", "\\n"}\")"
-    elseif cls == "box"
-        bg = element\getBackground!
-
-        if type(bg) == "table"
-            bg = "#{bg[1]}, #{bg[2]}, #{bg[3]}, #{bg[4]}"
-
-        cls = cls .. " (#{bg})"
-
-    print string.rep("-", depth) .. " #{cls}"
-
-    for i = 1, #element.child
-        pop.printElementTree element.child[i], depth + 1

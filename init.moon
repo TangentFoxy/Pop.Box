@@ -142,7 +142,7 @@ pop.create = (element, parent=pop.screen, ...) ->
         element = pop.elements[element](parent, ...)
         insert parent.child, element
         insert parent.data.child, element.data
-        element.parent = parent
+        element.parent = parent --this should already have been set by the element, this is here as a precaution
         element.data.parent = parent.data
     -- if explicitly no parent, just create the element
     elseif parent == false
@@ -154,7 +154,7 @@ pop.create = (element, parent=pop.screen, ...) ->
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
         insert pop.screen.data.child, element.data
-        element.parent = pop.screen
+        element.parent = pop.screen --this should already have been set by the element, this is here as a precaution
         element.data.parent = pop.screen.data
 
     return element
@@ -369,11 +369,11 @@ pop.debugDraw = (element=pop.screen) ->
     else
         graphics.setLineWidth 1
         graphics.setLineColor 0, 0, 0, 100
-        graphics.rectangle "fill", element.x, element.y, element.w, element.h
+        graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
         graphics.setColor 150, 150, 150, 150
-        graphics.rectangle "line", element.x, element.y, element.w, element.h
+        graphics.rectangle "line", element.data.x, element.data.y, element.data.w, element.data.h
         graphics.setColor 200, 200, 200, 255
-        graphics.print ".", element.x, element.y
+        graphics.print ".", element.data.x, element.data.y
 
     for i = 1, #element.child
         pop.debugDraw element.child[i]

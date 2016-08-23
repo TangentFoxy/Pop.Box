@@ -248,11 +248,11 @@ pop.debugDraw = function(element)
   else
     graphics.setLineWidth(1)
     graphics.setLineColor(0, 0, 0, 100)
-    graphics.rectangle("fill", element.x, element.y, element.w, element.h)
+    graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
     graphics.setColor(150, 150, 150, 150)
-    graphics.rectangle("line", element.x, element.y, element.w, element.h)
+    graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
     graphics.setColor(200, 200, 200, 255)
-    graphics.print(".", element.x, element.y)
+    graphics.print(".", element.data.x, element.data.y)
   end
   for i = 1, #element.child do
     pop.debugDraw(element.child[i])

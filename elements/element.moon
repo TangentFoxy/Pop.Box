@@ -4,9 +4,9 @@
 --- @license The MIT License (MIT)
 
 class element
-    --- Constructor expects nothing?
-    new: (parent) =>
-        --do stuff
+    --- Constructor expects nothing, or a data table describing it.
+    new: (@parent, @data={}) =>
+        --- @todo if data, do stuff about it
 
     setSize: =>
         --do more stuff!
