@@ -6,7 +6,8 @@
 class element
     --- Constructor expects nothing, or a data table describing it.
     new: (@parent, @data={}) =>
-        --- @todo if data, do stuff about it
+        if type @data != "table"
+            @data = {}
 
     setSize: =>
         --do more stuff!

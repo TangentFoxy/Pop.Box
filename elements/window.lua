@@ -1,4 +1,4 @@
-local element
+local window
 do
   local _class_0
   local _base_0 = {
@@ -11,12 +11,9 @@ do
         data = { }
       end
       self.parent, self.data = parent, data
-      if type(self.data ~= "table") then
-        self.data = { }
-      end
     end,
     __base = _base_0,
-    __name = "element"
+    __name = "window"
   }, {
     __index = _base_0,
     __call = function(cls, ...)
@@ -26,6 +23,6 @@ do
     end
   })
   _base_0.__class = _class_0
-  element = _class_0
+  window = _class_0
   return _class_0
 end

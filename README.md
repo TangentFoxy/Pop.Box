@@ -13,6 +13,11 @@ to make it easy to experiment with GUIs during development.
 
 Supports LÖVE versions 0.9.1 and higher.
 
+## Documentation
+
+Building the documentation relies on a specific version of LDoc. Run
+`sudo luarocks install ldoc 1.4.4-1` to install the necessary version.
+
 
 
 **Note**: Currently rewriting and redesigning Pop.Box. The following info is out of date until I finish:
