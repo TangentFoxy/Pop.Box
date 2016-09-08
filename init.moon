@@ -207,7 +207,7 @@ pop.draw = (element=pop.screen) ->
 pop.mousemoved = (x, y, dx, dy) ->
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
     if pop.focused and pop.focused.mousemoved
-        return pop.focused\mousemoved x, y, dx, dy
+        return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
 
     return false
 

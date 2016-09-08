@@ -154,7 +154,7 @@ pop.draw = function(element)
 end
 pop.mousemoved = function(x, y, dx, dy)
   if pop.focused and pop.focused.mousemoved then
-    return pop.focused:mousemoved(x, y, dx, dy)
+    return pop.focused:mousemoved(x - pop.focused.data.x, y - pop.focused.data.y, dx, dy)
   end
   return false
 end

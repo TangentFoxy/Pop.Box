@@ -27,8 +27,11 @@ describe "Pop.Box", ->
         pending "loads all extensions", ->
             -- see checks for loading all elements
 
-        pending "creates an element the size of the game window", ->
-            -- use our shim's width/height, check the size of the element, check that it actually is an element class object, make sure it is stored in pop.screen
+        it "creates an element the size of the game window", ->
+            pop = require "init"
+            w, h = pop.screen\getSize!
+            assert.are.equal love.graphics.getWidth!, w
+            assert.are.equal love.graphics.getHeight!, h
 
     pending "check inherit checker", ->
 

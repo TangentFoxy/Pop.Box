@@ -3,6 +3,10 @@
 --- **IMPORTANT**: Your class should inherit from *the* element class. This
 --- means that any methods defined on that class need to be compatible with or
 --- overridden by your class!
+---
+--- **Note**: The event handling functions only know about children of
+--- `pop.screen` or children of an element *you* have called Pop.Box's event
+--- handlers on.
 --- @see element
 
 
@@ -18,20 +22,20 @@
 --- @treturn function wrapper A function to be called to create an element of
 --- this class instead of using `pop.create()`.
 
---- **Optional**: Called from `pop.update()` if `data.update` and a child of
---- `pop.screen`. Use it for any time-based updates your element may need.
+--- **Optional**: Called from `pop.update()` if `data.update`. Use it for any
+--- time-based updates your element may need.
 --- @function update
 --- @tparam number dt The amount of time elapsed since `update` was last called.
 
---- **Optional**: Called from `pop.draw()` if `data.draw` and a child of
---- `pop.screen`. Use it to draw your element.
+--- **Optional**: Called from `pop.draw()` if `data.draw`. Use it to draw your
+--- element.
 --- @function draw
 
 --- **Optional**: Called from `pop.mousemoved()` if in LOVE >= 0.10.0 and your
 --- element is focused.
 --- @function mousemoved
---- @tparam integer x The x coordinate of the mouse.
---- @tparam integer y The y coordinate of the mouse.
+--- @tparam integer x The x coordinate of the mouse relative to the element.
+--- @tparam integer y The y coordinate of the mouse relative to the element.
 --- @tparam number dx The distance on the x axis the mouse was moved.
 --- @tparam number dy The distance on the y axis the mouse was moved.
 --- @treturn boolean Was the event handled?
@@ -42,8 +46,10 @@
 --- **Note**: Your element must be visible (`data.draw` is true) for this method
 --- to be called.
 --- @function mousepressed
---- @tparam integer x The x coordinate of the mouse press.
---- @tparam integer y The y coordinate of the mouse press.
+--- @tparam integer x The x coordinate of the mouse press relative to the
+--- element.
+--- @tparam integer y The y coordinate of the mouse press relative to the
+--- element.
 --- @tparam ?string|integer button The mouse button pressed. (Type varies by
 --- LÖVE version.)
 --- @treturn boolean Was the event handled?
@@ -78,7 +84,7 @@
 --- The parent element of this element.
 --- @tfield ?Element|false parent Parent element.
 
---- The child elements of this element.
+--- The child element(s) of this element.
 --- @tfield table child All child elements.
 
 
@@ -87,7 +93,7 @@
 --- should be saved in this field. Ideally, any Pop.Box element can be
 --- reconstructed from its data field.
 --- @table data
---- @tfield ?table|false parent The parent of this element's data field. This
+--- @tfield ?table|false|nil parent The parent of this element's data field. This
 --- will **not** be serialized. This is the *only* exception to all data being
 --- serialized.
 --- @tfield table child All child elements' data fields.
