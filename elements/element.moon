@@ -22,6 +22,7 @@ class element
         @data.h = 0 unless @data.h
         @data.update = false if @data.update == nil
         @data.draw = true if @data.draw == nil
+        @data.type = "element" unless @data.type
 
         @child = {}
 

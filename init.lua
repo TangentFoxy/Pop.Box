@@ -29,6 +29,11 @@ local insert
 insert = table.insert
 local inheritsFromElement
 inheritsFromElement = require(tostring(path) .. "/util").inheritsFromElement
+local dumps, loads
+do
+  local _obj_0 = require(tostring(path) .. "/lib/bitser/bitser")
+  dumps, loads = _obj_0.dumps, _obj_0.loads
+end
 pop.elements = { }
 pop.skins = { }
 pop.extensions = { }
@@ -124,7 +129,6 @@ pop.create = function(element, parent, ...)
     element = pop.elements[element](parent, ...)
     insert(parent.child, element)
     insert(parent.data.child, element.data)
-    element.parent = parent
     element.data.parent = parent.data
   elseif parent == false then
     element = pop.elements[element](false, ...)
@@ -134,7 +138,6 @@ pop.create = function(element, parent, ...)
     element = pop.elements[element](pop.screen, parent, ...)
     insert(pop.screen.child, element)
     insert(pop.screen.data.child, element.data)
-    element.parent = pop.screen
     element.data.parent = pop.screen.data
   end
   return element
@@ -251,6 +254,28 @@ pop.textinput = function(text)
     return element.textinput(text)
   end
   return false
+end
+pop.import = function(data, parent)
+  if parent == nil then
+    parent = pop.screen
+  end
+  local element
+  if type(data) == "string" then
+    data = loads(data)
+    element = pop.create(data.type, parent, data)
+  else
+    element = pop.elements[data.type](parent, data)
+    insert(parent.child, element)
+  end
+  for i = 1, #data.child do
+    pop.import(data.child[i], element)
+  end
+end
+pop.export = function(element)
+  if element == nil then
+    element = pop.screen
+  end
+  return dumps(element.data)
 end
 pop.debugDraw = function(element)
   if element == nil then

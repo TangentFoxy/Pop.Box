@@ -1,0 +1,3 @@
+[submodule "lib/bitser"]
+	path = lib/bitser
+	url = https://github.com/gvx/bitser

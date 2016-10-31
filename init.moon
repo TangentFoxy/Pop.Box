@@ -30,6 +30,7 @@ log "Require path detected: \"#{path}\""
 import filesystem, graphics from love
 import insert from table
 import inheritsFromElement from require "#{path}/util"
+import dumps, loads from require "#{path}/lib/bitser/bitser"
 
 --- @table pop
 --- @tfield table elements All GUI classes are stored here.
@@ -155,7 +156,7 @@ pop.create = (element, parent=pop.screen, ...) ->
         element = pop.elements[element](parent, ...)
         insert parent.child, element
         insert parent.data.child, element.data
-        element.parent = parent --this should already have been set by the element, this is here as a precaution
+        --element.parent = parent
         element.data.parent = parent.data
     -- if explicitly no parent, just create the element
     elseif parent == false
@@ -167,7 +168,7 @@ pop.create = (element, parent=pop.screen, ...) ->
         element = pop.elements[element](pop.screen, parent, ...)
         insert pop.screen.child, element
         insert pop.screen.data.child, element.data
-        element.parent = pop.screen --this should already have been set by the element, this is here as a precaution
+        --element.parent = pop.screen
         element.data.parent = pop.screen.data
 
     return element
@@ -366,6 +367,29 @@ pop.textinput = (text) ->
         return element.textinput text
 
     return false
+
+
+
+--- @todo doc me
+
+pop.import = (data, parent=pop.screen) ->
+    local element
+    if type(data) == "string"
+        data = loads(data)
+        element = pop.create(data.type, parent, data)
+    else
+        element = pop.elements[data.type](parent, data)
+        insert parent.child, element
+
+    for i = 1, #data.child
+        pop.import data.child[i], element
+
+
+
+--- @todo doc me
+
+pop.export = (element=pop.screen) ->
+    return dumps(element.data)
 
 
 
