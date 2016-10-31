@@ -5,16 +5,21 @@ local pop = {
   _LICENSE = 'The MIT License (MIT)',
   _AUTHOR = 'Paul Liverman III'
 }
+local log
+log = function(...)
+  return print("[Pop.Box]", ...)
+end
 if not (love.getVersion) then
   error("Pop.Box only supports LOVE versions >= 0.9.1")
 end
-local path = ...
+local path = (...):gsub("%.", "/")
 if (...):sub(-4) == "init" then
   path = (...):sub(1, -5)
   if not (path) then
     path = "."
   end
 end
+log("Require path detected: \"" .. tostring(path) .. "\"")
 local filesystem, graphics
 do
   local _obj_0 = love
@@ -29,21 +34,25 @@ pop.skins = { }
 pop.extensions = { }
 pop.screen = false
 pop.focused = false
+pop.log = log
 pop.load = function()
+  log("Loading elements from \"" .. tostring(path) .. "/elements\"")
   local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
   for i = 1, #elements do
     local _continue_0 = false
     repeat
       if not (elements[i]:sub(-4) == ".lua") then
+        log("Ignored non-Lua file \"" .. tostring(path) .. "/elements/" .. tostring(elements[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = elements[i]:sub(1, -5)
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/elements/" .. tostring(name) .. "\"")
       pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
       if pop.elements[name].load then
         pop.elements[name].load(pop)
       end
-      print("element loaded: \"" .. tostring(name) .. "\"")
+      log("Element loaded: \"" .. tostring(name) .. "\"")
       if not (pop[name]) then
         if pop.elements[name].wrap then
           pop[name] = pop.elements[name].wrap(pop)
@@ -52,7 +61,7 @@ pop.load = function()
             return pop.create(name, ...)
           end
         end
-        print("wrapper created: \"pop." .. tostring(name) .. "()\"")
+        log("Wrapper created: \"pop." .. tostring(name) .. "()\"")
       end
       _continue_0 = true
     until true
@@ -65,15 +74,17 @@ pop.load = function()
     local _continue_0 = false
     repeat
       if not (skins[i]:sub(-4) == ".lua") then
+        log("Ignored non-Lua file \"" .. tostring(path) .. "/skins/" .. tostring(skins[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = skins[i]:sub(1, -5)
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/skins/" .. tostring(name) .. "\"")
       pop.skins[name] = require(tostring(path) .. "/skins/" .. tostring(name))
       if pop.skins[name].load then
         pop.skins[name].load(pop)
       end
-      print("skin loaded: \"" .. tostring(name) .. "\"")
+      log("Skin loaded: \"" .. tostring(name) .. "\"")
       _continue_0 = true
     until true
     if not _continue_0 then
@@ -85,15 +96,17 @@ pop.load = function()
     local _continue_0 = false
     repeat
       if not (extensions[i]:sub(-4) == ".lua") then
+        log("Ignored non-Lua file \"" .. tostring(path) .. "/extensions/" .. tostring(extensions[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = extensions[i]:sub(1, -5)
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/extensions/" .. tostring(name) .. "\"")
       pop.extensions[name] = require(tostring(path) .. "/extensions/" .. tostring(name))
       if pop.extensions[name].load then
         pop.extensions[name].load(pop)
       end
-      print("extension loaded: \"" .. tostring(name) .. "\"")
+      log("Extension loaded: \"" .. tostring(name) .. "\"")
       _continue_0 = true
     until true
     if not _continue_0 then
@@ -101,7 +114,7 @@ pop.load = function()
     end
   end
   pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
-  return print("created \"pop.screen\"")
+  return log("Created \"pop.screen\"")
 end
 pop.create = function(element, parent, ...)
   if parent == nil then
@@ -160,7 +173,7 @@ pop.mousemoved = function(x, y, dx, dy)
 end
 pop.mousepressed = function(x, y, button, element)
   if not (element) then
-    print("mousepressed", x, y, button)
+    log("mousepressed", x, y, button)
     element = pop.screen
   end
   local handled = false
@@ -210,13 +223,13 @@ pop.mousereleased = function(x, y, button, element)
       end
     end
   else
-    print("mousereleased", x, y, button)
+    log("mousereleased", x, y, button)
     pop.mousereleased(x, y, button, pop.screen)
   end
   return clickedHandled, mousereleasedHandled
 end
 pop.keypressed = function(key)
-  print("keypressed", key)
+  log("keypressed", key)
   local element = pop.focused
   if element and element.keypressed and element.data.draw then
     return element.keypressed(key)
@@ -224,7 +237,7 @@ pop.keypressed = function(key)
   return false
 end
 pop.keyreleased = function(key)
-  print("keyreleased", key)
+  log("keyreleased", key)
   local element = pop.focused
   if element and element.keyreleased then
     return element.keyreleased(key)
@@ -232,7 +245,7 @@ pop.keyreleased = function(key)
   return false
 end
 pop.textinput = function(text)
-  print("textinput", text)
+  log("textinput", text)
   local element = pop.focused
   if element and element.textinput and element.data.draw then
     return element.textinput(text)
@@ -247,7 +260,7 @@ pop.debugDraw = function(element)
     element:debugDraw()
   else
     graphics.setLineWidth(1)
-    graphics.setLineColor(0, 0, 0, 100)
+    graphics.setColor(0, 0, 0, 100)
     graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
     graphics.setColor(150, 150, 150, 150)
     graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
@@ -275,7 +288,7 @@ pop.printElementTree = function(element, depth)
     end
     cls = cls .. " (" .. tostring(bg) .. ")"
   end
-  print(string.rep("-", depth) .. " " .. tostring(cls))
+  log(string.rep("-", depth) .. " " .. tostring(cls))
   for i = 1, #element.child do
     pop.printElementTree(element.child[i], depth + 1)
   end

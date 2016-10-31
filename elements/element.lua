@@ -1,7 +1,18 @@
+local graphics
+graphics = love.graphics
 local element
 do
   local _class_0
   local _base_0 = {
+    debugDraw = function(self)
+      graphics.setLineWidth(1)
+      graphics.setColor(0, 20, 0, 100)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
+      graphics.setColor(150, 255, 150, 150)
+      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
+      graphics.setColor(200, 255, 200, 255)
+      return graphics.print("e", self.data.x, self.data.y)
+    end,
     setSize = function(self, w, h)
       if w then
         self.data.w = w
@@ -63,6 +74,7 @@ do
       if self.data.draw == nil then
         self.data.draw = true
       end
+      self.child = { }
     end,
     __base = _base_0,
     __name = "element"

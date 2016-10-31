@@ -12,15 +12,20 @@ pop = {
     _AUTHOR: 'Paul Liverman III'
 }
 
+log = (...) ->
+    print "[Pop.Box]", ...
+
 unless love.getVersion
     error "Pop.Box only supports LOVE versions >= 0.9.1"
 
-path = ...
+path = (...)\gsub "%.", "/"
 
 if (...)\sub(-4) == "init"
     path = (...)\sub 1, -5
     unless path
         path = "."
+
+log "Require path detected: \"#{path}\""
 
 import filesystem, graphics from love
 import insert from table
@@ -42,6 +47,7 @@ pop.skins = {}
 pop.extensions = {}
 pop.screen = false
 pop.focused = false
+pop.log = log
 
 
 
@@ -56,21 +62,24 @@ pop.focused = false
 pop.load = ->
     --@todo @ see Skins
     --@todo @ see Extensions
+    log "Loading elements from \"#{path}/elements\""
     elements = filesystem.getDirectoryItems "#{path}/elements"
     for i = 1, #elements
         -- ignore non-Lua files
         unless elements[i]\sub(-4) == ".lua"
+            log "Ignored non-Lua file \"#{path}/elements/#{elements[i]}\""
             continue
 
         -- require into pop.elements table by filename
         name = elements[i]\sub 1, -5
+        log "Requiring \"#{name}\" from \"#{path}/elements/#{name}\""
         pop.elements[name] = require "#{path}/elements/#{name}"
 
         -- call the element's load function if it exists
         if pop.elements[name].load
             pop.elements[name].load pop
 
-        print "element loaded: \"#{name}\""
+        log "Element loaded: \"#{name}\""
 
         -- create "pop.element()" function wrapper if possible
         unless pop[name]
@@ -80,46 +89,50 @@ pop.load = ->
                 pop[name] = (...) ->
                     return pop.create(name, ...)
 
-            print "wrapper created: \"pop.#{name}()\""
+            log "Wrapper created: \"pop.#{name}()\""
 
 
     skins = filesystem.getDirectoryItems "#{path}/skins"
     for i = 1, #skins
         -- ignore non-Lua files
         unless skins[i]\sub(-4) == ".lua"
+            log "Ignored non-Lua file \"#{path}/skins/#{skins[i]}\""
             continue
 
         -- require into pop.skins table by filename
         name = skins[i]\sub 1, -5
+        log "Requiring \"#{name}\" from \"#{path}/skins/#{name}\""
         pop.skins[name] = require "#{path}/skins/#{name}"
 
         -- call the skin's load function if it exists
         if pop.skins[name].load
             pop.skins[name].load pop
 
-        print "skin loaded: \"#{name}\""
+        log "Skin loaded: \"#{name}\""
 
 
     extensions = filesystem.getDirectoryItems "#{path}/extensions"
     for i = 1, #extensions
         -- ignore non-Lua files
         unless extensions[i]\sub(-4) == ".lua"
+            log "Ignored non-Lua file \"#{path}/extensions/#{extensions[i]}\""
             continue
 
         -- require into pop.extensions by filename
         name = extensions[i]\sub 1, -5
+        log "Requiring \"#{name}\" from \"#{path}/extensions/#{name}\""
         pop.extensions[name] = require "#{path}/extensions/#{name}"
 
         -- call the extension's load function if it exists
         if pop.extensions[name].load
             pop.extensions[name].load pop
 
-        print "extension loaded: \"#{name}\""
+        log "Extension loaded: \"#{name}\""
 
 
     -- Initialize pop.screen (top element, GUI area)
     pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
-    print "created \"pop.screen\""
+    log "Created \"pop.screen\""
 
 
 
@@ -227,7 +240,7 @@ pop.mousemoved = (x, y, dx, dy) ->
 pop.mousepressed = (x, y, button, element) ->
     -- start at the screen, print that we received an event
     unless element
-        print "mousepressed", x, y, button
+        log "mousepressed", x, y, button
         element = pop.screen
 
     -- have we handled the event?
@@ -298,7 +311,7 @@ pop.mousereleased = (x, y, button, element) ->
 
     -- else, default to pop.screen to begin! (and print that we received an event)
     else
-        print "mousereleased", x, y, button
+        log "mousereleased", x, y, button
         pop.mousereleased x, y, button, pop.screen
 
     return clickedHandled, mousereleasedHandled
@@ -311,7 +324,7 @@ pop.mousereleased = (x, y, button, element) ->
 --- @treturn boolean Was the event handled?
 
 pop.keypressed = (key) ->
-    print "keypressed", key
+    log "keypressed", key
 
     -- keypressed events must be on visible elements
     element = pop.focused
@@ -328,7 +341,7 @@ pop.keypressed = (key) ->
 --- @treturn boolean Was the event handled?
 
 pop.keyreleased = (key) ->
-    print "keyreleased", key
+    log "keyreleased", key
 
     -- keyreleased events are always called
     element = pop.focused
@@ -345,7 +358,7 @@ pop.keyreleased = (key) ->
 --- @treturn boolean Was the text input handled?
 
 pop.textinput = (text) ->
-    print "textinput", text
+    log "textinput", text
 
     -- textinput events must be on visible elements
     element = pop.focused
@@ -368,7 +381,7 @@ pop.debugDraw = (element=pop.screen) ->
         element\debugDraw!
     else
         graphics.setLineWidth 1
-        graphics.setLineColor 0, 0, 0, 100
+        graphics.setColor 0, 0, 0, 100
         graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
         graphics.setColor 150, 150, 150, 150
         graphics.rectangle "line", element.data.x, element.data.y, element.data.w, element.data.h
@@ -400,7 +413,7 @@ pop.printElementTree = (element=pop.screen, depth=0) ->
 
         cls = cls .. " (#{bg})"
 
-    print string.rep("-", depth) .. " #{cls}"
+    log string.rep("-", depth) .. " #{cls}"
 
     for i = 1, #element.child
         pop.printElementTree element.child[i], depth + 1
