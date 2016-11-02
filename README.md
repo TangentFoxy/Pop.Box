@@ -2,10 +2,10 @@
 
 *Do not mix with [Cola][1].*
 
-[![GitHub release](https://img.shields.io/github/release/Guard13007/Pop.Box.svg?maxAge=2592000)](https://github.com/Guard13007/Pop.Box/releases/latest)
-[![GitHub downloads](https://img.shields.io/github/downloads/Guard13007/Pop.Box/latest/total.svg?maxAge=2592000)](https://github.com/Guard13007/Pop.Box/releases/latest)
-[![GitHub issues](https://img.shields.io/github/issues-raw/Guard13007/Pop.Box.svg?maxAge=2592000)](https://github.com/Guard13007/Pop.Box/issues)
-[![GitHub license](https://img.shields.io/github/license/Guard13007/Pop.Box.svg?maxAge=2592000)](https://github.com/Guard13007/Pop.Box/blob/master/LICENSE.txt)
+[![GitHub release](https://img.shields.io/github/release/Guard13007/Pop.Box.svg?maxAge=86400)](https://github.com/Guard13007/Pop.Box/releases/latest)
+[![GitHub downloads](https://img.shields.io/github/downloads/Guard13007/Pop.Box/latest/total.svg?maxAge=86400)](https://github.com/Guard13007/Pop.Box/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues-raw/Guard13007/Pop.Box.svg?maxAge=86400)](https://github.com/Guard13007/Pop.Box/issues)
+[![GitHub license](https://img.shields.io/badge/license-MIT%20License-blue.svg?maxAge=86400)](https://github.com/Guard13007/Pop.Box/blob/master/LICENSE.txt)
 
 Pop.Box is a GUI library for use in the [LÖVE][2] engine, designed to be easy to
 use and require as little code as possible to set up. It is primarily designed
