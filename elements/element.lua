@@ -1,5 +1,7 @@
 local graphics
 graphics = love.graphics
+local floor
+floor = math.floor
 local element
 do
   local _class_0
@@ -12,6 +14,39 @@ do
       graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 255, 200, 255)
       return graphics.print("e", self.data.x, self.data.y)
+    end,
+    align = function(self, horizontal, vertical, toPixel)
+      if toPixel == nil then
+        toPixel = true
+      end
+      if not (self.data.align) then
+        return false
+      end
+      if horizontal then
+        self.data.horizontal = horizontal
+      end
+      if vertical then
+        self.data.vertical = vertical
+      end
+      self.data.x = self.parent.data.x
+      self.data.y = self.parent.data.y
+      local _exp_0 = self.data.horizontal
+      if "center" == _exp_0 then
+        self.data.x = self.data.x + ((self.parent.data.w - self.data.w) / 2)
+      elseif "right" == _exp_0 then
+        self.data.x = self.data.x + (self.parent.data.w - self.data.w)
+      end
+      local _exp_1 = self.data.vertical
+      if "center" == _exp_1 then
+        self.data.y = self.data.y + ((self.parent.data.h - self.data.h) / 2)
+      elseif "right" == _exp_1 then
+        self.data.y = self.data.y + (self.parent.data.h - self.data.h)
+      end
+      if toPixel then
+        self.data.x = floor(self.data.x)
+        self.data.y = floor(self.data.y)
+      end
+      return self
     end,
     setSize = function(self, w, h)
       if w then
@@ -47,7 +82,7 @@ do
         data = { }
       end
       self.parent, self.data = parent, data
-      if type(self.data ~= "table") then
+      if type(self.data) ~= "table" then
         self.data = { }
       end
       if not (self.data.parent) then
@@ -77,7 +112,17 @@ do
       if not (self.data.type) then
         self.data.type = "element"
       end
+      if (self.data.align == nil) and self.parent then
+        self.data.align = true
+      end
+      if not (self.data.vertical) then
+        self.data.vertical = "top"
+      end
+      if not (self.data.horizontal) then
+        self.data.horizontal = "left"
+      end
       self.child = { }
+      return self:align()
     end,
     __base = _base_0,
     __name = "element"

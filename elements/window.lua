@@ -15,9 +15,7 @@ do
       end
       self.parent, self.data = parent, data
       _class_0.__parent.__init(self, self.parent, self.data)
-      if self.data.type == "element" then
-        self.data.type = "window"
-      end
+      self.data.type = "window"
     end,
     __base = _base_0,
     __name = "window",

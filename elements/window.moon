@@ -10,7 +10,7 @@ class window extends element
     new: (@parent, @data={}) =>
         super @parent, @data
 
-        @data.type = "window" if @data.type == "element"
+        @data.type = "window"
 
         --- @todo if data, do stuff about it
 

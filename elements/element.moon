@@ -4,6 +4,7 @@
 --- @license The MIT License (MIT)
 
 import graphics from love
+import floor from math
 
 class element
     --- Constructor expects nothing, or a data table describing it.
@@ -11,7 +12,7 @@ class element
     --- @tparam table data[opt] The data (state) for this element.
     --- @treturn element self
     new: (@parent, @data={}) =>
-        if type @data != "table"
+        if type(@data) != "table"
             @data = {}
 
         @data.parent = false unless @data.parent
@@ -23,8 +24,13 @@ class element
         @data.update = false if @data.update == nil
         @data.draw = true if @data.draw == nil
         @data.type = "element" unless @data.type
+        @data.align = true if (@data.align == nil) and @parent
+        @data.vertical = "top" unless @data.vertical
+        @data.horizontal = "left" unless @data.horizontal
 
         @child = {}
+
+        @align!
 
     --- Slightly modified from pop.debugDraw
     --- @see pop.debugDraw
@@ -36,6 +42,34 @@ class element
         graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
         graphics.setColor 200, 255, 200, 255
         graphics.print "e", @data.x, @data.y
+
+    --- @todo doc me
+    align: (horizontal, vertical, toPixel=true) =>
+        unless @data.align return false
+
+        @data.horizontal = horizontal if horizontal
+        @data.vertical = vertical if vertical
+
+        @data.x = @parent.data.x
+        @data.y = @parent.data.y
+
+        switch @data.horizontal
+            when "center"
+                @data.x += (@parent.data.w - @data.w) / 2
+            when "right"
+                @data.x += @parent.data.w - @data.w
+
+        switch @data.vertical
+            when "center"
+                @data.y += (@parent.data.h - @data.h) / 2
+            when "right"
+                @data.y += @parent.data.h - @data.h
+
+        if toPixel
+            @data.x = floor @data.x
+            @data.y = floor @data.y
+
+        return @
 
     --- Sets an element's width/height.
     --- @tparam integer w[opt] Width.
