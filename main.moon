@@ -6,3 +6,5 @@ pop = require ""
 --- @todo write this!
 
 print(pop, pop.elements) --NOTE TEMPORARY
+
+return --this is to prevent default returning of last statement

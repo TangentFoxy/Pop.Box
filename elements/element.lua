@@ -39,7 +39,7 @@ do
       local _exp_1 = self.data.vertical
       if "center" == _exp_1 then
         self.data.y = self.data.y + ((self.parent.data.h - self.data.h) / 2)
-      elseif "right" == _exp_1 then
+      elseif "bottom" == _exp_1 then
         self.data.y = self.data.y + (self.parent.data.h - self.data.h)
       end
       if toPixel then

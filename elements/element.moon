@@ -62,7 +62,7 @@ class element
         switch @data.vertical
             when "center"
                 @data.y += (@parent.data.h - @data.h) / 2
-            when "right"
+            when "bottom"
                 @data.y += @parent.data.h - @data.h
 
         if toPixel
