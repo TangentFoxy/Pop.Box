@@ -5,6 +5,9 @@
 pop = require ""
 --- @todo write this!
 
-print(pop, pop.elements) --NOTE TEMPORARY
+-- NOTE TEMPORARY
+
+inspect = require "lib/inspect/inspect"
+print inspect pop
 
 return --this is to prevent default returning of last statement

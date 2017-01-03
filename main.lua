@@ -1,2 +1,3 @@
 local pop = require("")
-return print(pop, pop.elements)
+local inspect = require("lib/inspect/inspect")
+print(inspect(pop))

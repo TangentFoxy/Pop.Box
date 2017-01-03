@@ -1,6 +1,7 @@
 file = {
     "init.moon",
     "elements/element.moon",
+    "elements/window.moon",
     "main.moon",
     "util.moon",
     "Element.luadoc",
