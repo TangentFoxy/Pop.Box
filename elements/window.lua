@@ -3,9 +3,7 @@ local window
 do
   local _class_0
   local _parent_0 = element
-  local _base_0 = {
-    setSize = function(self) end
-  }
+  local _base_0 = { }
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({

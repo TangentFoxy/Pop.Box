@@ -150,22 +150,35 @@ pop.load = ->
 --- @see pop
 --- @see Element
 
-pop.create = (element, parent=pop.screen, ...) ->
+pop.create = (element, parent=pop.screen, data, ...) ->
     -- if valid parent element, use it
     if inheritsFromElement parent
-        element = pop.elements[element](parent, ...)
+        if type(data) == "table"
+            element = pop.elements[element](parent, data, ...)
+        else
+            element = pop.elements[element](parent, {}, data, ...)
         insert parent.child, element
         insert parent.data.child, element.data
         --element.parent = parent
         element.data.parent = parent.data
     -- if explicitly no parent, just create the element
     elseif parent == false
-        element = pop.elements[element](false, ...)
+        if type(data) == "table"
+            element = pop.elements[element](false, data, ...)
+        else
+            element = pop.elements[element](false, {}, data, ...)
         element.parent = false
         element.data.parent = false
     -- else use pop.screen (and "parent" is actually the first argument)
     else
-        element = pop.elements[element](pop.screen, parent, ...)
+        if type(parent) == "table" -- then parent must be data table
+            element = pop.elements[element](pop.screen, parent, data, ...)
+        else -- parent must be an argument
+            element = pop.elements[element](pop.screen, {}, parent, data, ...)
+        --if type(data) == "table"
+        --    element = pop.elements[element](pop.screen, parent, data, ...)
+        --else
+        --    element = pop.elements[element](pop.screen, parent, {}, data, ...)
         insert pop.screen.child, element
         insert pop.screen.data.child, element.data
         --element.parent = pop.screen

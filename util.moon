@@ -12,7 +12,7 @@
 --- @see Element
 
 inheritsFromElement = (object) ->
-    if object and object.__class
+    if object and type(object) == "table" and object.__class
         cls = object.__class
 
         if cls.__name == "element"

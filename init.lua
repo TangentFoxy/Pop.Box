@@ -121,21 +121,33 @@ pop.load = function()
   pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
   return log("Created \"pop.screen\"")
 end
-pop.create = function(element, parent, ...)
+pop.create = function(element, parent, data, ...)
   if parent == nil then
     parent = pop.screen
   end
   if inheritsFromElement(parent) then
-    element = pop.elements[element](parent, ...)
+    if type(data) == "table" then
+      element = pop.elements[element](parent, data, ...)
+    else
+      element = pop.elements[element](parent, { }, data, ...)
+    end
     insert(parent.child, element)
     insert(parent.data.child, element.data)
     element.data.parent = parent.data
   elseif parent == false then
-    element = pop.elements[element](false, ...)
+    if type(data) == "table" then
+      element = pop.elements[element](false, data, ...)
+    else
+      element = pop.elements[element](false, { }, data, ...)
+    end
     element.parent = false
     element.data.parent = false
   else
-    element = pop.elements[element](pop.screen, parent, ...)
+    if type(parent) == "table" then
+      element = pop.elements[element](pop.screen, parent, data, ...)
+    else
+      element = pop.elements[element](pop.screen, { }, parent, data, ...)
+    end
     insert(pop.screen.child, element)
     insert(pop.screen.data.child, element.data)
     element.data.parent = pop.screen.data

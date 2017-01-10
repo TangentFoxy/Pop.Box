@@ -43,6 +43,8 @@ class element
         graphics.setColor 200, 255, 200, 255
         graphics.print "e", @data.x, @data.y
 
+        return @
+
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
         unless @data.align return false
@@ -71,7 +73,7 @@ class element
 
         return @
 
-    --- Sets an element's width/height.
+    --- Sets an element's width/height. Fixes alignment if needed.
     --- @tparam integer w[opt] Width.
     --- @tparam integer h[opt] Height.
     --- @treturn element self
@@ -80,6 +82,8 @@ class element
             @data.w = w
         if h
             @data.h = h
+
+        @align!
 
         return @
 

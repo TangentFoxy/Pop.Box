@@ -1,4 +1,5 @@
---- A generic window element. Supports resizing, minimizing(?), and closing.
+--- A generic window element. Built-in support for minimize, maximize, and close
+--- buttons, as well as drag-to-resize and drag-to-move. Title bar customizable.
 --- @classmod window
 --- @copyright Paul Liverman III (2016)
 --- @license The MIT License (MIT)
@@ -14,5 +15,5 @@ class window extends element
 
         --- @todo if data, do stuff about it
 
-    setSize: =>
+    --setSize: =>
         --do more stuff!

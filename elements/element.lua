@@ -13,7 +13,8 @@ do
       graphics.setColor(150, 255, 150, 150)
       graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
       graphics.setColor(200, 255, 200, 255)
-      return graphics.print("e", self.data.x, self.data.y)
+      graphics.print("e", self.data.x, self.data.y)
+      return self
     end,
     align = function(self, horizontal, vertical, toPixel)
       if toPixel == nil then
@@ -55,6 +56,7 @@ do
       if h then
         self.data.h = h
       end
+      self:align()
       return self
     end,
     getSize = function(self)

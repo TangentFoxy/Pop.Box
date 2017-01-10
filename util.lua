@@ -1,6 +1,6 @@
 local inheritsFromElement
 inheritsFromElement = function(object)
-  if object and object.__class then
+  if object and type(object) == "table" and object.__class then
     local cls = object.__class
     if cls.__name == "element" then
       return true
