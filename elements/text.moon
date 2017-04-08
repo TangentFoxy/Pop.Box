@@ -13,13 +13,15 @@ class text extends element
         super @parent, @data
 
         @data.type = "text"
-        @data.text = text
-        @data.fontFile = fontFile
-        @data.fontSize = fontSize
+        @data.text = text unless @data.text
+        @data.fontFile = fontFile unless @data.fontFile
+        @data.fontSize = fontSize unless @data.fontSize
         @data.color = {255, 255, 255, 255} unless @data.color
 
-        if @data.fontFile
+        if "string" == type @data.fontFile
             @font = graphics.newFont(@data.fontFile, @data.fontSize)
+        elseif "number" == type @data.fontFile
+            @font = graphics.newFont(@data.fontFile)
         else
             @font = graphics.newFont(@data.fontSize)
 

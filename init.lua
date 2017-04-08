@@ -34,26 +34,51 @@ do
   local _obj_0 = require(tostring(path) .. "/lib/bitser/bitser")
   dumps, loads = _obj_0.dumps, _obj_0.loads
 end
+local major, minor, revision = love.getVersion()
+if major == 0 and minor == 9 then
+  pop.constants = {
+    left_mouse = "l",
+    middle_mouse = "m",
+    right_mouse = "r",
+    button_4 = "x1",
+    button_5 = "x2",
+    mouse_wheel_down = "wd",
+    mouse_wheel_up = "wu"
+  }
+elseif major == 0 and minor == 10 then
+  pop.constants = {
+    left_mouse = 1,
+    middle_mouse = 2,
+    right_mouse = 3,
+    button_4 = 4,
+    button_5 = 5
+  }
+else
+  pop.constants = { }
+end
 pop.elements = { }
 pop.skins = { }
 pop.extensions = { }
 pop.screen = false
 pop.focused = false
 pop.log = log
-pop.load = function()
-  log("Loading elements from \"" .. tostring(path) .. "/elements\"")
-  local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
+pop.load = function(load_path)
+  if load_path == nil then
+    load_path = path
+  end
+  log("Loading elements from \"" .. tostring(load_path) .. "/elements\"")
+  local elements = filesystem.getDirectoryItems(tostring(load_path) .. "/elements")
   for i = 1, #elements do
     local _continue_0 = false
     repeat
       if not (elements[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/elements/" .. tostring(elements[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/elements/" .. tostring(elements[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = elements[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/elements/" .. tostring(name) .. "\"")
-      pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/elements/" .. tostring(name) .. "\"")
+      pop.elements[name] = require(tostring(load_path) .. "/elements/" .. tostring(name))
       if pop.elements[name].load then
         pop.elements[name].load(pop)
       end
@@ -74,18 +99,18 @@ pop.load = function()
       break
     end
   end
-  local skins = filesystem.getDirectoryItems(tostring(path) .. "/skins")
+  local skins = filesystem.getDirectoryItems(tostring(load_path) .. "/skins")
   for i = 1, #skins do
     local _continue_0 = false
     repeat
       if not (skins[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/skins/" .. tostring(skins[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/skins/" .. tostring(skins[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = skins[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/skins/" .. tostring(name) .. "\"")
-      pop.skins[name] = require(tostring(path) .. "/skins/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/skins/" .. tostring(name) .. "\"")
+      pop.skins[name] = require(tostring(load_path) .. "/skins/" .. tostring(name))
       if pop.skins[name].load then
         pop.skins[name].load(pop)
       end
@@ -96,18 +121,18 @@ pop.load = function()
       break
     end
   end
-  local extensions = filesystem.getDirectoryItems(tostring(path) .. "/extensions")
+  local extensions = filesystem.getDirectoryItems(tostring(load_path) .. "/extensions")
   for i = 1, #extensions do
     local _continue_0 = false
     repeat
       if not (extensions[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/extensions/" .. tostring(extensions[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/extensions/" .. tostring(extensions[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = extensions[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/extensions/" .. tostring(name) .. "\"")
-      pop.extensions[name] = require(tostring(path) .. "/extensions/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/extensions/" .. tostring(name) .. "\"")
+      pop.extensions[name] = require(tostring(load_path) .. "/extensions/" .. tostring(name))
       if pop.extensions[name].load then
         pop.extensions[name].load(pop)
       end
@@ -118,8 +143,10 @@ pop.load = function()
       break
     end
   end
-  pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
-  return log("Created \"pop.screen\"")
+  if not (pop.screen) then
+    pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
+    return log("Created \"pop.screen\"")
+  end
 end
 pop.create = function(element, parent, data, ...)
   if parent == nil then

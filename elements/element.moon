@@ -116,3 +116,10 @@ class element
     --- @treturn integer Height.
     getHeight: =>
         return @data.h
+
+    --- Moves an element by specified x/y.
+    --- @treturn element self
+    move: (x=0, y=0) =>
+        @data.x += x
+        @data.y += y
+        return @

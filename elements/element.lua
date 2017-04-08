@@ -75,6 +75,17 @@ do
     end,
     getHeight = function(self)
       return self.data.h
+    end,
+    move = function(self, x, y)
+      if x == nil then
+        x = 0
+      end
+      if y == nil then
+        y = 0
+      end
+      self.data.x = self.data.x + x
+      self.data.y = self.data.y + y
+      return self
     end
   }
   _base_0.__index = _base_0

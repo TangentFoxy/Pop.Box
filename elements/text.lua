@@ -38,9 +38,15 @@ do
       self.parent, self.data = parent, data
       _class_0.__parent.__init(self, self.parent, self.data)
       self.data.type = "text"
-      self.data.text = text
-      self.data.fontFile = fontFile
-      self.data.fontSize = fontSize
+      if not (self.data.text) then
+        self.data.text = text
+      end
+      if not (self.data.fontFile) then
+        self.data.fontFile = fontFile
+      end
+      if not (self.data.fontSize) then
+        self.data.fontSize = fontSize
+      end
       if not (self.data.color) then
         self.data.color = {
           255,
@@ -49,8 +55,10 @@ do
           255
         }
       end
-      if self.data.fontFile then
+      if "string" == type(self.data.fontFile) then
         self.font = graphics.newFont(self.data.fontFile, self.data.fontSize)
+      elseif "number" == type(self.data.fontFile) then
+        self.font = graphics.newFont(self.data.fontFile)
       else
         self.font = graphics.newFont(self.data.fontSize)
       end

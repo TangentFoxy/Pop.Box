@@ -33,6 +33,8 @@ import inheritsFromElement from require "#{path}/util"
 import dumps, loads from require "#{path}/lib/bitser/bitser"
 
 --- @table pop
+--- @tfield constants For now, just stores values to be used with mouse clicks
+--- for compatibility with differing LOVE versions.
 --- @tfield table elements All GUI classes are stored here.
 --- @tfield table skins All skins are stored here.
 --- @tfield table extensions All extensions are loaded here.
@@ -43,6 +45,31 @@ import dumps, loads from require "#{path}/lib/bitser/bitser"
 --- @see pop.load
 --- @see Element
 
+major, minor, revision = love.getVersion!
+if major == 0 and minor == 9
+    pop.constants = {
+        left_mouse: "l"
+        middle_mouse: "m"
+        right_mouse: "r"
+
+        button_4: "x1"
+        button_5: "x2"
+
+        mouse_wheel_down: "wd"
+        mouse_wheel_up: "wu"
+    }
+elseif major == 0 and minor == 10
+    pop.constants = {
+        left_mouse: 1
+        middle_mouse: 2
+        right_mouse: 3
+        button_4: 4
+        button_5: 5
+        --no mouse wheel, may lead to problems?
+    }
+else
+    pop.constants = {} -- this would be an unsupported version currently
+
 pop.elements = {}
 pop.skins = {}
 pop.extensions = {}
@@ -52,29 +79,31 @@ pop.log = log
 
 
 
---- Loads elements, skins, extensions, and initializes `pop.screen`.
+--- Loads elements, skins, extensions from a specified path. Initializes
+--- `pop.screen` on first call.
 ---
---- **IMPORTANT**: Intended to only be called once, and is automatically called
---- when you require Pop.Box.
+--- Automatically called when you require Pop.Box for its internals. Subsequent
+--- calls can be used to add more elements/skins/extensions.
 --- @function load
---- @see pop
+--- @tparam string[opt] The path to load from. Within this path should be
+--- elements, skins, and extensions directories, containing whatever items you
+--- want to load.
 --- @see Element
+--- @todo @ see Skins, see Extensions
 
-pop.load = ->
-    --@todo @ see Skins
-    --@todo @ see Extensions
-    log "Loading elements from \"#{path}/elements\""
-    elements = filesystem.getDirectoryItems "#{path}/elements"
+pop.load = (load_path=path) ->
+    log "Loading elements from \"#{load_path}/elements\""
+    elements = filesystem.getDirectoryItems "#{load_path}/elements"
     for i = 1, #elements
         -- ignore non-Lua files
         unless elements[i]\sub(-4) == ".lua"
-            log "Ignored non-Lua file \"#{path}/elements/#{elements[i]}\""
+            log "Ignored non-Lua file \"#{load_path}/elements/#{elements[i]}\""
             continue
 
         -- require into pop.elements table by filename
         name = elements[i]\sub 1, -5
-        log "Requiring \"#{name}\" from \"#{path}/elements/#{name}\""
-        pop.elements[name] = require "#{path}/elements/#{name}"
+        log "Requiring \"#{name}\" from \"#{load_path}/elements/#{name}\""
+        pop.elements[name] = require "#{load_path}/elements/#{name}"
 
         -- call the element's load function if it exists
         if pop.elements[name].load
@@ -93,17 +122,17 @@ pop.load = ->
             log "Wrapper created: \"pop.#{name}()\""
 
 
-    skins = filesystem.getDirectoryItems "#{path}/skins"
+    skins = filesystem.getDirectoryItems "#{load_path}/skins"
     for i = 1, #skins
         -- ignore non-Lua files
         unless skins[i]\sub(-4) == ".lua"
-            log "Ignored non-Lua file \"#{path}/skins/#{skins[i]}\""
+            log "Ignored non-Lua file \"#{load_path}/skins/#{skins[i]}\""
             continue
 
         -- require into pop.skins table by filename
         name = skins[i]\sub 1, -5
-        log "Requiring \"#{name}\" from \"#{path}/skins/#{name}\""
-        pop.skins[name] = require "#{path}/skins/#{name}"
+        log "Requiring \"#{name}\" from \"#{load_path}/skins/#{name}\""
+        pop.skins[name] = require "#{load_path}/skins/#{name}"
 
         -- call the skin's load function if it exists
         if pop.skins[name].load
@@ -112,17 +141,17 @@ pop.load = ->
         log "Skin loaded: \"#{name}\""
 
 
-    extensions = filesystem.getDirectoryItems "#{path}/extensions"
+    extensions = filesystem.getDirectoryItems "#{load_path}/extensions"
     for i = 1, #extensions
         -- ignore non-Lua files
         unless extensions[i]\sub(-4) == ".lua"
-            log "Ignored non-Lua file \"#{path}/extensions/#{extensions[i]}\""
+            log "Ignored non-Lua file \"#{load_path}/extensions/#{extensions[i]}\""
             continue
 
         -- require into pop.extensions by filename
         name = extensions[i]\sub 1, -5
-        log "Requiring \"#{name}\" from \"#{path}/extensions/#{name}\""
-        pop.extensions[name] = require "#{path}/extensions/#{name}"
+        log "Requiring \"#{name}\" from \"#{load_path}/extensions/#{name}\""
+        pop.extensions[name] = require "#{load_path}/extensions/#{name}"
 
         -- call the extension's load function if it exists
         if pop.extensions[name].load
@@ -132,8 +161,9 @@ pop.load = ->
 
 
     -- Initialize pop.screen (top element, GUI area)
-    pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
-    log "Created \"pop.screen\""
+    unless pop.screen
+        pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
+        log "Created \"pop.screen\""
 
 
 
@@ -383,7 +413,7 @@ pop.textinput = (text) ->
 
 
 
---- @todo doc me
+--- @todo document pop.import
 
 pop.import = (data, parent=pop.screen) ->
     local element
@@ -399,7 +429,7 @@ pop.import = (data, parent=pop.screen) ->
 
 
 
---- @todo doc me
+--- @todo document pop.export
 
 pop.export = (element=pop.screen) ->
     return dumps(element.data)
