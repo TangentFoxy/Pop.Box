@@ -4,9 +4,6 @@
 [submodule "lib/middleclass"]
 	path = lib/middleclass
 	url = https://github.com/kikito/middleclass.git
-[submodule "lib/inspect.lua"]
-	path = lib/inspect.lua
-	url = https://github.com/kikito/inspect.lua.git
 [submodule "lib/inspect"]
 	path = lib/inspect
 	url = https://github.com/kikito/inspect.lua.git
