@@ -17,9 +17,26 @@ do
       self.data.h = self.font:getHeight() * (select(2, self.data.text:gsub("\n", "\n")) + 1)
       return self
     end,
+    getText = function(self)
+      return self.data.text
+    end,
     setText = function(self, text)
-      self.data.text = text
-      return self:setSize()
+      self.data.text = tostring(text)
+      self:setSize()
+      return self:align()
+    end,
+    setColor = function(self, r, g, b, a)
+      if "table" == type(r) then
+        self.data.color = r
+      else
+        self.data.color = {
+          r,
+          g,
+          b,
+          a
+        }
+      end
+      return self
     end
   }
   _base_0.__index = _base_0
@@ -37,6 +54,11 @@ do
       end
       self.parent, self.data = parent, data
       _class_0.__parent.__init(self, self.parent, self.data)
+      if "number" == type(text) then
+        fontSize = fontFile
+        fontFile = text
+        text = ""
+      end
       self.data.type = "text"
       if not (self.data.text) then
         self.data.text = text

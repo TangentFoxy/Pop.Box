@@ -42,6 +42,8 @@ import dumps, loads from require "#{path}/lib/bitser/bitser"
 --- screen. Initialized in `pop.load()`
 --- @tfield ?Element|false focused The currently focused GUI element (or `false`
 --- if none is focused).
+--- @tfield ?Element|false hovered The GUI element the mouse is hovering over
+--- (or `false` if none is hovered over).
 --- @see pop.load
 --- @see Element
 
@@ -75,6 +77,7 @@ pop.skins = {}
 pop.extensions = {}
 pop.screen = false
 pop.focused = false
+pop.hovered = false
 pop.log = log
 
 
@@ -163,6 +166,7 @@ pop.load = (load_path=path) ->
     -- Initialize pop.screen (top element, GUI area)
     unless pop.screen
         pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
+        pop.screen.data.update = true
         log "Created \"pop.screen\""
 
 
@@ -261,9 +265,18 @@ pop.draw = (element=pop.screen) ->
 --- @tparam number dy The distance on the y axis the mouse was moved.
 --- @treturn boolean Was the event handled?
 
-pop.mousemoved = (x, y, dx, dy) ->
+pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
+    -- first we find out if we're hovering over anything and set pop.hovered
+    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+        -- okay, we're over this element for sure, but let's check its children
+        pop.hovered = element
+        -- check in reverse order, it will set pop.hovered to any that match
+        for i = #element.child, 1, -1
+            pop.mousemoved x, y, dx, dy, element.child[i]
+
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
-    if pop.focused and pop.focused.mousemoved
+    -- checking element against pop.screen so that this only gets called once
+    if pop.focused and pop.focused.mousemoved and element == pop.screen
         return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
 
     return false
@@ -480,7 +493,10 @@ pop.printElementTree = (element=pop.screen, depth=0) ->
 
         cls = cls .. " (#{bg})"
 
-    log string.rep("-", depth) .. " #{cls}"
+    if depth > 0
+        log string.rep("-", depth) .. " #{cls}"
+    else
+        log cls
 
     for i = 1, #element.child
         pop.printElementTree element.child[i], depth + 1

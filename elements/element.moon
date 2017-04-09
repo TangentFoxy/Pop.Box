@@ -47,7 +47,7 @@ class element
 
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
-        unless @data.align return false
+        unless @data.align return @
 
         @data.horizontal = horizontal if horizontal
         @data.vertical = vertical if vertical

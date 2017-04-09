@@ -61,6 +61,7 @@ pop.skins = { }
 pop.extensions = { }
 pop.screen = false
 pop.focused = false
+pop.hovered = false
 pop.log = log
 pop.load = function(load_path)
   if load_path == nil then
@@ -145,6 +146,7 @@ pop.load = function(load_path)
   end
   if not (pop.screen) then
     pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
+    pop.screen.data.update = true
     return log("Created \"pop.screen\"")
   end
 end
@@ -207,8 +209,17 @@ pop.draw = function(element)
     end
   end
 end
-pop.mousemoved = function(x, y, dx, dy)
-  if pop.focused and pop.focused.mousemoved then
+pop.mousemoved = function(x, y, dx, dy, element)
+  if element == nil then
+    element = pop.screen
+  end
+  if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    pop.hovered = element
+    for i = #element.child, 1, -1 do
+      pop.mousemoved(x, y, dx, dy, element.child[i])
+    end
+  end
+  if pop.focused and pop.focused.mousemoved and element == pop.screen then
     return pop.focused:mousemoved(x - pop.focused.data.x, y - pop.focused.data.y, dx, dy)
   end
   return false
@@ -352,7 +363,11 @@ pop.printElementTree = function(element, depth)
     end
     cls = cls .. " (" .. tostring(bg) .. ")"
   end
-  log(string.rep("-", depth) .. " " .. tostring(cls))
+  if depth > 0 then
+    log(string.rep("-", depth) .. " " .. tostring(cls))
+  else
+    log(cls)
+  end
   for i = 1, #element.child do
     pop.printElementTree(element.child[i], depth + 1)
   end

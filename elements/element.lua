@@ -21,7 +21,7 @@ do
         toPixel = true
       end
       if not (self.data.align) then
-        return false
+        return self
       end
       if horizontal then
         self.data.horizontal = horizontal
