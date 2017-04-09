@@ -434,7 +434,7 @@ pop.import = (data, parent=pop.screen) ->
         data = loads(data)
         element = pop.create(data.type, parent, data)
     else
-        element = pop.elements[data.type](parent, data)
+        element = pop.elements[data.type](parent, data) --why is it not the same as the other way?
         insert parent.child, element
 
     for i = 1, #data.child

@@ -49,6 +49,34 @@ do
       end
       return self
     end,
+    setPosition = function(self, x, y, toPixel)
+      if toPixel == nil then
+        toPixel = true
+      end
+      if x then
+        self.data.x = x
+      end
+      if y then
+        self.data.y = y
+      end
+      local _exp_0 = self.data.horizontal
+      if "center" == _exp_0 then
+        self.data.x = self.data.x - (self.data.w / 2)
+      elseif "right" == _exp_0 then
+        self.data.x = self.data.x - self.data.w
+      end
+      local _exp_1 = self.data.vertical
+      if "center" == _exp_1 then
+        self.data.y = self.data.y - (self.data.h / 2)
+      elseif "bottom" == _exp_1 then
+        self.data.y = self.data.y - self.data.h
+      end
+      if toPixel then
+        self.data.x = floor(self.data.x)
+        self.data.y = floor(self.data.y)
+      end
+      return self
+    end,
     setSize = function(self, w, h)
       if w then
         self.data.w = w
@@ -86,6 +114,20 @@ do
       self.data.x = self.data.x + x
       self.data.y = self.data.y + y
       return self
+    end,
+    delete = function(self)
+      for i = 1, #self.parent.child do
+        if self.parent.child[i] == self then
+          table.remove(self.parent.child, i)
+          break
+        end
+      end
+      for i = 1, #self.parent.data.child do
+        if self.parent.data.child[i] == self.data then
+          table.remove(self.parent.data.child, i)
+          break
+        end
+      end
     end
   }
   _base_0.__index = _base_0
@@ -117,7 +159,7 @@ do
         self.data.h = 0
       end
       if self.data.update == nil then
-        self.data.update = false
+        self.data.update = true
       end
       if self.data.draw == nil then
         self.data.draw = true

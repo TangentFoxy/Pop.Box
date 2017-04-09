@@ -21,7 +21,7 @@ class element
         @data.y = 0 unless @data.y
         @data.w = 0 unless @data.w
         @data.h = 0 unless @data.h
-        @data.update = false if @data.update == nil
+        @data.update = true if @data.update == nil
         @data.draw = true if @data.draw == nil
         @data.type = "element" unless @data.type
         @data.align = true if (@data.align == nil) and @parent
@@ -66,6 +66,31 @@ class element
                 @data.y += (@parent.data.h - @data.h) / 2
             when "bottom"
                 @data.y += @parent.data.h - @data.h
+
+        if toPixel
+            @data.x = floor @data.x
+            @data.y = floor @data.y
+
+        return @
+
+    --- @todo document this
+    setPosition: (x, y, toPixel=true) =>
+        if x
+            @data.x = x
+        if y
+            @data.y = y
+
+        switch @data.horizontal
+            when "center"
+                @data.x -= @data.w / 2
+            when "right"
+                @data.x -= @data.w
+
+        switch @data.vertical
+            when "center"
+                @data.y -= @data.h / 2
+            when "bottom"
+                @data.y -= @data.h
 
         if toPixel
             @data.x = floor @data.x
@@ -123,3 +148,23 @@ class element
         @data.x += x
         @data.y += y
         return @
+
+    --- Deletes references to this element and then deletes it.
+    delete: =>
+      --for i=1, #@child
+      --  @child[i]\delete!
+      --@data.child -- for each child, delete its parent ref!
+
+      for i=1, #@parent.child
+          if @parent.child[i] == @
+              table.remove @parent.child, i
+              break
+
+      for i=1, #@parent.data.child
+          if @parent.data.child[i] == @data
+              table.remove @parent.data.child, i
+              break
+
+      --@parent = nil
+      --@data.parent = nil -- really should be for all @data -> nil, and for all @ -> nil
+      --@ = nil
