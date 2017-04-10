@@ -151,9 +151,8 @@ class element
 
     --- Deletes references to this element and then deletes it.
     delete: =>
-      --for i=1, #@child
-      --  @child[i]\delete!
-      --@data.child -- for each child, delete its parent ref!
+      for i=#@child, 1, -1
+          @child[i]\delete!
 
       for i=1, #@parent.child
           if @parent.child[i] == @
@@ -165,6 +164,7 @@ class element
               table.remove @parent.data.child, i
               break
 
-      --@parent = nil
-      --@data.parent = nil -- really should be for all @data -> nil, and for all @ -> nil
-      --@ = nil
+      @parent = nil
+      @data.parent = nil -- should be for all @ -> nil
+      --@ = nil <- or that, does that work? Idk
+      -- DO NOT DELETE @data though, it could still be in use

@@ -116,6 +116,9 @@ do
       return self
     end,
     delete = function(self)
+      for i = #self.child, 1, -1 do
+        self.child[i]:delete()
+      end
       for i = 1, #self.parent.child do
         if self.parent.child[i] == self then
           table.remove(self.parent.child, i)
@@ -128,6 +131,8 @@ do
           break
         end
       end
+      self.parent = nil
+      self.data.parent = nil
     end
   }
   _base_0.__index = _base_0
