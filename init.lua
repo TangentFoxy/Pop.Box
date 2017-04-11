@@ -213,9 +213,9 @@ pop.mousemoved = function(x, y, dx, dy, element)
   if element == nil then
     element = pop.screen
   end
-  if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+  if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
     pop.hovered = element
-    for i = #element.child, 1, -1 do
+    for i = 1, #element.child do
       pop.mousemoved(x, y, dx, dy, element.child[i])
     end
   end
@@ -230,8 +230,8 @@ pop.mousepressed = function(x, y, button, element)
     element = pop.screen
   end
   local handled = false
-  if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
-    for i = #element.child, 1, -1 do
+  if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    for i = 1, #element.child do
       do
         handled = pop.mousepressed(x, y, button, element.child[i])
         if handled then
@@ -240,7 +240,7 @@ pop.mousepressed = function(x, y, button, element)
       end
     end
     if not (handled) then
-      if element.mousepressed and element.data.draw then
+      if element.mousepressed then
         do
           handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
           if handled then
@@ -257,14 +257,14 @@ pop.mousereleased = function(x, y, button, element)
   local mousereleasedHandled = false
   if element then
     if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
-      for i = #element.child, 1, -1 do
+      for i = 1, #element.child do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
         if clickedHandled or mousereleasedHandled then
           return clickedHandled, mousereleasedHandled
         end
       end
       if not (clickedHandled or mousereleasedHandled) then
-        if element.clicked and element.data.draw then
+        if element.clicked then
           clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
         end
         if element.mousereleased then

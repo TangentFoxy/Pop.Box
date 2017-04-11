@@ -267,11 +267,11 @@ pop.draw = (element=pop.screen) ->
 
 pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
     -- first we find out if we're hovering over anything and set pop.hovered
-    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+    if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- okay, we're over this element for sure, but let's check its children
         pop.hovered = element
         -- check in reverse order, it will set pop.hovered to any that match
-        for i = #element.child, 1, -1
+        for i = 1, #element.child
             pop.mousemoved x, y, dx, dy, element.child[i]
 
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
@@ -304,16 +304,16 @@ pop.mousepressed = (x, y, button, element) ->
     handled = false
 
     -- if it is inside the current element..
-    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+    if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- check its child elements in reverse order, returning if something handles it
-        for i = #element.child, 1, -1
+        for i = 1, #element.child
             if handled = pop.mousepressed x, y, button, element.child[i]
                 return handled
 
         -- if a child hasn't handled it yet (note: this check doesn't seem neccessary)
         unless handled
-            -- if we can handle it and are visible, try to handle it, and set pop.focused
-            if element.mousepressed and element.data.draw
+            -- if we can handle it, try to handle it, and set pop.focused
+            if element.mousepressed
                 if handled = element\mousepressed x - element.data.x, y - element.data.y, button
                     pop.focused = element
 
@@ -343,15 +343,14 @@ pop.mousereleased = (x, y, button, element) ->
     if element
         if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
             -- check its children in reverse for handling a clicked or mousereleased event
-            for i = #element.child, 1, -1
+            for i = 1, #element.child
                 clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
                 if clickedHandled or mousereleasedHandled
                     return clickedHandled, mousereleasedHandled
 
             -- if that doesn't work, we try to handle it ourselves (note: again, this check seems unneccessary)
             unless clickedHandled or mousereleasedHandled
-                -- clicked only happens on visible elements, mousereleased happens either way
-                if element.clicked and element.data.draw
+                if element.clicked
                     clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
                 if element.mousereleased
                     mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
