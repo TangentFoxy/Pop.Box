@@ -271,7 +271,7 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
         -- okay, we're over this element for sure, but let's check its children
         pop.hovered = element
         -- check in reverse order, it will set pop.hovered to any that match
-        for i = 1, #element.child
+        for i = #element.child, 1, -1
             pop.mousemoved x, y, dx, dy, element.child[i]
 
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
@@ -306,7 +306,7 @@ pop.mousepressed = (x, y, button, element) ->
     -- if it is inside the current element..
     if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- check its child elements in reverse order, returning if something handles it
-        for i = 1, #element.child
+        for i = #element.child, 1, -1
             if handled = pop.mousepressed x, y, button, element.child[i]
                 return handled
 
@@ -343,7 +343,7 @@ pop.mousereleased = (x, y, button, element) ->
     if element
         if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
             -- check its children in reverse for handling a clicked or mousereleased event
-            for i = 1, #element.child
+            for i = #element.child, 1, -1
                 clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
                 if clickedHandled or mousereleasedHandled
                     return clickedHandled, mousereleasedHandled

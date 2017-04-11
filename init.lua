@@ -215,7 +215,7 @@ pop.mousemoved = function(x, y, dx, dy, element)
   end
   if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
     pop.hovered = element
-    for i = 1, #element.child do
+    for i = #element.child, 1, -1 do
       pop.mousemoved(x, y, dx, dy, element.child[i])
     end
   end
@@ -231,7 +231,7 @@ pop.mousepressed = function(x, y, button, element)
   end
   local handled = false
   if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
-    for i = 1, #element.child do
+    for i = #element.child, 1, -1 do
       do
         handled = pop.mousepressed(x, y, button, element.child[i])
         if handled then
@@ -257,7 +257,7 @@ pop.mousereleased = function(x, y, button, element)
   local mousereleasedHandled = false
   if element then
     if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
-      for i = 1, #element.child do
+      for i = #element.child, 1, -1 do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
         if clickedHandled or mousereleasedHandled then
           return clickedHandled, mousereleasedHandled
