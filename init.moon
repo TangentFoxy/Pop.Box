@@ -63,8 +63,8 @@ if major == 0 and minor == 9
 elseif major == 0 and minor == 10
     pop.constants = {
         left_mouse: 1
-        middle_mouse: 2
-        right_mouse: 3
+        middle_mouse: 3
+        right_mouse: 2
         button_4: 4
         button_5: 5
         --no mouse wheel, may lead to problems?
