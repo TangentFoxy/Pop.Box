@@ -53,6 +53,7 @@ do
       if toPixel == nil then
         toPixel = true
       end
+      local dx, dy = self.data.x, self.data.y
       if x then
         self.data.x = x
       end
@@ -74,6 +75,13 @@ do
       if toPixel then
         self.data.x = floor(self.data.x)
         self.data.y = floor(self.data.y)
+      end
+      dx = self.data.x - dx
+      dy = self.data.y - dy
+      local _list_0 = self.child
+      for _index_0 = 1, #_list_0 do
+        local child = _list_0[_index_0]
+        child:move(dx, dy)
       end
       return self
     end,
@@ -110,6 +118,11 @@ do
       end
       if y == nil then
         y = 0
+      end
+      local _list_0 = self.child
+      for _index_0 = 1, #_list_0 do
+        local child = _list_0[_index_0]
+        child:move(x, y)
       end
       self.data.x = self.data.x + x
       self.data.y = self.data.y + y

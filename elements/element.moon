@@ -75,9 +75,13 @@ class element
 
     --- @todo document this
     setPosition: (x, y, toPixel=true) =>
+        dx, dy = @data.x, @data.y
+
         if x
+            --dx = x - @data.x
             @data.x = x
         if y
+            --dy = y - @data.y
             @data.y = y
 
         switch @data.horizontal
@@ -95,6 +99,12 @@ class element
         if toPixel
             @data.x = floor @data.x
             @data.y = floor @data.y
+
+        -- new minus old is difference that children need to be moved
+        dx = @data.x - dx
+        dy = @data.y - dy
+        for child in *@child
+          child\move dx, dy
 
         return @
 
@@ -145,6 +155,9 @@ class element
     --- Moves an element by specified x/y.
     --- @treturn element self
     move: (x=0, y=0) =>
+        for child in *@child
+          child\move x, y
+
         @data.x += x
         @data.y += y
         return @

@@ -341,7 +341,7 @@ pop.mousereleased = (x, y, button, element) ->
 
     -- if we have an element, and are within its bounds
     if element
-        if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+        if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
             -- check its children in reverse for handling a clicked or mousereleased event
             for i = #element.child, 1, -1
                 clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
@@ -456,17 +456,18 @@ pop.export = (element=pop.screen) ->
 --- @see Element
 
 pop.debugDraw = (element=pop.screen) ->
-    --@todo Make this better in the future when different element types have been created and whatnot.
-    if element.debugDraw
-        element\debugDraw!
+    --@todo Remove element.debugDraw functions.
+    graphics.setLineWidth 1
+    graphics.setColor 0, 0, 0, 100
+    graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
+    graphics.setColor 150, 150, 150, 150
+    graphics.rectangle "line", element.data.x, element.data.y, element.data.w, element.data.h
+    graphics.setColor 200, 200, 200, 255
+
+    if element.debugInfo
+        graphics.print "#{element.__class.__name\sub 1, 1} (#{element\debugInfo!})", element.data.x, element.data.y
     else
-        graphics.setLineWidth 1
-        graphics.setColor 0, 0, 0, 100
-        graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
-        graphics.setColor 150, 150, 150, 150
-        graphics.rectangle "line", element.data.x, element.data.y, element.data.w, element.data.h
-        graphics.setColor 200, 200, 200, 255
-        graphics.print ".", element.data.x, element.data.y
+        graphics.print "#{element.__class.__name\sub 1, 1}", element.data.x, element.data.y
 
     for i = 1, #element.child
         pop.debugDraw element.child[i]
@@ -480,18 +481,11 @@ pop.debugDraw = (element=pop.screen) ->
 --- @see Element
 
 pop.printElementTree = (element=pop.screen, depth=0) ->
-    --- @todo Correct this once elements are reimplemented if it needs correction.
+    --- @todo Write debugInfo things for elements.
     cls = element.__class.__name
 
-    if cls == "text"
-        cls = cls .. " (\"#{element\getText!\gsub "\n", "\\n"}\")"
-    elseif cls == "box"
-        bg = element\getBackground!
-
-        if type(bg) == "table"
-            bg = "#{bg[1]}, #{bg[2]}, #{bg[3]}, #{bg[4]}"
-
-        cls = cls .. " (#{bg})"
+    if element.debugInfo
+      cls = "#{cls} (#{element\debugInfo!})"
 
     if depth > 0
         log string.rep("-", depth) .. " #{cls}"

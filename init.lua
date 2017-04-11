@@ -256,7 +256,7 @@ pop.mousereleased = function(x, y, button, element)
   local clickedHandled = false
   local mousereleasedHandled = false
   if element then
-    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
       for i = #element.child, 1, -1 do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
         if clickedHandled or mousereleasedHandled then
@@ -331,16 +331,16 @@ pop.debugDraw = function(element)
   if element == nil then
     element = pop.screen
   end
-  if element.debugDraw then
-    element:debugDraw()
+  graphics.setLineWidth(1)
+  graphics.setColor(0, 0, 0, 100)
+  graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
+  graphics.setColor(150, 150, 150, 150)
+  graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
+  graphics.setColor(200, 200, 200, 255)
+  if element.debugInfo then
+    graphics.print(tostring(element.__class.__name:sub(1, 1)) .. " (" .. tostring(element:debugInfo()) .. ")", element.data.x, element.data.y)
   else
-    graphics.setLineWidth(1)
-    graphics.setColor(0, 0, 0, 100)
-    graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
-    graphics.setColor(150, 150, 150, 150)
-    graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
-    graphics.setColor(200, 200, 200, 255)
-    graphics.print(".", element.data.x, element.data.y)
+    graphics.print(tostring(element.__class.__name:sub(1, 1)), element.data.x, element.data.y)
   end
   for i = 1, #element.child do
     pop.debugDraw(element.child[i])
@@ -354,14 +354,8 @@ pop.printElementTree = function(element, depth)
     depth = 0
   end
   local cls = element.__class.__name
-  if cls == "text" then
-    cls = cls .. " (\"" .. tostring(element:getText():gsub("\n", "\\n")) .. "\")"
-  elseif cls == "box" then
-    local bg = element:getBackground()
-    if type(bg) == "table" then
-      bg = tostring(bg[1]) .. ", " .. tostring(bg[2]) .. ", " .. tostring(bg[3]) .. ", " .. tostring(bg[4])
-    end
-    cls = cls .. " (" .. tostring(bg) .. ")"
+  if element.debugInfo then
+    cls = tostring(cls) .. " (" .. tostring(element:debugInfo()) .. ")"
   end
   if depth > 0 then
     log(string.rep("-", depth) .. " " .. tostring(cls))
