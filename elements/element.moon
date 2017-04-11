@@ -32,19 +32,6 @@ class element
 
         @align!
 
-    --- Slightly modified from pop.debugDraw
-    --- @see pop.debugDraw
-    debugDraw: =>
-        graphics.setLineWidth 1
-        graphics.setColor 0, 20, 0, 100
-        graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
-        graphics.setColor 150, 255, 150, 150
-        graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
-        graphics.setColor 200, 255, 200, 255
-        graphics.print "e", @data.x, @data.y
-
-        return @
-
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
         unless @data.align return @

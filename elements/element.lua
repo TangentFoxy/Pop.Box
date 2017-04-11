@@ -6,16 +6,6 @@ local element
 do
   local _class_0
   local _base_0 = {
-    debugDraw = function(self)
-      graphics.setLineWidth(1)
-      graphics.setColor(0, 20, 0, 100)
-      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
-      graphics.setColor(150, 255, 150, 150)
-      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
-      graphics.setColor(200, 255, 200, 255)
-      graphics.print("e", self.data.x, self.data.y)
-      return self
-    end,
     align = function(self, horizontal, vertical, toPixel)
       if toPixel == nil then
         toPixel = true
