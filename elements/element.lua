@@ -172,6 +172,9 @@ do
       if self.data.draw == nil then
         self.data.draw = true
       end
+      if self.data.hoverable == nil then
+        self.data.hoverable = true
+      end
       if not (self.data.type) then
         self.data.type = "element"
       end

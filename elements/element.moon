@@ -23,6 +23,7 @@ class element
         @data.h = 0 unless @data.h
         @data.update = true if @data.update == nil
         @data.draw = true if @data.draw == nil
+        @data.hoverable = true if @data.hoverable == nil
         @data.type = "element" unless @data.type
         @data.align = true if (@data.align == nil) and @parent
         @data.vertical = "top" unless @data.vertical

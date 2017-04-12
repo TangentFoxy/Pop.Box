@@ -267,11 +267,11 @@ pop.draw = (element=pop.screen) ->
 
 pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
     -- first we find out if we're hovering over anything and set pop.hovered
-    if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+    if element.data.draw and element.data.hoverable and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- okay, we're over this element for sure, but let's check its children
         pop.hovered = element
         -- check in reverse order, it will set pop.hovered to any that match
-        for i = #element.child, 1, -1
+        for i = 1, #element.child
             pop.mousemoved x, y, dx, dy, element.child[i]
 
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
@@ -297,6 +297,14 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
 pop.mousepressed = (x, y, button, element) ->
     -- start at the screen, print that we received an event
     unless element
+        -- take pre 0.10.0 wheel movement and pass it along
+        if button == "wd"
+          pop.wheelmoved 0, -1
+          return true
+        elseif button == "wu"
+          pop.wheelmoved 0, 1
+          return true
+
         log "mousepressed", x, y, button
         element = pop.screen
 
@@ -371,6 +379,21 @@ pop.mousereleased = (x, y, button, element) ->
         pop.mousereleased x, y, button, pop.screen
 
     return clickedHandled, mousereleasedHandled
+
+
+
+--- Event handler for `love.wheelmoved()`
+--- @function wheelmoved
+--- @tparam number x The distance the wheel moved on the x-axis.
+--- @tparam number y The distance the wheel moved on the y-axis.
+--- @treturn boolean Was the event handled?
+pop.wheelmoved = (x, y) ->
+    log "wheelmoved", x, y
+
+    if pop.hovered and pop.hovered.wheelmoved
+        return pop.hovered\wheelmoved x, y
+
+    return false
 
 
 

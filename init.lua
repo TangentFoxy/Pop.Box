@@ -213,9 +213,9 @@ pop.mousemoved = function(x, y, dx, dy, element)
   if element == nil then
     element = pop.screen
   end
-  if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+  if element.data.draw and element.data.hoverable and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
     pop.hovered = element
-    for i = #element.child, 1, -1 do
+    for i = 1, #element.child do
       pop.mousemoved(x, y, dx, dy, element.child[i])
     end
   end
@@ -226,6 +226,13 @@ pop.mousemoved = function(x, y, dx, dy, element)
 end
 pop.mousepressed = function(x, y, button, element)
   if not (element) then
+    if button == "wd" then
+      pop.wheelmoved(0, -1)
+      return true
+    elseif button == "wu" then
+      pop.wheelmoved(0, 1)
+      return true
+    end
     log("mousepressed", x, y, button)
     element = pop.screen
   end
@@ -280,6 +287,13 @@ pop.mousereleased = function(x, y, button, element)
     pop.mousereleased(x, y, button, pop.screen)
   end
   return clickedHandled, mousereleasedHandled
+end
+pop.wheelmoved = function(x, y)
+  log("wheelmoved", x, y)
+  if pop.hovered and pop.hovered.wheelmoved then
+    return pop.hovered:wheelmoved(x, y)
+  end
+  return false
 end
 pop.keypressed = function(key)
   log("keypressed", key)
