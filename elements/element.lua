@@ -122,20 +122,25 @@ do
       for i = #self.child, 1, -1 do
         self.child[i]:delete()
       end
-      for i = 1, #self.parent.child do
-        if self.parent.child[i] == self then
-          table.remove(self.parent.child, i)
-          break
+      if self.parent then
+        for i = 1, #self.parent.child do
+          if self.parent.child[i] == self then
+            table.remove(self.parent.child, i)
+            break
+          end
         end
       end
-      for i = 1, #self.parent.data.child do
-        if self.parent.data.child[i] == self.data then
-          table.remove(self.parent.data.child, i)
-          break
+      if self.parent then
+        for i = 1, #self.parent.data.child do
+          if self.parent.data.child[i] == self.data then
+            table.remove(self.parent.data.child, i)
+            break
+          end
         end
       end
       self.parent = nil
       self.data.parent = nil
+      self = nil
     end
   }
   _base_0.__index = _base_0

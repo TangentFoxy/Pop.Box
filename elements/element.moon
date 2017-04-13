@@ -92,7 +92,7 @@ class element
         dx = @data.x - dx
         dy = @data.y - dy
         for child in *@child
-          child\move dx, dy
+            child\move dx, dy
 
         return @
 
@@ -144,7 +144,7 @@ class element
     --- @treturn element self
     move: (x=0, y=0) =>
         for child in *@child
-          child\move x, y
+            child\move x, y
 
         @data.x += x
         @data.y += y
@@ -152,20 +152,22 @@ class element
 
     --- Deletes references to this element and then deletes it.
     delete: =>
-      for i=#@child, 1, -1
-          @child[i]\delete!
+        for i=#@child, 1, -1
+            @child[i]\delete!
 
-      for i=1, #@parent.child
-          if @parent.child[i] == @
-              table.remove @parent.child, i
-              break
+        if @parent
+            for i=1, #@parent.child
+                if @parent.child[i] == @
+                    table.remove @parent.child, i
+                    break
 
-      for i=1, #@parent.data.child
-          if @parent.data.child[i] == @data
-              table.remove @parent.data.child, i
-              break
+        if @parent
+            for i=1, #@parent.data.child
+                if @parent.data.child[i] == @data
+                    table.remove @parent.data.child, i
+                    break
 
-      @parent = nil
-      @data.parent = nil -- should be for all @ -> nil
-      --@ = nil <- or that, does that work? Idk
-      -- DO NOT DELETE @data though, it could still be in use
+        @parent = nil
+        @data.parent = nil -- should be for all @ -> nil MAYBE
+        @ = nil
+        -- DO NOT DELETE @data though, it could still be in use
