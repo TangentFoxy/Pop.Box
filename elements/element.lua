@@ -75,6 +75,9 @@ do
       end
       return self
     end,
+    getPosition = function(self)
+      return self.data.x, self.data.y
+    end,
     setSize = function(self, w, h)
       if w then
         self.data.w = w

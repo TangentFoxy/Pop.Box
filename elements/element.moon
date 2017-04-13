@@ -96,6 +96,11 @@ class element
 
         return @
 
+    --- @todo doc me
+    --- @todo rewrite me to return value based on alignment instead of just x/y
+    getPosition: =>
+      return @data.x, @data.y
+
     --- Sets an element's width/height. Fixes alignment if needed.
     --- @tparam integer w[opt] Width.
     --- @tparam integer h[opt] Height.
