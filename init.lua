@@ -246,13 +246,11 @@ pop.mousepressed = function(x, y, button, element)
         end
       end
     end
-    if not (handled) then
-      if element.mousepressed then
-        do
-          handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
-          if handled then
-            pop.focused = element
-          end
+    if element.mousepressed then
+      do
+        handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
+        if handled then
+          pop.focused = element
         end
       end
     end
@@ -270,16 +268,14 @@ pop.mousereleased = function(x, y, button, element)
           return clickedHandled, mousereleasedHandled
         end
       end
-      if not (clickedHandled or mousereleasedHandled) then
-        if element.clicked then
-          clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
-        end
-        if element.mousereleased then
-          mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
-        end
-        if clickedHandled then
-          pop.focused = element
-        end
+      if element.clicked then
+        clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+      end
+      if element.mousereleased then
+        mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
+      end
+      if clickedHandled then
+        pop.focused = element
       end
     end
   else

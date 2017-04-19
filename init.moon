@@ -318,12 +318,10 @@ pop.mousepressed = (x, y, button, element) ->
             if handled = pop.mousepressed x, y, button, element.child[i]
                 return handled
 
-        -- if a child hasn't handled it yet (note: this check doesn't seem neccessary)
-        unless handled
-            -- if we can handle it, try to handle it, and set pop.focused
-            if element.mousepressed
-                if handled = element\mousepressed x - element.data.x, y - element.data.y, button
-                    pop.focused = element
+        -- if a child hasn't handled it yet, try to handle it, and set pop.focused
+        if element.mousepressed
+            if handled = element\mousepressed x - element.data.x, y - element.data.y, button
+                pop.focused = element
 
     -- return whether or not we have handled the event
     return handled
@@ -356,22 +354,21 @@ pop.mousereleased = (x, y, button, element) ->
                 if clickedHandled or mousereleasedHandled
                     return clickedHandled, mousereleasedHandled
 
-            -- if that doesn't work, we try to handle it ourselves (note: again, this check seems unneccessary)
-            unless clickedHandled or mousereleasedHandled
-                if element.clicked
-                    clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
-                if element.mousereleased
-                    mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
+            -- if that doesn't work, we try to handle it ourselves
+            if element.clicked
+                clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
+            if element.mousereleased
+                mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
 
-                -- if we clicked, we're focused!
-                if clickedHandled
-                    pop.focused = element
-                    --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
-                    --- (If I do it right here, the for loop above may break! I need to test/figure this out.)
-                    --NOTE this might cause an error in the above for loop!
-                    -- basically, move focused element to front of its parent's child
-                    --element.parent\focusChild element
-                    --table.insert element.parent, element.parent\removeChild(element),
+            -- if we clicked, we're focused!
+            if clickedHandled
+                pop.focused = element
+                --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
+                --- (If I do it right here, the for loop above may break! I need to test/figure this out.)
+                --NOTE this might cause an error in the above for loop!
+                -- basically, move focused element to front of its parent's child
+                --element.parent\focusChild element
+                --table.insert element.parent, element.parent\removeChild(element),
 
     -- else, default to pop.screen to begin! (and print that we received an event)
     else
