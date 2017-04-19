@@ -6,22 +6,12 @@ local element
 do
   local _class_0
   local _base_0 = {
-    debugDraw = function(self)
-      graphics.setLineWidth(1)
-      graphics.setColor(0, 20, 0, 100)
-      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
-      graphics.setColor(150, 255, 150, 150)
-      graphics.rectangle("line", self.data.x, self.data.y, self.data.w, self.data.h)
-      graphics.setColor(200, 255, 200, 255)
-      graphics.print("e", self.data.x, self.data.y)
-      return self
-    end,
     align = function(self, horizontal, vertical, toPixel)
       if toPixel == nil then
         toPixel = true
       end
       if not (self.data.align) then
-        return false
+        return self
       end
       if horizontal then
         self.data.horizontal = horizontal
@@ -49,6 +39,45 @@ do
       end
       return self
     end,
+    setPosition = function(self, x, y, toPixel)
+      if toPixel == nil then
+        toPixel = true
+      end
+      local dx, dy = self.data.x, self.data.y
+      if x then
+        self.data.x = x
+      end
+      if y then
+        self.data.y = y
+      end
+      local _exp_0 = self.data.horizontal
+      if "center" == _exp_0 then
+        self.data.x = self.data.x - (self.data.w / 2)
+      elseif "right" == _exp_0 then
+        self.data.x = self.data.x - self.data.w
+      end
+      local _exp_1 = self.data.vertical
+      if "center" == _exp_1 then
+        self.data.y = self.data.y - (self.data.h / 2)
+      elseif "bottom" == _exp_1 then
+        self.data.y = self.data.y - self.data.h
+      end
+      if toPixel then
+        self.data.x = floor(self.data.x)
+        self.data.y = floor(self.data.y)
+      end
+      dx = self.data.x - dx
+      dy = self.data.y - dy
+      local _list_0 = self.child
+      for _index_0 = 1, #_list_0 do
+        local child = _list_0[_index_0]
+        child:move(dx, dy)
+      end
+      return self
+    end,
+    getPosition = function(self)
+      return self.data.x, self.data.y
+    end,
     setSize = function(self, w, h)
       if w then
         self.data.w = w
@@ -75,6 +104,46 @@ do
     end,
     getHeight = function(self)
       return self.data.h
+    end,
+    move = function(self, x, y)
+      if x == nil then
+        x = 0
+      end
+      if y == nil then
+        y = 0
+      end
+      local _list_0 = self.child
+      for _index_0 = 1, #_list_0 do
+        local child = _list_0[_index_0]
+        child:move(x, y)
+      end
+      self.data.x = self.data.x + x
+      self.data.y = self.data.y + y
+      return self
+    end,
+    delete = function(self)
+      for i = #self.child, 1, -1 do
+        self.child[i]:delete()
+      end
+      if self.parent then
+        for i = 1, #self.parent.child do
+          if self.parent.child[i] == self then
+            table.remove(self.parent.child, i)
+            break
+          end
+        end
+      end
+      if self.parent then
+        for i = 1, #self.parent.data.child do
+          if self.parent.data.child[i] == self.data then
+            table.remove(self.parent.data.child, i)
+            break
+          end
+        end
+      end
+      self.parent = nil
+      self.data.parent = nil
+      self = nil
     end
   }
   _base_0.__index = _base_0
@@ -106,10 +175,13 @@ do
         self.data.h = 0
       end
       if self.data.update == nil then
-        self.data.update = false
+        self.data.update = true
       end
       if self.data.draw == nil then
         self.data.draw = true
+      end
+      if self.data.hoverable == nil then
+        self.data.hoverable = true
       end
       if not (self.data.type) then
         self.data.type = "element"

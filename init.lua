@@ -34,26 +34,52 @@ do
   local _obj_0 = require(tostring(path) .. "/lib/bitser/bitser")
   dumps, loads = _obj_0.dumps, _obj_0.loads
 end
+local major, minor, revision = love.getVersion()
+if major == 0 and minor == 9 then
+  pop.constants = {
+    left_mouse = "l",
+    middle_mouse = "m",
+    right_mouse = "r",
+    button_4 = "x1",
+    button_5 = "x2",
+    mouse_wheel_down = "wd",
+    mouse_wheel_up = "wu"
+  }
+elseif major == 0 and minor == 10 then
+  pop.constants = {
+    left_mouse = 1,
+    middle_mouse = 3,
+    right_mouse = 2,
+    button_4 = 4,
+    button_5 = 5
+  }
+else
+  pop.constants = { }
+end
 pop.elements = { }
 pop.skins = { }
 pop.extensions = { }
 pop.screen = false
 pop.focused = false
+pop.hovered = false
 pop.log = log
-pop.load = function()
-  log("Loading elements from \"" .. tostring(path) .. "/elements\"")
-  local elements = filesystem.getDirectoryItems(tostring(path) .. "/elements")
+pop.load = function(load_path)
+  if load_path == nil then
+    load_path = path
+  end
+  log("Loading elements from \"" .. tostring(load_path) .. "/elements\"")
+  local elements = filesystem.getDirectoryItems(tostring(load_path) .. "/elements")
   for i = 1, #elements do
     local _continue_0 = false
     repeat
       if not (elements[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/elements/" .. tostring(elements[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/elements/" .. tostring(elements[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = elements[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/elements/" .. tostring(name) .. "\"")
-      pop.elements[name] = require(tostring(path) .. "/elements/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/elements/" .. tostring(name) .. "\"")
+      pop.elements[name] = require(tostring(load_path) .. "/elements/" .. tostring(name))
       if pop.elements[name].load then
         pop.elements[name].load(pop)
       end
@@ -74,18 +100,18 @@ pop.load = function()
       break
     end
   end
-  local skins = filesystem.getDirectoryItems(tostring(path) .. "/skins")
+  local skins = filesystem.getDirectoryItems(tostring(load_path) .. "/skins")
   for i = 1, #skins do
     local _continue_0 = false
     repeat
       if not (skins[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/skins/" .. tostring(skins[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/skins/" .. tostring(skins[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = skins[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/skins/" .. tostring(name) .. "\"")
-      pop.skins[name] = require(tostring(path) .. "/skins/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/skins/" .. tostring(name) .. "\"")
+      pop.skins[name] = require(tostring(load_path) .. "/skins/" .. tostring(name))
       if pop.skins[name].load then
         pop.skins[name].load(pop)
       end
@@ -96,18 +122,18 @@ pop.load = function()
       break
     end
   end
-  local extensions = filesystem.getDirectoryItems(tostring(path) .. "/extensions")
+  local extensions = filesystem.getDirectoryItems(tostring(load_path) .. "/extensions")
   for i = 1, #extensions do
     local _continue_0 = false
     repeat
       if not (extensions[i]:sub(-4) == ".lua") then
-        log("Ignored non-Lua file \"" .. tostring(path) .. "/extensions/" .. tostring(extensions[i]) .. "\"")
+        log("Ignored non-Lua file \"" .. tostring(load_path) .. "/extensions/" .. tostring(extensions[i]) .. "\"")
         _continue_0 = true
         break
       end
       local name = extensions[i]:sub(1, -5)
-      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(path) .. "/extensions/" .. tostring(name) .. "\"")
-      pop.extensions[name] = require(tostring(path) .. "/extensions/" .. tostring(name))
+      log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/extensions/" .. tostring(name) .. "\"")
+      pop.extensions[name] = require(tostring(load_path) .. "/extensions/" .. tostring(name))
       if pop.extensions[name].load then
         pop.extensions[name].load(pop)
       end
@@ -118,8 +144,11 @@ pop.load = function()
       break
     end
   end
-  pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
-  return log("Created \"pop.screen\"")
+  if not (pop.screen) then
+    pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
+    pop.screen.data.update = true
+    return log("Created \"pop.screen\"")
+  end
 end
 pop.create = function(element, parent, data, ...)
   if parent == nil then
@@ -180,35 +209,45 @@ pop.draw = function(element)
     end
   end
 end
-pop.mousemoved = function(x, y, dx, dy)
-  if pop.focused and pop.focused.mousemoved then
+pop.mousemoved = function(x, y, dx, dy, element)
+  if element == nil then
+    element = pop.screen
+  end
+  if element.data.draw and element.data.hoverable and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    pop.hovered = element
+    for i = 1, #element.child do
+      pop.mousemoved(x, y, dx, dy, element.child[i])
+    end
+  end
+  if pop.focused and pop.focused.mousemoved and element == pop.screen then
     return pop.focused:mousemoved(x - pop.focused.data.x, y - pop.focused.data.y, dx, dy)
   end
   return false
 end
 pop.mousepressed = function(x, y, button, element)
   if not (element) then
+    if button == "wd" then
+      pop.wheelmoved(0, -1)
+      return true
+    elseif button == "wu" then
+      pop.wheelmoved(0, 1)
+      return true
+    end
     log("mousepressed", x, y, button)
     element = pop.screen
   end
   local handled = false
-  if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+  if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
     for i = #element.child, 1, -1 do
-      do
-        handled = pop.mousepressed(x, y, button, element.child[i])
-        if handled then
-          return handled
-        end
+      handled = pop.mousepressed(x, y, button, element.child[i])
+      if handled ~= false then
+        return handled
       end
     end
-    if not (handled) then
-      if element.mousepressed and element.data.draw then
-        do
-          handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
-          if handled then
-            pop.focused = element
-          end
-        end
+    if element.mousepressed then
+      handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
+      if handled ~= false then
+        pop.focused = element
       end
     end
   end
@@ -218,23 +257,21 @@ pop.mousereleased = function(x, y, button, element)
   local clickedHandled = false
   local mousereleasedHandled = false
   if element then
-    if (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+    if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
       for i = #element.child, 1, -1 do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
-        if clickedHandled or mousereleasedHandled then
+        if clickedHandled ~= false or mousereleasedHandled ~= false then
           return clickedHandled, mousereleasedHandled
         end
       end
-      if not (clickedHandled or mousereleasedHandled) then
-        if element.clicked and element.data.draw then
-          clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
-        end
-        if element.mousereleased then
-          mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
-        end
-        if clickedHandled then
-          pop.focused = element
-        end
+      if element.clicked then
+        clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+      end
+      if element.mousereleased then
+        mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
+      end
+      if clickedHandled ~= false then
+        pop.focused = element
       end
     end
   else
@@ -242,6 +279,13 @@ pop.mousereleased = function(x, y, button, element)
     pop.mousereleased(x, y, button, pop.screen)
   end
   return clickedHandled, mousereleasedHandled
+end
+pop.wheelmoved = function(x, y)
+  log("wheelmoved", x, y)
+  if pop.hovered and pop.hovered.wheelmoved then
+    return pop.hovered:wheelmoved(x, y)
+  end
+  return false
 end
 pop.keypressed = function(key)
   log("keypressed", key)
@@ -293,16 +337,16 @@ pop.debugDraw = function(element)
   if element == nil then
     element = pop.screen
   end
-  if element.debugDraw then
-    element:debugDraw()
+  graphics.setLineWidth(1)
+  graphics.setColor(0, 0, 0, 100)
+  graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
+  graphics.setColor(150, 150, 150, 150)
+  graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
+  graphics.setColor(200, 200, 200, 255)
+  if element.debugInfo then
+    graphics.print(tostring(element.__class.__name:sub(1, 1)) .. " (" .. tostring(element:debugInfo()) .. ")", element.data.x, element.data.y)
   else
-    graphics.setLineWidth(1)
-    graphics.setColor(0, 0, 0, 100)
-    graphics.rectangle("fill", element.data.x, element.data.y, element.data.w, element.data.h)
-    graphics.setColor(150, 150, 150, 150)
-    graphics.rectangle("line", element.data.x, element.data.y, element.data.w, element.data.h)
-    graphics.setColor(200, 200, 200, 255)
-    graphics.print(".", element.data.x, element.data.y)
+    graphics.print(tostring(element.__class.__name:sub(1, 1)), element.data.x, element.data.y)
   end
   for i = 1, #element.child do
     pop.debugDraw(element.child[i])
@@ -316,16 +360,14 @@ pop.printElementTree = function(element, depth)
     depth = 0
   end
   local cls = element.__class.__name
-  if cls == "text" then
-    cls = cls .. " (\"" .. tostring(element:getText():gsub("\n", "\\n")) .. "\")"
-  elseif cls == "box" then
-    local bg = element:getBackground()
-    if type(bg) == "table" then
-      bg = tostring(bg[1]) .. ", " .. tostring(bg[2]) .. ", " .. tostring(bg[3]) .. ", " .. tostring(bg[4])
-    end
-    cls = cls .. " (" .. tostring(bg) .. ")"
+  if element.debugInfo then
+    cls = tostring(cls) .. " (" .. tostring(element:debugInfo()) .. ")"
   end
-  log(string.rep("-", depth) .. " " .. tostring(cls))
+  if depth > 0 then
+    log(string.rep("-", depth) .. " " .. tostring(cls))
+  else
+    log(cls)
+  end
   for i = 1, #element.child do
     pop.printElementTree(element.child[i], depth + 1)
   end

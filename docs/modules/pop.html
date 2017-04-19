@@ -48,6 +48,7 @@
 <h2>Classes</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><a href="../classes/element.html">element</a></li>
+  <li><a href="../classes/window.html">window</a></li>
 </ul>
 
 </div>
@@ -70,8 +71,8 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#load">load ()</a></td>
-	<td class="summary">Loads elements, skins, extensions, and initializes <code>pop.screen</code>.</td>
+	<td class="name" nowrap><a href="#load">load (The)</a></td>
+	<td class="summary">Loads elements, skins, extensions from a specified path.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#create">create (element, parent, ...)</a></td>
@@ -96,6 +97,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#mousereleased">mousereleased (x, y, button, element)</a></td>
 	<td class="summary">Event handler for <code>love.mousereleased()</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#wheelmoved">wheelmoved (x, y)</a></td>
+	<td class="summary">Event handler for <code>love.wheelmoved()</code></td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#keypressed">keypressed (key)</a></td>
@@ -136,7 +141,8 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#mousemoved-todo2">mousemoved-todo2</a></td>
-	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?</td>
+	<td class="summary">Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?
+ checking element against pop.screen so that this only gets called once</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#mousereleased-todo3">mousereleased-todo3</a></td>
@@ -149,15 +155,15 @@ table.insert element.parent, element.parent\removeChild(element),</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#textinput-todo4">textinput-todo4</a></td>
-	<td class="summary">doc me</td>
+	<td class="summary">document pop.import</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#textinput-todo4-todo5">textinput-todo4-todo5</a></td>
-	<td class="summary">doc me</td>
+	<td class="summary">document pop.export</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#printElementTree-todo6">printElementTree-todo6</a></td>
-	<td class="summary">Correct this once elements are reimplemented if it needs correction.</td>
+	<td class="summary">Write debugInfo things for elements.</td>
 	</tr>
 </table>
 
@@ -170,22 +176,31 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     <dl class="function">
     <dt>
     <a name = "load"></a>
-    <strong>load ()</strong>
+    <strong>load (The)</strong>
     </dt>
     <dd>
-    Loads elements, skins, extensions, and initializes <code>pop.screen</code>. </p>
+    Loads elements, skins, extensions from a specified path.  Initializes
+ <code>pop.screen</code> on first call.</p>
 
-<p> <strong>IMPORTANT</strong>: Intended to only be called once, and is automatically called
- when you require Pop.Box.
+<p> Automatically called when you require Pop.Box for its internals. Subsequent
+ calls can be used to add more elements/skins/extensions.
 
 
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">The</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string[opt]</a></span>
+         path to load from. Within this path should be
+ elements, skins, and extensions directories, containing whatever items you
+ want to load.
+        </li>
+    </ul>
 
 
 
     <h3>See also:</h3>
     <ul>
-         <li><a href="../modules/pop.html#">pop</a></li>
-         <li><a href="../modules/Element.html#">Element</a></li>
+         <a href="../modules/Element.html#">Element</a>
     </ul>
 
 
@@ -418,6 +433,37 @@ table.insert element.parent, element.parent\removeChild(element),</td>
 
 </dd>
     <dt>
+    <a name = "wheelmoved"></a>
+    <strong>wheelmoved (x, y)</strong>
+    </dt>
+    <dd>
+    Event handler for <code>love.wheelmoved()</code>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         The distance the wheel moved on the x-axis.
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         The distance the wheel moved on the y-axis.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Was the event handled?
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "keypressed"></a>
     <strong>keypressed (key)</strong>
     </dt>
@@ -566,6 +612,11 @@ table.insert element.parent, element.parent\removeChild(element),</td>
 
     <h3>Fields:</h3>
     <ul>
+        <li><span class="parameter">For</span>
+            <span class="types"><span class="type">constants</span></span>
+         now, just stores values to be used with mouse clicks
+ for compatibility with differing LOVE versions.
+        </li>
         <li><span class="parameter">elements</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
          All GUI classes are stored here.
@@ -587,6 +638,11 @@ table.insert element.parent, element.parent\removeChild(element),</td>
             <span class="types"><span class="type">Element</span> or <span class="type">false</span></span>
          The currently focused GUI element (or <code>false</code>
  if none is focused).
+        </li>
+        <li><span class="parameter">hovered</span>
+            <span class="types"><span class="type">Element</span> or <span class="type">false</span></span>
+         The GUI element the mouse is hovering over
+ (or <code>false</code> if none is hovered over).
         </li>
     </ul>
 
@@ -625,6 +681,7 @@ table.insert element.parent, element.parent\removeChild(element),</td>
     </dt>
     <dd>
     Implement a way for an element to attach itself to <code>love.mousemoved()</code> events?
+ checking element against pop.screen so that this only gets called once
 
 
 
@@ -657,7 +714,7 @@ table.insert element.parent, element.parent\removeChild(element),
     <strong>textinput-todo4</strong>
     </dt>
     <dd>
-    doc me
+    document pop.import
 
 
 
@@ -671,7 +728,7 @@ table.insert element.parent, element.parent\removeChild(element),
     <strong>textinput-todo4-todo5</strong>
     </dt>
     <dd>
-    doc me
+    document pop.export
 
 
 
@@ -685,7 +742,7 @@ table.insert element.parent, element.parent\removeChild(element),
     <strong>printElementTree-todo6</strong>
     </dt>
     <dd>
-    Correct this once elements are reimplemented if it needs correction.
+    Write debugInfo things for elements.
 
 
 
@@ -701,7 +758,7 @@ table.insert element.parent, element.parent\removeChild(element),
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-10-30 23:39:49 </i>
+<i style="float:right;">Last updated 2017-04-13 14:28:39 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

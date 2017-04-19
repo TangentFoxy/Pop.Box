@@ -21,8 +21,9 @@ class element
         @data.y = 0 unless @data.y
         @data.w = 0 unless @data.w
         @data.h = 0 unless @data.h
-        @data.update = false if @data.update == nil
+        @data.update = true if @data.update == nil
         @data.draw = true if @data.draw == nil
+        @data.hoverable = true if @data.hoverable == nil
         @data.type = "element" unless @data.type
         @data.align = true if (@data.align == nil) and @parent
         @data.vertical = "top" unless @data.vertical
@@ -32,22 +33,9 @@ class element
 
         @align!
 
-    --- Slightly modified from pop.debugDraw
-    --- @see pop.debugDraw
-    debugDraw: =>
-        graphics.setLineWidth 1
-        graphics.setColor 0, 20, 0, 100
-        graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
-        graphics.setColor 150, 255, 150, 150
-        graphics.rectangle "line", @data.x, @data.y, @data.w, @data.h
-        graphics.setColor 200, 255, 200, 255
-        graphics.print "e", @data.x, @data.y
-
-        return @
-
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
-        unless @data.align return false
+        unless @data.align return @
 
         @data.horizontal = horizontal if horizontal
         @data.vertical = vertical if vertical
@@ -72,6 +60,46 @@ class element
             @data.y = floor @data.y
 
         return @
+
+    --- @todo document this
+    setPosition: (x, y, toPixel=true) =>
+        dx, dy = @data.x, @data.y
+
+        if x
+            --dx = x - @data.x
+            @data.x = x
+        if y
+            --dy = y - @data.y
+            @data.y = y
+
+        switch @data.horizontal
+            when "center"
+                @data.x -= @data.w / 2
+            when "right"
+                @data.x -= @data.w
+
+        switch @data.vertical
+            when "center"
+                @data.y -= @data.h / 2
+            when "bottom"
+                @data.y -= @data.h
+
+        if toPixel
+            @data.x = floor @data.x
+            @data.y = floor @data.y
+
+        -- new minus old is difference that children need to be moved
+        dx = @data.x - dx
+        dy = @data.y - dy
+        for child in *@child
+            child\move dx, dy
+
+        return @
+
+    --- @todo doc me
+    --- @todo rewrite me to return value based on alignment instead of just x/y
+    getPosition: =>
+      return @data.x, @data.y
 
     --- Sets an element's width/height. Fixes alignment if needed.
     --- @tparam integer w[opt] Width.
@@ -116,3 +144,35 @@ class element
     --- @treturn integer Height.
     getHeight: =>
         return @data.h
+
+    --- Moves an element by specified x/y.
+    --- @treturn element self
+    move: (x=0, y=0) =>
+        for child in *@child
+            child\move x, y
+
+        @data.x += x
+        @data.y += y
+        return @
+
+    --- Deletes references to this element and then deletes it.
+    delete: =>
+        for i=#@child, 1, -1
+            @child[i]\delete!
+
+        if @parent
+            for i=1, #@parent.child
+                if @parent.child[i] == @
+                    table.remove @parent.child, i
+                    break
+
+        if @parent
+            for i=1, #@parent.data.child
+                if @parent.data.child[i] == @data
+                    table.remove @parent.data.child, i
+                    break
+
+        @parent = nil
+        @data.parent = nil -- should be for all @ -> nil MAYBE
+        @ = nil
+        -- DO NOT DELETE @data though, it could still be in use
