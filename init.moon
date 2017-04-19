@@ -315,12 +315,14 @@ pop.mousepressed = (x, y, button, element) ->
     if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- check its child elements in reverse order, returning if something handles it
         for i = #element.child, 1, -1
-            if handled = pop.mousepressed x, y, button, element.child[i]
+            handled = pop.mousepressed x, y, button, element.child[i]
+            if handled != false
                 return handled
 
         -- if a child hasn't handled it yet, try to handle it, and set pop.focused
         if element.mousepressed
-            if handled = element\mousepressed x - element.data.x, y - element.data.y, button
+            handled = element\mousepressed x - element.data.x, y - element.data.y, button
+            if handled != false
                 pop.focused = element
 
     -- return whether or not we have handled the event
@@ -351,7 +353,7 @@ pop.mousereleased = (x, y, button, element) ->
             -- check its children in reverse for handling a clicked or mousereleased event
             for i = #element.child, 1, -1
                 clickedHandled, mousereleasedHandled = pop.mousereleased x, y, button, element.child[i]
-                if clickedHandled or mousereleasedHandled
+                if clickedHandled != false or mousereleasedHandled != false
                     return clickedHandled, mousereleasedHandled
 
             -- if that doesn't work, we try to handle it ourselves
@@ -361,7 +363,7 @@ pop.mousereleased = (x, y, button, element) ->
                 mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
 
             -- if we clicked, we're focused!
-            if clickedHandled
+            if clickedHandled != false
                 pop.focused = element
                 --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
                 --- (If I do it right here, the for loop above may break! I need to test/figure this out.)

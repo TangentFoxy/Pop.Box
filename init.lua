@@ -239,19 +239,15 @@ pop.mousepressed = function(x, y, button, element)
   local handled = false
   if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
     for i = #element.child, 1, -1 do
-      do
-        handled = pop.mousepressed(x, y, button, element.child[i])
-        if handled then
-          return handled
-        end
+      handled = pop.mousepressed(x, y, button, element.child[i])
+      if handled ~= false then
+        return handled
       end
     end
     if element.mousepressed then
-      do
-        handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
-        if handled then
-          pop.focused = element
-        end
+      handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
+      if handled ~= false then
+        pop.focused = element
       end
     end
   end
@@ -264,7 +260,7 @@ pop.mousereleased = function(x, y, button, element)
     if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
       for i = #element.child, 1, -1 do
         clickedHandled, mousereleasedHandled = pop.mousereleased(x, y, button, element.child[i])
-        if clickedHandled or mousereleasedHandled then
+        if clickedHandled ~= false or mousereleasedHandled ~= false then
           return clickedHandled, mousereleasedHandled
         end
       end
@@ -274,7 +270,7 @@ pop.mousereleased = function(x, y, button, element)
       if element.mousereleased then
         mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
       end
-      if clickedHandled then
+      if clickedHandled ~= false then
         pop.focused = element
       end
     end
