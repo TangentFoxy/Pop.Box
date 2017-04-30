@@ -22,16 +22,20 @@ do
       self.data.x = self.parent.data.x
       self.data.y = self.parent.data.y
       local _exp_0 = self.data.horizontal
-      if "center" == _exp_0 then
+      if "left" == _exp_0 then
+        self.data.x = self.data.x + self.data.padding
+      elseif "center" == _exp_0 then
         self.data.x = self.data.x + ((self.parent.data.w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        self.data.x = self.data.x + (self.parent.data.w - self.data.w)
+        self.data.x = self.data.x + (self.parent.data.w - self.data.w - self.data.padding)
       end
       local _exp_1 = self.data.vertical
-      if "center" == _exp_1 then
+      if "top" == _exp_1 then
+        self.data.y = self.data.y + self.data.padding
+      elseif "center" == _exp_1 then
         self.data.y = self.data.y + ((self.parent.data.h - self.data.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.data.y = self.data.y + (self.parent.data.h - self.data.h)
+        self.data.y = self.data.y + (self.parent.data.h - self.data.h - self.data.padding)
       end
       if toPixel then
         self.data.x = floor(self.data.x)
@@ -46,21 +50,21 @@ do
       local dx, dy = self.data.x, self.data.y
       if x then
         self.data.x = x
+        local _exp_0 = self.data.horizontal
+        if "center" == _exp_0 then
+          self.data.x = self.data.x - (self.data.w / 2)
+        elseif "right" == _exp_0 then
+          self.data.x = self.data.x - self.data.w
+        end
       end
       if y then
         self.data.y = y
-      end
-      local _exp_0 = self.data.horizontal
-      if "center" == _exp_0 then
-        self.data.x = self.data.x - (self.data.w / 2)
-      elseif "right" == _exp_0 then
-        self.data.x = self.data.x - self.data.w
-      end
-      local _exp_1 = self.data.vertical
-      if "center" == _exp_1 then
-        self.data.y = self.data.y - (self.data.h / 2)
-      elseif "bottom" == _exp_1 then
-        self.data.y = self.data.y - self.data.h
+        local _exp_0 = self.data.vertical
+        if "center" == _exp_0 then
+          self.data.y = self.data.y - (self.data.h / 2)
+        elseif "bottom" == _exp_0 then
+          self.data.y = self.data.y - self.data.h
+        end
       end
       if toPixel then
         self.data.x = floor(self.data.x)
@@ -76,7 +80,20 @@ do
       return self
     end,
     getPosition = function(self)
-      return self.data.x, self.data.y
+      local x, y = self.data.x, self.data.y
+      local _exp_0 = self.data.horizontal
+      if "center" == _exp_0 then
+        x = x + (self.data.w / 2)
+      elseif "right" == _exp_0 then
+        y = y + self.data.w
+      end
+      local _exp_1 = self.data.vertical
+      if "center" == _exp_1 then
+        y = y + (self.data.h / 2)
+      elseif "bottom" == _exp_1 then
+        y = y + self.data.h
+      end
+      return x, y
     end,
     setSize = function(self, w, h)
       if w then
@@ -93,6 +110,7 @@ do
     end,
     setWidth = function(self, w)
       self.data.w = w
+      self:align()
       return self
     end,
     getWidth = function(self)
@@ -100,10 +118,22 @@ do
     end,
     setHeight = function(self, h)
       self.data.h = h
+      self:align()
       return self
     end,
     getHeight = function(self)
       return self.data.h
+    end,
+    adjustSize = function(self, w, h)
+      local W, H = self:getSize()
+      if w then
+        W = W + w
+      end
+      if h then
+        H = H + h
+      end
+      self:setSize(W, H)
+      return self
     end,
     move = function(self, x, y)
       if x == nil then
@@ -112,14 +142,22 @@ do
       if y == nil then
         y = 0
       end
+      self.data.x = self.data.x + x
+      self.data.y = self.data.y + y
       local _list_0 = self.child
       for _index_0 = 1, #_list_0 do
         local child = _list_0[_index_0]
         child:move(x, y)
       end
-      self.data.x = self.data.x + x
-      self.data.y = self.data.y + y
       return self
+    end,
+    setPadding = function(self, padding)
+      self.data.padding = padding
+      self:align()
+      return self
+    end,
+    getPadding = function(self)
+      return self.data.padding
     end,
     delete = function(self)
       for i = #self.child, 1, -1 do
@@ -166,10 +204,18 @@ do
         self.data.type = "element"
       end
       if not (self.data.x) then
-        self.data.x = 0
+        if self.parent then
+          self.data.x = self.parent.data.x
+        else
+          self.data.x = 0
+        end
       end
       if not (self.data.y) then
-        self.data.y = 0
+        if self.parent then
+          self.data.y = self.parent.data.y
+        else
+          self.data.y = 0
+        end
       end
       if not (self.data.w) then
         self.data.w = 0
@@ -194,6 +240,9 @@ do
       end
       if not (self.data.horizontal) then
         self.data.horizontal = "left"
+      end
+      if not (self.data.padding) then
+        self.data.padding = 0
       end
       self.child = { }
     end,

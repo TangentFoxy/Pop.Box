@@ -19,18 +19,28 @@ class element
         @data.child = {} unless @data.child
         @data.type = "element" unless @data.type
 
-        @data.x = 0 unless @data.x
-        @data.y = 0 unless @data.y
+        unless @data.x
+            if @parent
+                @data.x = @parent.data.x
+            else
+                @data.x = 0
+        unless @data.y
+            if @parent
+                @data.y = @parent.data.y
+            else
+                @data.y = 0
         @data.w = 0 unless @data.w
         @data.h = 0 unless @data.h
 
         @data.update = true if @data.update == nil
         @data.draw = true if @data.draw == nil
         @data.hoverable = true if @data.hoverable == nil
+        --@data.static = false if @data.static == nil
 
         @data.align = true if (@data.align == nil) and @parent
         @data.vertical = "top" unless @data.vertical
         @data.horizontal = "left" unless @data.horizontal
+        @data.padding = 0 unless @data.padding
 
         @child = {}
 
@@ -45,16 +55,20 @@ class element
         @data.y = @parent.data.y
 
         switch @data.horizontal
+            when "left"
+                @data.x += @data.padding
             when "center"
                 @data.x += (@parent.data.w - @data.w) / 2
             when "right"
-                @data.x += @parent.data.w - @data.w
+                @data.x += @parent.data.w - @data.w - @data.padding
 
         switch @data.vertical
+            when "top"
+                @data.y += @data.padding
             when "center"
                 @data.y += (@parent.data.h - @data.h) / 2
             when "bottom"
-                @data.y += @parent.data.h - @data.h
+                @data.y += @parent.data.h - @data.h - @data.padding
 
         if toPixel
             @data.x = floor @data.x
@@ -67,23 +81,20 @@ class element
         dx, dy = @data.x, @data.y
 
         if x
-            --dx = x - @data.x
             @data.x = x
+            switch @data.horizontal
+                when "center"
+                    @data.x -= @data.w / 2
+                when "right"
+                    @data.x -= @data.w
+
         if y
-            --dy = y - @data.y
             @data.y = y
-
-        switch @data.horizontal
-            when "center"
-                @data.x -= @data.w / 2
-            when "right"
-                @data.x -= @data.w
-
-        switch @data.vertical
-            when "center"
-                @data.y -= @data.h / 2
-            when "bottom"
-                @data.y -= @data.h
+            switch @data.vertical
+                when "center"
+                    @data.y -= @data.h / 2
+                when "bottom"
+                    @data.y -= @data.h
 
         if toPixel
             @data.x = floor @data.x
@@ -98,9 +109,22 @@ class element
         return @
 
     --- @todo doc me
-    --- @todo rewrite me to return value based on alignment instead of just x/y
     getPosition: =>
-      return @data.x, @data.y
+        x, y = @data.x, @data.y
+
+        switch @data.horizontal
+            when "center"
+                x += @data.w / 2
+            when "right"
+                y += @data.w
+
+        switch @data.vertical
+            when "center"
+                y += @data.h / 2
+            when "bottom"
+                y += @data.h
+
+        return x, y
 
     --- Sets an element's width/height. Fixes alignment if needed.
     --- @tparam integer w[opt] Width.
@@ -127,6 +151,7 @@ class element
     --- @treturn element self
     setWidth: (w) =>
         @data.w = w
+        @align!
         return @
 
     --- Returns an element's width.
@@ -139,6 +164,7 @@ class element
     --- @treturn element self
     setHeight: (h) =>
         @data.h = h
+        @align!
         return @
 
     --- Returns an element's height.
@@ -146,15 +172,39 @@ class element
     getHeight: =>
         return @data.h
 
+    --- @todo doc me
+    adjustSize: (w, h) =>
+        W, H = @getSize!
+
+        if w
+            W += w
+        if h
+            H += h
+
+        @setSize W, H
+
+        return @
+
     --- Moves an element by specified x/y.
     --- @treturn element self
     move: (x=0, y=0) =>
-        for child in *@child
-            child\move x, y
+        --if @data.static return @
 
         @data.x += x
         @data.y += y
+
+        for child in *@child
+            child\move x, y
+
         return @
+
+    setPadding: (padding) =>
+        @data.padding = padding
+        @align!
+        return @
+
+    getPadding: =>
+        return @data.padding
 
     --- Deletes references to this element and then deletes it.
     delete: =>

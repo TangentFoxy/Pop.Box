@@ -1,7 +1,10 @@
 file = {
     "init.moon",
+    "elements/box.moon",
     "elements/element.moon",
+    "elements/text.moon",
     "elements/window.moon",
+    "extensions/streamlined_get_set.moon",
     "main.moon",
     "util.moon",
     "Element.luadoc",
