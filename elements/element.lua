@@ -159,6 +159,13 @@ do
     getPadding = function(self)
       return self.data.padding
     end,
+    indexOf = function(self, element)
+      for i = 1, #self.child do
+        if self.child[i] == element then
+          return i
+        end
+      end
+    end,
     delete = function(self)
       for i = #self.child, 1, -1 do
         self.child[i]:delete()

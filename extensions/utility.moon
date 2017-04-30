@@ -5,11 +5,12 @@
 import graphics from love
 import sub, len from string
 
-path = sub ..., 1, len(...) - len "/extensions/streamlined_get_set"
+path = sub ..., 1, len(...) - len "/extensions/utility"
 element = require "#{path}/elements/element"
 --box = require "#{path}/elements/box"
 --text = require "#{path}/elements/text"
 
+--- @todo make this built-in as maximize for window elements
 element.__base.fill = =>
   @data.x = @parent.data.x + @data.padding
   @data.y = @parent.data.y + @data.padding

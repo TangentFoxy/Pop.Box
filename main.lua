@@ -2,6 +2,13 @@ local pop = require("")
 local debug = false
 love.load = function()
   pop.text("Hello World!"):align("center", "center")
+  pop.window({
+    windowBackground = {
+      200,
+      200,
+      200
+    }
+  }, "Testing Window"):move(20, 20):setSize(200, 100):align("right", "top")
   local centerBox = pop.box({
     w = 200,
     h = 200
@@ -129,11 +136,26 @@ love.load = function()
     }
   }):align("right", "bottom")
 end
+love.update = function(dt)
+  return pop.update(dt)
+end
 love.draw = function()
   pop.draw()
   if debug then
     return pop.debugDraw()
   end
+end
+love.mousemoved = function(x, y, dx, dy)
+  return pop.mousemoved(x, y, dx, dy)
+end
+love.mousepressed = function(x, y, button)
+  return pop.mousepressed(x, y, button)
+end
+love.mousereleased = function(x, y, button)
+  return pop.mousereleased(x, y, button)
+end
+love.wheelmoved = function(x, y)
+  return pop.wheelmoved(x, y)
 end
 love.keypressed = function(key)
   if key == "escape" then
@@ -141,4 +163,10 @@ love.keypressed = function(key)
   elseif key == "d" then
     debug = not debug
   end
+end
+love.keyreleased = function(key)
+  return pop.keyreleased(key)
+end
+love.textinput = function(text)
+  return pop.textinput(text)
 end

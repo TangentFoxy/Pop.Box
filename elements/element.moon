@@ -206,6 +206,11 @@ class element
     getPadding: =>
         return @data.padding
 
+    indexOf: (element) =>
+        for i = 1, #@child
+            if @child[i] == element
+                return i
+
     --- Deletes references to this element and then deletes it.
     delete: =>
         for i=#@child, 1, -1

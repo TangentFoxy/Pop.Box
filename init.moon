@@ -158,7 +158,7 @@ pop.load = (load_path=path) ->
         pop.extensions[name] = require "#{load_path}/extensions/#{name}"
 
         -- call the extension's load function if it exists
-        if pop.extensions[name].load
+        if type(pop.extensions[name]) == "table" and pop.extensions[name].load
             pop.extensions[name].load pop
 
         log "Extension loaded: \"#{name}\""
@@ -299,10 +299,10 @@ pop.mousepressed = (x, y, button, element) ->
     -- start at the screen, print that we received an event
     unless element
         -- take pre 0.10.0 wheel movement and pass it along
-        if button == "wd"
+        if button == pop.constants.mouse_wheel_down
           pop.wheelmoved 0, -1
           return true
-        elseif button == "wu"
+        elseif button == pop.constants.mouse_wheel_up
           pop.wheelmoved 0, 1
           return true
 
@@ -373,9 +373,20 @@ pop.mousereleased = (x, y, button, element) ->
                 --element.parent\focusChild element
                 --table.insert element.parent, element.parent\removeChild(element),
 
-    -- else, default to pop.screen to begin! (and print that we received an event)
+    -- else, check for focused element, and then default to pop.screen to begin! (and print that we received an event)
     else
         log "mousereleased", x, y, button
+
+        if element = pop.focused
+            if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
+                if element.clicked
+                    clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
+            -- a focused element needs to know when it has been released no matter what!
+            if element.mousereleased
+                mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
+            if clickedHandled != false or mousereleasedHandled != false
+                return clickedHandled, mousereleasedHandled
+
         pop.mousereleased x, y, button, pop.screen
 
     return clickedHandled, mousereleasedHandled

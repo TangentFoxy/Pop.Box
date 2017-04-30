@@ -134,7 +134,7 @@ pop.load = function(load_path)
       local name = extensions[i]:sub(1, -5)
       log("Requiring \"" .. tostring(name) .. "\" from \"" .. tostring(load_path) .. "/extensions/" .. tostring(name) .. "\"")
       pop.extensions[name] = require(tostring(load_path) .. "/extensions/" .. tostring(name))
-      if pop.extensions[name].load then
+      if type(pop.extensions[name]) == "table" and pop.extensions[name].load then
         pop.extensions[name].load(pop)
       end
       log("Extension loaded: \"" .. tostring(name) .. "\"")
@@ -226,10 +226,10 @@ pop.mousemoved = function(x, y, dx, dy, element)
 end
 pop.mousepressed = function(x, y, button, element)
   if not (element) then
-    if button == "wd" then
+    if button == pop.constants.mouse_wheel_down then
       pop.wheelmoved(0, -1)
       return true
-    elseif button == "wu" then
+    elseif button == pop.constants.mouse_wheel_up then
       pop.wheelmoved(0, 1)
       return true
     end
@@ -276,6 +276,22 @@ pop.mousereleased = function(x, y, button, element)
     end
   else
     log("mousereleased", x, y, button)
+    do
+      element = pop.focused
+      if element then
+        if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+          if element.clicked then
+            clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+          end
+        end
+        if element.mousereleased then
+          mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
+        end
+        if clickedHandled ~= false or mousereleasedHandled ~= false then
+          return clickedHandled, mousereleasedHandled
+        end
+      end
+    end
     pop.mousereleased(x, y, button, pop.screen)
   end
   return clickedHandled, mousereleasedHandled

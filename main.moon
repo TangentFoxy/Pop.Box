@@ -7,6 +7,7 @@ debug = false
 
 love.load = ->
     pop.text("Hello World!")\align "center", "center"
+    pop.window({windowBackground: {200, 200, 200}}, "Testing Window")\move(20, 20)\setSize(200, 100)\align "right", "top"
 
     -- alignment testing
     centerBox = pop.box({w: 200, h: 200}, {255, 255, 0, 120})\align "center", "center"
@@ -28,17 +29,36 @@ love.load = ->
     pop.text(centerBox, {padding: 5, color: {0, 0, 255, 100}}, "Align me!")\align "right", "top"
     pop.window(centerBox, {padding: 5, titleColor: {0, 0, 0, 150}, titleBackground: {0, 0, 255, 100}, windowBackground: {200, 200, 255, 100}})\align "right", "bottom"
 
---- @todo finish writing callbacks!
+love.update = (dt) ->
+    pop.update dt
 
 love.draw = ->
     pop.draw!
     pop.debugDraw! if debug
+
+love.mousemoved = (x, y, dx, dy) ->
+    pop.mousemoved x, y, dx, dy
+
+love.mousepressed = (x, y, button) ->
+    pop.mousepressed x, y, button
+
+love.mousereleased = (x, y, button) ->
+    pop.mousereleased x, y, button
+
+love.wheelmoved = (x, y) ->
+    pop.wheelmoved x, y
 
 love.keypressed = (key) ->
     if key == "escape"
         love.event.quit!
     elseif key == "d"
         debug = not debug
+
+love.keyreleased = (key) ->
+    pop.keyreleased key
+
+love.textinput = (text) ->
+    pop.textinput text
 
 
 
