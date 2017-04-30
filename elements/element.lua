@@ -162,6 +162,9 @@ do
       if not (self.data.child) then
         self.data.child = { }
       end
+      if not (self.data.type) then
+        self.data.type = "element"
+      end
       if not (self.data.x) then
         self.data.x = 0
       end
@@ -183,9 +186,6 @@ do
       if self.data.hoverable == nil then
         self.data.hoverable = true
       end
-      if not (self.data.type) then
-        self.data.type = "element"
-      end
       if (self.data.align == nil) and self.parent then
         self.data.align = true
       end
@@ -196,7 +196,6 @@ do
         self.data.horizontal = "left"
       end
       self.child = { }
-      return self:align()
     end,
     __base = _base_0,
     __name = "element"

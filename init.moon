@@ -57,6 +57,7 @@ if major == 0 and minor == 9
         button_4: "x1"
         button_5: "x2"
 
+        -- note: these should not be used
         mouse_wheel_down: "wd"
         mouse_wheel_up: "wu"
     }

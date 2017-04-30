@@ -17,21 +17,22 @@ class element
 
         @data.parent = false unless @data.parent
         @data.child = {} unless @data.child
+        @data.type = "element" unless @data.type
+
         @data.x = 0 unless @data.x
         @data.y = 0 unless @data.y
         @data.w = 0 unless @data.w
         @data.h = 0 unless @data.h
+
         @data.update = true if @data.update == nil
         @data.draw = true if @data.draw == nil
         @data.hoverable = true if @data.hoverable == nil
-        @data.type = "element" unless @data.type
+
         @data.align = true if (@data.align == nil) and @parent
         @data.vertical = "top" unless @data.vertical
         @data.horizontal = "left" unless @data.horizontal
 
         @child = {}
-
-        @align!
 
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
