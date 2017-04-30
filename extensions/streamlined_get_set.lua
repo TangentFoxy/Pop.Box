@@ -30,7 +30,7 @@ element.__base.width = function(self, w)
     return self:getWidth()
   end
 end
-elements.__base.height = function(self, h)
+element.__base.height = function(self, h)
   if h then
     return self:setHeight(h)
   else

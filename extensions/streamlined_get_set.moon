@@ -28,7 +28,7 @@ element.__base.width = (w) =>
   else
     return @getWidth!
 
-elements.__base.height = (h) =>
+element.__base.height = (h) =>
   if h
     return @setHeight h
   else
