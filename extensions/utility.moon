@@ -12,7 +12,7 @@ element = require "#{path}/elements/element"
 
 --- @todo make this built-in as maximize for window elements
 element.__base.fill = =>
-  @data.x = @parent.data.x + @data.padding
-  @data.y = @parent.data.y + @data.padding
-  @data.w = @parent.data.w - @data.padding*2
-  @data.h = @parent.data.h - @data.padding*2
+  @data.x = @parent.data.x + @parent.data.padding
+  @data.y = @parent.data.y + @parent.data.padding
+  @data.w = @parent.data.w - @parent.data.padding*2
+  @data.h = @parent.data.h - @parent.data.padding*2

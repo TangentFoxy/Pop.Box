@@ -1,7 +1,10 @@
 local graphics
 graphics = love.graphics
-local floor
-floor = math.floor
+local floor, max
+do
+  local _obj_0 = math
+  floor, max = _obj_0.floor, _obj_0.max
+end
 local element
 do
   local _class_0
@@ -23,19 +26,19 @@ do
       self.data.y = self.parent.data.y
       local _exp_0 = self.data.horizontal
       if "left" == _exp_0 then
-        self.data.x = self.data.x + self.data.padding
+        self.data.x = self.data.x + max(self.parent.data.padding + self.parent.data.horizontalPadding, self.data.margin + self.data.horizontalMargin)
       elseif "center" == _exp_0 then
         self.data.x = self.data.x + ((self.parent.data.w - self.data.w) / 2)
       elseif "right" == _exp_0 then
-        self.data.x = self.data.x + (self.parent.data.w - self.data.w - self.data.padding)
+        self.data.x = self.data.x + (self.parent.data.w - self.data.w - max(self.parent.data.padding + self.parent.data.horizontalPadding, self.data.margin + self.data.horizontalMargin))
       end
       local _exp_1 = self.data.vertical
       if "top" == _exp_1 then
-        self.data.y = self.data.y + self.data.padding
+        self.data.y = self.data.y + (self.parent.data.padding + self.data.margin + self.data.verticalMargin)
       elseif "center" == _exp_1 then
         self.data.y = self.data.y + ((self.parent.data.h - self.data.h) / 2)
       elseif "bottom" == _exp_1 then
-        self.data.y = self.data.y + (self.parent.data.h - self.data.h - self.data.padding)
+        self.data.y = self.data.y + (self.parent.data.h - self.data.h - max(self.parent.data.padding + self.parent.data.verticalPadding, self.data.margin + self.data.verticalMargin))
       end
       if toPixel then
         self.data.x = floor(self.data.x)
@@ -248,8 +251,23 @@ do
       if not (self.data.horizontal) then
         self.data.horizontal = "left"
       end
+      if not (self.data.margin) then
+        self.data.margin = 0
+      end
+      if not (self.data.horizontalMargin) then
+        self.data.horizontalMargin = 0
+      end
+      if not (self.data.verticalMargin) then
+        self.data.verticalMargin = 0
+      end
       if not (self.data.padding) then
         self.data.padding = 0
+      end
+      if not (self.data.horizontalPadding) then
+        self.data.horizontalPadding = 0
+      end
+      if not (self.data.verticalPadding) then
+        self.data.verticalPadding = 0
       end
       self.child = { }
     end,

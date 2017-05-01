@@ -4,7 +4,7 @@
 --- @license The MIT License (MIT)
 
 import graphics from love
-import floor from math
+import floor, max from math
 
 class element
     --- Constructor expects nothing, or a data table describing it.
@@ -40,7 +40,14 @@ class element
         @data.align = true if (@data.align == nil) and @parent
         @data.vertical = "top" unless @data.vertical
         @data.horizontal = "left" unless @data.horizontal
+
+        @data.margin = 0 unless @data.margin
+        @data.horizontalMargin = 0 unless @data.horizontalMargin
+        @data.verticalMargin = 0 unless @data.verticalMargin
+
         @data.padding = 0 unless @data.padding
+        @data.horizontalPadding = 0 unless @data.horizontalPadding
+        @data.verticalPadding = 0 unless @data.verticalPadding
 
         @child = {}
 
@@ -56,19 +63,19 @@ class element
 
         switch @data.horizontal
             when "left"
-                @data.x += @data.padding
+                @data.x += max(@parent.data.padding + @parent.data.horizontalPadding, @data.margin + @data.horizontalMargin)
             when "center"
                 @data.x += (@parent.data.w - @data.w) / 2
             when "right"
-                @data.x += @parent.data.w - @data.w - @data.padding
+                @data.x += @parent.data.w - @data.w - max(@parent.data.padding + @parent.data.horizontalPadding, @data.margin + @data.horizontalMargin)
 
         switch @data.vertical
             when "top"
-                @data.y += @data.padding
+                @data.y += @parent.data.padding + @data.margin + @data.verticalMargin
             when "center"
                 @data.y += (@parent.data.h - @data.h) / 2
             when "bottom"
-                @data.y += @parent.data.h - @data.h - @data.padding
+                @data.y += @parent.data.h - @data.h - max(@parent.data.padding + @parent.data.verticalPadding, @data.margin + @data.verticalMargin)
 
         if toPixel
             @data.x = floor @data.x

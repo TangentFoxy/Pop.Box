@@ -7,14 +7,18 @@
 
 local pop
 
-import mouse from love
+import graphics, mouse from love
 
 path = (...)\sub 1, -7
 element = require "#{path}/element"
 box = require "#{path}/box"
 text = require "#{path}/text"
 
--- images would go here
+path = path\sub 1, -11
+maximizeImage = graphics.newImage "#{path}/images/maximize.png"
+minimizeImage = graphics.newImage "#{path}/images/minimize.png"
+closeImage = graphics.newImage "#{path}/images/close.png"
+-- drag to resize is based on area of padding, which defaults to 5 pixels
 
 class window extends element
     load: (pop_lib) ->
@@ -28,26 +32,55 @@ class window extends element
         @data.type = "window"
         @data.w = 100 unless @data.w > 0
         @data.h = 80 unless @data.h > 0
+
+        -- how a window is contained within its parent element
         @data.containMethod = "mouse" unless @data.containMethod
+
+        @data.maximized = false
+        @data.maximizeable = false if @data.maximizeable == nil
+        @data.minimizeable = false if @data.minimizeable == nil
+        @data.closeable = false if @data.closeable == nil
+        unless @data.previous
+            @data.previous = {}
 
         @header = pop.box @, @data.titleBackground or {25, 180, 230, 255}
         @title = pop.text @header, {horizontal: "center"}, title, @data.titleColor or {255, 255, 255, 255}
-        @window_area = pop.box @, @data.windowBackground or {200, 200, 210, 255}
-        -- closeButton, minimizeButton, etc
+        @window_area = pop.box @, {padding: 5}, @data.windowBackground or {200, 200, 210, 255}
 
-        height = @title\getHeight!
-        @header\setSize @data.w, height
+        -- buttons! :D
+        @data.header_width_reduction = 0
+        buttonSize = @title\getHeight! + 1
+        if @data.closeable
+            @closeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, closeImage)\align "right"
+            @closeButton.clicked = (x, y, button) =>
+                if button == pop.constants.left_mouse
+                    @parent\close!
+            @data.header_width_reduction += buttonSize
+        if @data.maximizeable
+            @maximizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, maximizeImage)\align "right"
+            @maximizeButton.clicked = (x, y, button) =>
+                if button == pop.constants.left_mouse
+                    @parent\maximize!
+            @data.header_width_reduction += buttonSize
+        if @data.minimizeable
+            @minimizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, minimizeImage)\align "right"
+            @minimizeButton.clicked = (x, y, button) =>
+                if button == pop.constants.left_mouse
+                    @parent\minimize!
+            @data.header_width_reduction += buttonSize
+
+        height = @title\getHeight! + 1
+        @header\setSize @data.w - @data.header_width_reduction, height
         @window_area\setSize @data.w, @data.h - height
         @window_area\move nil, height
 
         -- window area steals mouse events to prevent propagation to elements under it
-        @window_area.mousepressed = (x, y, button) ->
-            -- attempted to also make them pull to foreground, but it doesn't work
+        @window_area.mousepressed = (x, y, button) =>
             if button == pop.constants.left_mouse
                 grandparent = @parent.parent
                 table.insert grandparent.child, table.remove(grandparent.child, grandparent\indexOf @parent)
             return nil
-        @window_area.clicked = ->
+        @window_area.clicked = =>
             return nil
 
         selected = false
@@ -109,6 +142,12 @@ class window extends element
         @header\align!
         @title\align!
         @window_area\align!
+        if @closeButton
+            @closeButton\align!
+        if @maximizeButton
+            @maximizeButton\align!
+        if @minimizeButton
+            @minimizeButton\align!
 
         @window_area\move nil, @header\getHeight!
 
@@ -127,7 +166,7 @@ class window extends element
 
             -- close button stuff
 
-            @header\setWidth w
+            @header\setWidth w - @data.header_width_reduction
             @window_area\setWidth w
             @data.w = w
             @data.x += x
@@ -158,3 +197,35 @@ class window extends element
 
     setHeight: (h) =>
         return @setSize nil, h
+
+    setPadding: (padding) =>
+        @window_area\setPadding padding
+        return @
+
+    getPadding: =>
+        return @window_area\getPadding!
+
+    maximize: =>
+        if @data.maximized
+            @data.x = @data.previous.x
+            @data.y = @data.previous.y
+            @setSize @data.previous.w, @data.previous.h
+        else
+            @data.previous.x = @data.x
+            @data.previous.y = @data.y
+            @data.previous.w = @data.w
+            @data.previous.h = @data.h
+            @data.x = @parent.data.x
+            @data.y = @parent.data.y
+            @setSize @parent.data.w, @parent.data.h
+            table.insert @parent.child, table.remove(@parent.child, @parent\indexOf @)
+        @data.maximized = not @data.maximized
+        @align!
+        return @
+
+    minimize: =>
+        @data.draw = false
+        return @
+
+    close: =>
+        @delete!

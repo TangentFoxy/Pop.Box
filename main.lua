@@ -7,7 +7,10 @@ love.load = function()
       200,
       200,
       200
-    }
+    },
+    closeable = true,
+    maximizeable = true,
+    minimizeable = true
   }, "Testing Window"):move(20, 20):setSize(200, 100):align("right", "top")
   local centerBox = pop.box({
     w = 200,
@@ -41,8 +44,8 @@ love.load = function()
   }):align("center", "bottom")
   pop.text(centerBox, "Align me!"):align("right", "top")
   pop.window(centerBox):align("right", "bottom")
+  centerBox:setPadding(5)
   pop.box(centerBox, {
-    padding = 5,
     w = 10,
     h = 20,
     background = {
@@ -53,7 +56,6 @@ love.load = function()
     }
   }):align("left", "top")
   pop.box(centerBox, {
-    padding = 5,
     w = 30,
     h = 30,
     background = {
@@ -64,7 +66,6 @@ love.load = function()
     }
   }):align("center", "top")
   pop.box(centerBox, {
-    padding = 5,
     w = 5,
     h = 40,
     background = {
@@ -75,7 +76,6 @@ love.load = function()
     }
   }):align("left", "center")
   pop.box(centerBox, {
-    padding = 5,
     w = 50,
     h = 50,
     background = {
@@ -86,7 +86,6 @@ love.load = function()
     }
   }):align("right", "center")
   pop.text(centerBox, {
-    padding = 5,
     color = {
       0,
       0,
@@ -95,7 +94,6 @@ love.load = function()
     }
   }, "Text!"):align("left", "bottom")
   pop.box(centerBox, {
-    padding = 5,
     w = 25,
     h = 10,
     background = {
@@ -106,7 +104,6 @@ love.load = function()
     }
   }):align("center", "bottom")
   pop.text(centerBox, {
-    padding = 5,
     color = {
       0,
       0,
@@ -115,7 +112,6 @@ love.load = function()
     }
   }, "Align me!"):align("right", "top")
   return pop.window(centerBox, {
-    padding = 5,
     titleColor = {
       0,
       0,

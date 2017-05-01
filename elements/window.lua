@@ -1,10 +1,17 @@
 local pop
-local mouse
-mouse = love.mouse
+local graphics, mouse
+do
+  local _obj_0 = love
+  graphics, mouse = _obj_0.graphics, _obj_0.mouse
+end
 local path = (...):sub(1, -7)
 local element = require(tostring(path) .. "/element")
 local box = require(tostring(path) .. "/box")
 local text = require(tostring(path) .. "/text")
+path = path:sub(1, -11)
+local maximizeImage = graphics.newImage(tostring(path) .. "/images/maximize.png")
+local minimizeImage = graphics.newImage(tostring(path) .. "/images/minimize.png")
+local closeImage = graphics.newImage(tostring(path) .. "/images/close.png")
 local window
 do
   local _class_0
@@ -21,6 +28,15 @@ do
       self.header:align()
       self.title:align()
       self.window_area:align()
+      if self.closeButton then
+        self.closeButton:align()
+      end
+      if self.maximizeButton then
+        self.maximizeButton:align()
+      end
+      if self.minimizeButton then
+        self.minimizeButton:align()
+      end
       self.window_area:move(nil, self.header:getHeight())
       return self
     end,
@@ -34,7 +50,7 @@ do
         elseif "right" == _exp_0 then
           x = x - (w - self.data.w)
         end
-        self.header:setWidth(w)
+        self.header:setWidth(w - self.data.header_width_reduction)
         self.window_area:setWidth(w)
         self.data.w = w
         self.data.x = self.data.x + x
@@ -61,6 +77,39 @@ do
     end,
     setHeight = function(self, h)
       return self:setSize(nil, h)
+    end,
+    setPadding = function(self, padding)
+      self.window_area:setPadding(padding)
+      return self
+    end,
+    getPadding = function(self)
+      return self.window_area:getPadding()
+    end,
+    maximize = function(self)
+      if self.data.maximized then
+        self.data.x = self.data.previous.x
+        self.data.y = self.data.previous.y
+        self:setSize(self.data.previous.w, self.data.previous.h)
+      else
+        self.data.previous.x = self.data.x
+        self.data.previous.y = self.data.y
+        self.data.previous.w = self.data.w
+        self.data.previous.h = self.data.h
+        self.data.x = self.parent.data.x
+        self.data.y = self.parent.data.y
+        self:setSize(self.parent.data.w, self.parent.data.h)
+        table.insert(self.parent.child, table.remove(self.parent.child, self.parent:indexOf(self)))
+      end
+      self.data.maximized = not self.data.maximized
+      self:align()
+      return self
+    end,
+    minimize = function(self)
+      self.data.draw = false
+      return self
+    end,
+    close = function(self)
+      return self:delete()
     end
   }
   _base_0.__index = _base_0
@@ -85,6 +134,19 @@ do
       if not (self.data.containMethod) then
         self.data.containMethod = "mouse"
       end
+      self.data.maximized = false
+      if self.data.maximizeable == nil then
+        self.data.maximizeable = false
+      end
+      if self.data.minimizeable == nil then
+        self.data.minimizeable = false
+      end
+      if self.data.closeable == nil then
+        self.data.closeable = false
+      end
+      if not (self.data.previous) then
+        self.data.previous = { }
+      end
       self.header = pop.box(self, self.data.titleBackground or {
         25,
         180,
@@ -99,24 +161,67 @@ do
         255,
         255
       })
-      self.window_area = pop.box(self, self.data.windowBackground or {
+      self.window_area = pop.box(self, {
+        padding = 5
+      }, self.data.windowBackground or {
         200,
         200,
         210,
         255
       })
-      local height = self.title:getHeight()
-      self.header:setSize(self.data.w, height)
+      self.data.header_width_reduction = 0
+      local buttonSize = self.title:getHeight() + 1
+      if self.data.closeable then
+        self.closeButton = pop.box(self, {
+          w = buttonSize,
+          h = buttonSize,
+          horizontalMargin = self.data.header_width_reduction
+        }, closeImage):align("right")
+        self.closeButton.clicked = function(self, x, y, button)
+          if button == pop.constants.left_mouse then
+            return self.parent:close()
+          end
+        end
+        self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
+      end
+      if self.data.maximizeable then
+        self.maximizeButton = pop.box(self, {
+          w = buttonSize,
+          h = buttonSize,
+          horizontalMargin = self.data.header_width_reduction
+        }, maximizeImage):align("right")
+        self.maximizeButton.clicked = function(self, x, y, button)
+          if button == pop.constants.left_mouse then
+            return self.parent:maximize()
+          end
+        end
+        self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
+      end
+      if self.data.minimizeable then
+        self.minimizeButton = pop.box(self, {
+          w = buttonSize,
+          h = buttonSize,
+          horizontalMargin = self.data.header_width_reduction
+        }, minimizeImage):align("right")
+        self.minimizeButton.clicked = function(self, x, y, button)
+          if button == pop.constants.left_mouse then
+            return self.parent:minimize()
+          end
+        end
+        self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
+      end
+      local height = self.title:getHeight() + 1
+      self.header:setSize(self.data.w - self.data.header_width_reduction, height)
       self.window_area:setSize(self.data.w, self.data.h - height)
       self.window_area:move(nil, height)
-      self.window_area.mousepressed = function(x, y, button)
+      self.window_area.mousepressed = function(self, x, y, button)
         if button == pop.constants.left_mouse then
           local grandparent = self.parent.parent
           table.insert(grandparent.child, table.remove(grandparent.child, grandparent:indexOf(self.parent)))
         end
         return nil
       end
-      self.window_area.clicked = function()
+      self.window_area.clicked = function(self)
         return nil
       end
       local selected = false
