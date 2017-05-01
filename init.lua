@@ -162,6 +162,7 @@ pop.create = function(element, parent, data, ...)
     end
     insert(parent.child, element)
     insert(parent.data.child, element.data)
+    element.parent = parent
     element.data.parent = parent.data
   elseif parent == false then
     if type(data) == "table" then
@@ -179,7 +180,12 @@ pop.create = function(element, parent, data, ...)
     end
     insert(pop.screen.child, element)
     insert(pop.screen.data.child, element.data)
+    element.parent = pop.screen
     element.data.parent = pop.screen.data
+    if element.parent and element.parent.childAdded then
+      print("working?")
+      element.parent:childAdded(element)
+    end
   end
   return element
 end
@@ -368,16 +374,31 @@ pop.debugDraw = function(element)
     pop.debugDraw(element.child[i])
   end
 end
-pop.printElementTree = function(element, depth)
+pop.printElementTree = function(element, fn, depth)
   if element == nil then
     element = pop.screen
   end
   if depth == nil then
     depth = 0
   end
+  if "table" ~= type(element) then
+    depth = fn
+    fn = element
+    element = pop.screen
+  end
+  if "number" == type(fn) then
+    depth = fn
+    fn = nil
+  end
+  if not (depth) then
+    depth = 0
+  end
   local cls = element.__class.__name
   if element.debugInfo then
-    cls = tostring(cls) .. " (" .. tostring(element:debugInfo()) .. ")"
+    cls = cls .. " (" .. tostring(element:debugInfo()) .. ")"
+  end
+  if fn then
+    cls = cls .. " " .. tostring(fn(element))
   end
   if depth > 0 then
     log(string.rep("-", depth) .. " " .. tostring(cls))
@@ -385,7 +406,7 @@ pop.printElementTree = function(element, depth)
     log(cls)
   end
   for i = 1, #element.child do
-    pop.printElementTree(element.child[i], depth + 1)
+    pop.printElementTree(element.child[i], fn, depth + 1)
   end
 end
 pop.load()

@@ -218,6 +218,11 @@ class element
             if @child[i] == element
                 return i
 
+    dataIndexOf: (data) =>
+        for i = 1, #@data.child
+            if @data.child[i] == data
+                return i
+
     --- Deletes references to this element and then deletes it.
     delete: =>
         for i=#@child, 1, -1

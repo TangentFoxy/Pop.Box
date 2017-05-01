@@ -6,8 +6,6 @@ do
 end
 local path = (...):sub(1, -7)
 local element = require(tostring(path) .. "/element")
-local box = require(tostring(path) .. "/box")
-local text = require(tostring(path) .. "/text")
 path = path:sub(1, -11)
 local maximizeImage = graphics.newImage(tostring(path) .. "/images/maximize.png")
 local minimizeImage = graphics.newImage(tostring(path) .. "/images/minimize.png")
@@ -84,6 +82,13 @@ do
     end,
     getPadding = function(self)
       return self.window_area:getPadding()
+    end,
+    childAdded = function(self, element)
+      table.insert(self.window_area.data, table.remove(self.data.child, self:dataIndexOf(element.data)))
+      table.insert(self.window_area, table.remove(self.child, self:indexOf(element)))
+      element:align()
+      print("worked?")
+      return self
     end,
     maximize = function(self)
       if self.data.maximized then

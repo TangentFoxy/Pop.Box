@@ -11,8 +11,6 @@ import graphics, mouse from love
 
 path = (...)\sub 1, -7
 element = require "#{path}/element"
-box = require "#{path}/box"
-text = require "#{path}/text"
 
 path = path\sub 1, -11
 maximizeImage = graphics.newImage "#{path}/images/maximize.png"
@@ -124,21 +122,15 @@ class window extends element
         @header.mousereleased = (x, y, button) =>
             if button == pop.constants.left_mouse
                 selected = false
-                --pop.focused = false -- we have to manually clear our focus
                 return true
             return false
 
-        -- unsure if needed or how needed
-        --@setSize @data.w, @data.h -- or 100, 80
         @align!
 
     align: (...) =>
         unless @data.align return @
         super ...
 
-        -- don't know if this is needed or why
-        --for i = 1, #@child
-        --    @child[i]\align!
         @header\align!
         @title\align!
         @window_area\align!
@@ -164,16 +156,12 @@ class window extends element
                 when "right"
                     x -= w - @data.w
 
-            -- close button stuff
-
             @header\setWidth w - @data.header_width_reduction
             @window_area\setWidth w
             @data.w = w
             @data.x += x
 
             @title\align!
-
-            -- close button stuff 2 ?
 
         if h
             switch @data.vertical
@@ -204,6 +192,13 @@ class window extends element
 
     getPadding: =>
         return @window_area\getPadding!
+
+    childAdded: (element) =>
+        table.insert @window_area.data, table.remove @data.child, @dataIndexOf element.data
+        table.insert @window_area, table.remove @child, @indexOf element
+        element\align!
+        print "worked?"
+        return @
 
     maximize: =>
         if @data.maximized

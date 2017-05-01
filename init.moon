@@ -194,7 +194,7 @@ pop.create = (element, parent=pop.screen, data, ...) ->
             element = pop.elements[element](parent, {}, data, ...)
         insert parent.child, element
         insert parent.data.child, element.data
-        --element.parent = parent
+        element.parent = parent
         element.data.parent = parent.data
     -- if explicitly no parent, just create the element
     elseif parent == false
@@ -210,14 +210,14 @@ pop.create = (element, parent=pop.screen, data, ...) ->
             element = pop.elements[element](pop.screen, parent, data, ...)
         else -- parent must be an argument
             element = pop.elements[element](pop.screen, {}, parent, data, ...)
-        --if type(data) == "table"
-        --    element = pop.elements[element](pop.screen, parent, data, ...)
-        --else
-        --    element = pop.elements[element](pop.screen, parent, {}, data, ...)
         insert pop.screen.child, element
         insert pop.screen.data.child, element.data
-        --element.parent = pop.screen
+        element.parent = pop.screen
         element.data.parent = pop.screen.data
+
+        if element.parent and element.parent.childAdded
+            print "working?"
+            element.parent\childAdded element
 
     return element
 
@@ -513,12 +513,25 @@ pop.debugDraw = (element=pop.screen) ->
 --- `pop.screen`.
 --- @see Element
 
-pop.printElementTree = (element=pop.screen, depth=0) ->
+pop.printElementTree = (element=pop.screen, fn, depth=0) ->
+    if "table" != type element
+      depth = fn
+      fn = element
+      element = pop.screen
+    if "number" == type fn
+      depth = fn
+      fn = nil
+    unless depth
+      depth=0
+
     --- @todo Write debugInfo things for elements.
     cls = element.__class.__name
 
     if element.debugInfo
-      cls = "#{cls} (#{element\debugInfo!})"
+      cls ..= " (#{element\debugInfo!})"
+
+    if fn
+      cls ..= " #{fn element}"
 
     if depth > 0
         log string.rep("-", depth) .. " #{cls}"
@@ -526,7 +539,7 @@ pop.printElementTree = (element=pop.screen, depth=0) ->
         log cls
 
     for i = 1, #element.child
-        pop.printElementTree element.child[i], depth + 1
+        pop.printElementTree element.child[i], fn, depth + 1
 
 
 

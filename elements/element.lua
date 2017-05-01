@@ -169,6 +169,13 @@ do
         end
       end
     end,
+    dataIndexOf = function(self, data)
+      for i = 1, #self.data.child do
+        if self.data.child[i] == data then
+          return i
+        end
+      end
+    end,
     delete = function(self)
       for i = #self.child, 1, -1 do
         self.child[i]:delete()
