@@ -252,7 +252,7 @@ pop.mousepressed = function(x, y, button, element)
     end
     if element.mousepressed then
       handled = element:mousepressed(x - element.data.x, y - element.data.y, button)
-      if handled ~= false then
+      if handled then
         pop.focused = element
       end
     end
@@ -358,6 +358,9 @@ end
 pop.debugDraw = function(element)
   if element == nil then
     element = pop.screen
+  end
+  if element.debugDraw then
+    element:debugDraw()
   end
   graphics.setLineWidth(1)
   graphics.setColor(0, 0, 0, 100)

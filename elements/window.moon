@@ -81,6 +81,8 @@ class window extends element
         @window_area.clicked = =>
             return nil
 
+        --print "window_area " .. tostring @window_area
+
         selected = false
         mx = 0
         my = 0

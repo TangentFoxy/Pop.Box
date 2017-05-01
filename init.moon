@@ -323,7 +323,7 @@ pop.mousepressed = (x, y, button, element) ->
         -- if a child hasn't handled it yet, try to handle it, and set pop.focused
         if element.mousepressed
             handled = element\mousepressed x - element.data.x, y - element.data.y, button
-            if handled != false
+            if handled   -- you have to explicitly handle a mousepressed event to become focused
                 pop.focused = element
 
     -- return whether or not we have handled the event
@@ -385,9 +385,12 @@ pop.mousereleased = (x, y, button, element) ->
             if element.mousereleased
                 mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
             if clickedHandled != false or mousereleasedHandled != false
+                --print "#{clickedHandled}, #{mousereleasedHandled}, #{element}, #{element.data.type}"
                 return clickedHandled, mousereleasedHandled
 
         pop.mousereleased x, y, button, pop.screen
+
+    --print "#{clickedHandled}, #{mousereleasedHandled}, #{element}"
 
     return clickedHandled, mousereleasedHandled
 
@@ -489,7 +492,9 @@ pop.export = (element=pop.screen) ->
 --- @see Element
 
 pop.debugDraw = (element=pop.screen) ->
-    --@todo Remove element.debugDraw functions.
+    if element.debugDraw
+      element\debugDraw!
+
     graphics.setLineWidth 1
     graphics.setColor 0, 0, 0, 100
     graphics.rectangle "fill", element.data.x, element.data.y, element.data.w, element.data.h
