@@ -27,7 +27,7 @@ class window extends element
     new: (@parent, @data={}, title="Window") =>
         super @parent, @data
 
-        @data.type = "window"
+        @data.type = "window" if @data.type == "element"
         @data.w = 100 unless @data.w > 0
         @data.h = 80 unless @data.h > 0
 
@@ -41,27 +41,28 @@ class window extends element
         unless @data.previous
             @data.previous = {}
 
-        @header = pop.box @, @data.titleBackground or {25, 180, 230, 255}
-        @title = pop.text @header, {horizontal: "center"}, title, @data.titleColor or {255, 255, 255, 255}
-        @window_area = pop.box @, {padding: 5}, @data.windowBackground or {200, 200, 210, 255}
+        @header = pop.box @, {type: "box (window header)"}, @data.titleBackground or {25, 180, 230, 255}
+        @title = pop.text @header, {horizontal: "center", type: "text (window title)"}, title, @data.titleColor or {255, 255, 255, 255}
+        @window_area = pop.box @, {padding: 5, type: "box (window area)"}, @data.windowBackground or {200, 200, 210, 255}
 
         -- buttons! :D
         @data.header_width_reduction = 0
         buttonSize = @title\getHeight! + 1
         if @data.closeable
-            @closeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, closeImage)\align "right"
+            @closeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction, type: "box (window close button)"}, closeImage)\align "right"
             @closeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\close!
             @data.header_width_reduction += buttonSize
         if @data.maximizeable
-            @maximizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, maximizeImage)\align "right"
+            @maximizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction, type: "box (window maximize button)"}, maximizeImage)\align "right"
             @maximizeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\maximize!
+                --return nil --probably not needed
             @data.header_width_reduction += buttonSize
         if @data.minimizeable
-            @minimizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction}, minimizeImage)\align "right"
+            @minimizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction, type: "box (window minimize button)"}, minimizeImage)\align "right"
             @minimizeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\minimize!
@@ -204,9 +205,9 @@ class window extends element
 
     maximize: =>
         if @data.maximized
-            @data.x = @data.previous.x
-            @data.y = @data.previous.y
             @setSize @data.previous.w, @data.previous.h
+            @align!
+            @move @data.previous.x - @data.x, @data.previous.y - @data.y
         else
             @data.previous.x = @data.x
             @data.previous.y = @data.y
@@ -216,8 +217,8 @@ class window extends element
             @data.y = @parent.data.y
             @setSize @parent.data.w, @parent.data.h
             table.insert @parent.child, table.remove(@parent.child, @parent\indexOf @)
+            @align!
         @data.maximized = not @data.maximized
-        @align!
         return @
 
     minimize: =>

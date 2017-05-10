@@ -2,7 +2,7 @@ local pop = require("")
 local debug = false
 love.load = function()
   pop.text("Hello World!"):align("center", "center")
-  pop.window({
+  local testWindow = pop.window({
     windowBackground = {
       200,
       200,
@@ -12,6 +12,10 @@ love.load = function()
     maximizeable = true,
     minimizeable = true
   }, "Testing Window"):move(20, 20):setSize(200, 100):align("right", "top")
+  print(testWindow.window_area)
+  pop.window({
+    maximizeable = true
+  }, "Test Window #2"):align("center", "bottom")
   local centerBox = pop.box({
     w = 200,
     h = 200

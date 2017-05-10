@@ -19,7 +19,7 @@ class box extends element
 
         super @parent, @data
 
-        @data.type = "box"
+        @data.type = "box" if @data.type == "element"
         @data.background = background unless @data.background
 
     draw: =>

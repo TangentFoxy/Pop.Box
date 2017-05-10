@@ -75,7 +75,9 @@ do
         self.data = nil
       end
       _class_0.__parent.__init(self, self.parent, self.data)
-      self.data.type = "box"
+      if self.data.type == "element" then
+        self.data.type = "box"
+      end
       if not (self.data.background) then
         self.data.background = background
       end

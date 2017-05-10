@@ -267,6 +267,10 @@ pop.draw = (element=pop.screen) ->
 --- @treturn boolean Was the event handled?
 
 pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
+    local previously_hovered
+    if element == pop.screen
+        previously_hovered = pop.hovered
+
     -- first we find out if we're hovering over anything and set pop.hovered
     if element.data.draw and element.data.hoverable and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
         -- okay, we're over this element for sure, but let's check its children
@@ -274,6 +278,10 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
         -- check in reverse order, it will set pop.hovered to any that match
         for i = 1, #element.child
             pop.mousemoved x, y, dx, dy, element.child[i]
+
+    -- if we're hovering over something different, log it
+    if element == pop.screen and pop.hovered != previously_hovered
+        log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
 
     --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
     -- checking element against pop.screen so that this only gets called once
@@ -323,7 +331,10 @@ pop.mousepressed = (x, y, button, element) ->
         -- if a child hasn't handled it yet, try to handle it, and set pop.focused
         if element.mousepressed
             handled = element\mousepressed x - element.data.x, y - element.data.y, button
+            if handled != false
+                log "   #{handled} (handled)", "#{element} (#{element.data.type})"
             if handled   -- you have to explicitly handle a mousepressed event to become focused
+                log "   ^ focused"
                 pop.focused = element
 
     -- return whether or not we have handled the event
@@ -365,6 +376,9 @@ pop.mousereleased = (x, y, button, element) ->
 
             -- if we clicked, we're focused!
             if clickedHandled != false
+                log "   #{clickedHandled} (click handled)", "#{element} (#{element.data.type})"
+            if clickedHandled
+                log "   ^ focused"
                 pop.focused = element
                 --- @todo Figure out how to bring a focused element to the front of view (aka the first element in its parent's children).
                 --- (If I do it right here, the for loop above may break! I need to test/figure this out.)
@@ -372,12 +386,14 @@ pop.mousereleased = (x, y, button, element) ->
                 -- basically, move focused element to front of its parent's child
                 --element.parent\focusChild element
                 --table.insert element.parent, element.parent\removeChild(element),
+            if mousereleasedHandled != false
+                log "   #{mousereleasedHandled} (release handled)", "#{element} (#{element.data.type})"
 
     -- else, check for focused element, and then default to pop.screen to begin! (and print that we received an event)
     else
         log "mousereleased", x, y, button
 
-        if element = pop.focused
+        if element == pop.focused
             if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
                 if element.clicked
                     clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
@@ -385,7 +401,6 @@ pop.mousereleased = (x, y, button, element) ->
             if element.mousereleased
                 mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
             if clickedHandled != false or mousereleasedHandled != false
-                --print "#{clickedHandled}, #{mousereleasedHandled}, #{element}, #{element.data.type}"
                 return clickedHandled, mousereleasedHandled
 
         pop.mousereleased x, y, button, pop.screen

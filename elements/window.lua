@@ -92,9 +92,9 @@ do
     end,
     maximize = function(self)
       if self.data.maximized then
-        self.data.x = self.data.previous.x
-        self.data.y = self.data.previous.y
         self:setSize(self.data.previous.w, self.data.previous.h)
+        self:align()
+        self:move(self.data.previous.x - self.data.x, self.data.previous.y - self.data.y)
       else
         self.data.previous.x = self.data.x
         self.data.previous.y = self.data.y
@@ -104,9 +104,9 @@ do
         self.data.y = self.parent.data.y
         self:setSize(self.parent.data.w, self.parent.data.h)
         table.insert(self.parent.child, table.remove(self.parent.child, self.parent:indexOf(self)))
+        self:align()
       end
       self.data.maximized = not self.data.maximized
-      self:align()
       return self
     end,
     minimize = function(self)
@@ -129,7 +129,9 @@ do
       end
       self.parent, self.data = parent, data
       _class_0.__parent.__init(self, self.parent, self.data)
-      self.data.type = "window"
+      if self.data.type == "element" then
+        self.data.type = "window"
+      end
       if not (self.data.w > 0) then
         self.data.w = 100
       end
@@ -152,14 +154,17 @@ do
       if not (self.data.previous) then
         self.data.previous = { }
       end
-      self.header = pop.box(self, self.data.titleBackground or {
+      self.header = pop.box(self, {
+        type = "box (window header)"
+      }, self.data.titleBackground or {
         25,
         180,
         230,
         255
       })
       self.title = pop.text(self.header, {
-        horizontal = "center"
+        horizontal = "center",
+        type = "text (window title)"
       }, title, self.data.titleColor or {
         255,
         255,
@@ -167,7 +172,8 @@ do
         255
       })
       self.window_area = pop.box(self, {
-        padding = 5
+        padding = 5,
+        type = "box (window area)"
       }, self.data.windowBackground or {
         200,
         200,
@@ -180,7 +186,8 @@ do
         self.closeButton = pop.box(self, {
           w = buttonSize,
           h = buttonSize,
-          horizontalMargin = self.data.header_width_reduction
+          horizontalMargin = self.data.header_width_reduction,
+          type = "box (window close button)"
         }, closeImage):align("right")
         self.closeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then
@@ -193,7 +200,8 @@ do
         self.maximizeButton = pop.box(self, {
           w = buttonSize,
           h = buttonSize,
-          horizontalMargin = self.data.header_width_reduction
+          horizontalMargin = self.data.header_width_reduction,
+          type = "box (window maximize button)"
         }, maximizeImage):align("right")
         self.maximizeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then
@@ -206,7 +214,8 @@ do
         self.minimizeButton = pop.box(self, {
           w = buttonSize,
           h = buttonSize,
-          horizontalMargin = self.data.header_width_reduction
+          horizontalMargin = self.data.header_width_reduction,
+          type = "box (window minimize button)"
         }, minimizeImage):align("right")
         self.minimizeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then

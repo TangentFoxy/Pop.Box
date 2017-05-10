@@ -7,7 +7,10 @@ debug = false
 
 love.load = ->
     pop.text("Hello World!")\align "center", "center"
-    pop.window({windowBackground: {200, 200, 200}, closeable: true, maximizeable: true, minimizeable: true}, "Testing Window")\move(20, 20)\setSize(200, 100)\align "right", "top"
+    testWindow = pop.window({windowBackground: {200, 200, 200}, closeable: true, maximizeable: true, minimizeable: true}, "Testing Window")\move(20, 20)\setSize(200, 100)\align "right", "top"
+    print testWindow.window_area
+
+    pop.window({maximizeable: true}, "Test Window #2")\align "center", "bottom"
 
     -- alignment testing
     centerBox = pop.box({w: 200, h: 200}, {255, 255, 0, 120})\align "center", "center"

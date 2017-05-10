@@ -18,7 +18,7 @@ class text extends element
           fontFile = text
           text = ""
 
-        @data.type = "text"
+        @data.type = "text" if @data.type == "element"
         @data.text = text unless @data.text
         @data.fontFile = fontFile unless @data.fontFile
         @data.fontSize = fontSize unless @data.fontSize

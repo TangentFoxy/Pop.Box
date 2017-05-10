@@ -59,7 +59,9 @@ do
         fontFile = text
         text = ""
       end
-      self.data.type = "text"
+      if self.data.type == "element" then
+        self.data.type = "text"
+      end
       if not (self.data.text) then
         self.data.text = text
       end
