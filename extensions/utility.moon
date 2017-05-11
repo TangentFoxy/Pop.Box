@@ -11,6 +11,7 @@ element = require "#{path}/elements/element"
 --text = require "#{path}/elements/text"
 
 --- @todo make this built-in as maximize for window elements
+--- @todo rewrite to take into account margin!
 element.__base.fill = =>
   @data.x = @parent.data.x + @parent.data.padding
   @data.y = @parent.data.y + @parent.data.padding

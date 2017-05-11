@@ -5,6 +5,8 @@ do
   local _obj_0 = math
   floor, max = _obj_0.floor, _obj_0.max
 end
+local inheritsFromElement
+inheritsFromElement = require(tostring((...):sub(1, -19)) .. "/util").inheritsFromElement
 local element
 do
   local _class_0
@@ -175,6 +177,33 @@ do
           return i
         end
       end
+    end,
+    add = function(self, element)
+      if not (inheritsFromElement(element)) then
+        for _index_0 = 1, #element do
+          local e = element[_index_0]
+          self:add(e)
+          return self
+        end
+      end
+      element.parent:remove(element)
+      table.insert(self.child, element)
+      table.insert(self.data.child, element.data)
+      return self
+    end,
+    remove = function(self, element)
+      if not (inheritsFromElement(element)) then
+        for _index_0 = 1, #element do
+          local e = element[_index_0]
+          self:remove(e)
+          return self
+        end
+      end
+      local index = self:indexOf(element)
+      local dataIndex = self:dataIndexOf(element.data)
+      table.remove(self.child, index)
+      table.remove(self.data.child, dataIndex)
+      return self
     end,
     delete = function(self)
       for i = #self.child, 1, -1 do

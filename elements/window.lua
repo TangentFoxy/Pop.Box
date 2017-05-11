@@ -6,6 +6,8 @@ do
 end
 local path = (...):sub(1, -7)
 local element = require(tostring(path) .. "/element")
+local inheritsFromElement
+inheritsFromElement = require(tostring(path:sub(1, -11)) .. "/util").inheritsFromElement
 path = path:sub(1, -11)
 local maximizeImage = graphics.newImage(tostring(path) .. "/images/maximize.png")
 local minimizeImage = graphics.newImage(tostring(path) .. "/images/minimize.png")
@@ -35,7 +37,9 @@ do
       if self.minimizeButton then
         self.minimizeButton:align()
       end
-      self.window_area:move(nil, self.header:getHeight())
+      if self.data.titleBar then
+        self.window_area:move(nil, self.header:getHeight())
+      end
       return self
     end,
     setSize = function(self, w, h)
@@ -61,8 +65,12 @@ do
         elseif "right" == _exp_0 then
           y = y - (h - self.data.h)
         end
-        self.window_area:setHeight(h - self.header:getHeight())
-        self.window_area:move(nil, self.header:getHeight())
+        if self.data.titleBar then
+          self.window_area:setHeight(h - self.header:getHeight())
+          self.window_area:move(nil, self.header:getHeight())
+        else
+          self.window_area:setHeight(h)
+        end
         self.data.h = h
         self.data.y = self.data.y + y
       end
@@ -83,11 +91,13 @@ do
     getPadding = function(self)
       return self.window_area:getPadding()
     end,
-    childAdded = function(self, element)
-      table.insert(self.window_area.data, table.remove(self.data.child, self:dataIndexOf(element.data)))
-      table.insert(self.window_area, table.remove(self.child, self:indexOf(element)))
-      element:align()
-      print("worked?")
+    add = function(self, element)
+      self.window_area:add(element)
+      local x, y = self.window_area.data.x, self.window_area.data.y
+      return self
+    end,
+    remove = function(self, element)
+      self.window_area:remove(element)
       return self
     end,
     maximize = function(self)
@@ -142,6 +152,9 @@ do
         self.data.containMethod = "mouse"
       end
       self.data.maximized = false
+      if self.data.titleBar == nil then
+        self.data.titleBar = true
+      end
       if self.data.maximizeable == nil then
         self.data.maximizeable = false
       end
@@ -226,8 +239,16 @@ do
       end
       local height = self.title:getHeight() + 1
       self.header:setSize(self.data.w - self.data.header_width_reduction, height)
-      self.window_area:setSize(self.data.w, self.data.h - height)
-      self.window_area:move(nil, height)
+      if self.data.titleBar then
+        self.window_area:setSize(self.data.w, self.data.h - height)
+        self.window_area:move(nil, height)
+      else
+        self.header.data.draw = false
+        self.window_area.data.x = self.data.x + self.data.padding
+        self.window_area.data.y = self.data.y + self.data.padding
+        self.window_area.data.w = self.data.w - self.data.padding * 2
+        self.window_area.data.h = self.data.h - self.data.padding * 2
+      end
       self.window_area.mousepressed = function(self, x, y, button)
         if button == pop.constants.left_mouse then
           local grandparent = self.parent.parent

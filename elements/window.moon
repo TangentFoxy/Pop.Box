@@ -12,6 +12,8 @@ import graphics, mouse from love
 path = (...)\sub 1, -7
 element = require "#{path}/element"
 
+import inheritsFromElement from require "#{path\sub 1, -11}/util"
+
 path = path\sub 1, -11
 maximizeImage = graphics.newImage "#{path}/images/maximize.png"
 minimizeImage = graphics.newImage "#{path}/images/minimize.png"
@@ -35,6 +37,7 @@ class window extends element
         @data.containMethod = "mouse" unless @data.containMethod
 
         @data.maximized = false
+        @data.titleBar = true if @data.titleBar == nil
         @data.maximizeable = false if @data.maximizeable == nil
         @data.minimizeable = false if @data.minimizeable == nil
         @data.closeable = false if @data.closeable == nil
@@ -70,8 +73,16 @@ class window extends element
 
         height = @title\getHeight! + 1
         @header\setSize @data.w - @data.header_width_reduction, height
-        @window_area\setSize @data.w, @data.h - height
-        @window_area\move nil, height
+
+        if @data.titleBar
+          @window_area\setSize @data.w, @data.h - height
+          @window_area\move nil, height
+        else
+          @header.data.draw = false
+          @window_area.data.x = @data.x + @data.padding
+          @window_area.data.y = @data.y + @data.padding
+          @window_area.data.w = @data.w - @data.padding*2
+          @window_area.data.h = @data.h - @data.padding*2
 
         -- window area steals mouse events to prevent propagation to elements under it
         @window_area.mousepressed = (x, y, button) =>
@@ -82,7 +93,23 @@ class window extends element
         @window_area.clicked = =>
             return nil
 
-        --print "window_area " .. tostring @window_area
+        -- @window_area.add = (element) =>
+        --     pop.elements.box.__parent.add @, element
+        --     --NOTE temporarily disabled
+        --     -- this seems to be working but errors with previous == nil
+        --     -- I have moved the intended functionality to the window element's function that calls these
+        --     if false and inheritsFromElement element
+        --         -- we need to adjust its position based on the previous element
+        --         previous = @data.child[#@data.child-1]
+        --         y, h = previous.y, previous.h
+        --         y += h + @data.padding
+        --         element.data.x = @data.x + @data.padding
+        --         element.data.y = y
+        --         element\setWidth @data.w - @data.padding*2
+        --
+        -- @window_area.remove = (element) =>
+        --     pop.elements.box.__parent.remove @, element
+        --     --TODO we need to adjust all elements' positions
 
         selected = false
         mx = 0
@@ -144,7 +171,8 @@ class window extends element
         if @minimizeButton
             @minimizeButton\align!
 
-        @window_area\move nil, @header\getHeight!
+        if @data.titleBar
+            @window_area\move nil, @header\getHeight!
 
         return @
 
@@ -173,8 +201,11 @@ class window extends element
                 when "right"
                     y -= h - @data.h
 
-            @window_area\setHeight h - @header\getHeight!
-            @window_area\move nil, @header\getHeight!
+            if @data.titleBar
+                @window_area\setHeight h - @header\getHeight!
+                @window_area\move nil, @header\getHeight!
+            else
+                @window_area\setHeight h
             @data.h = h
             @data.y += y
 
@@ -196,12 +227,45 @@ class window extends element
     getPadding: =>
         return @window_area\getPadding!
 
-    childAdded: (element) =>
-        table.insert @window_area.data, table.remove @data.child, @dataIndexOf element.data
-        table.insert @window_area, table.remove @child, @indexOf element
-        element\align!
-        print "worked?"
+    add: (element) =>
+        @window_area\add element
+
+        x, y = @window_area.data.x, @window_area.data.y
+        --for element in *@window_area.child
+            --element\setWidth @data.w - @data.padding*2
+            --TODO needs to align them vertically with appropriate padding (I am not taking margin into account which is bad)
+
         return @
+
+        -- @window_area.add = (element) =>
+        --     pop.elements.box.__parent.add @, element
+        --     --NOTE temporarily disabled
+        --     -- this seems to be working but errors with previous == nil
+        --     -- I have moved the intended functionality to the window element's function that calls these
+        --     if false and inheritsFromElement element
+        --         -- we need to adjust its position based on the previous element
+        --         previous = @data.child[#@data.child-1]
+        --         y, h = previous.y, previous.h
+        --         y += h + @data.padding
+        --         element.data.x = @data.x + @data.padding
+        --         element.data.y = y
+        --         element\setWidth @data.w - @data.padding*2
+        --
+        -- @window_area.remove = (element) =>
+        --     pop.elements.box.__parent.remove @, element
+        --     --TODO we need to adjust all elements' positions
+
+    remove: (element) =>
+        @window_area\remove element
+        return @
+
+    --NOTE was this even used?
+    --childAdded: (element) =>
+    --    table.insert @window_area.data, table.remove @data.child, @dataIndexOf element.data
+    --    table.insert @window_area, table.remove @child, @indexOf element
+    --    element\align!
+    --    print "worked?"
+    --    return @
 
     maximize: =>
         if @data.maximized

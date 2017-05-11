@@ -5,6 +5,7 @@
 
 import graphics from love
 import floor, max from math
+import inheritsFromElement from require "#{(...)\sub 1, -19}/util"
 
 class element
     --- Constructor expects nothing, or a data table describing it.
@@ -222,6 +223,33 @@ class element
         for i = 1, #@data.child
             if @data.child[i] == data
                 return i
+
+    add: (element) =>
+        unless inheritsFromElement element
+            for e in *element
+                @add e
+                return @
+
+        element.parent\remove(element)
+
+        table.insert @child, element
+        table.insert @data.child, element.data
+
+        return @
+
+    remove: (element) =>
+        unless inheritsFromElement element
+            for e in *element
+                @remove e
+                return @
+
+        index = @indexOf element
+        dataIndex = @dataIndexOf element.data
+
+        table.remove @child, index
+        table.remove @data.child, dataIndex
+
+        return @
 
     --- Deletes references to this element and then deletes it.
     delete: =>
