@@ -5,7 +5,24 @@ local scrollbox
 do
   local _class_0
   local _parent_0 = element
-  local _base_0 = { }
+  local _base_0 = {
+    draw = function(self)
+      graphics.setColor(self.data.color)
+      graphics.rectangle("fill", self.data.x, self.data.y, self.data.w, self.data.h)
+      return self
+    end,
+    setBackground = function(self, r, g, b, a)
+      if a == nil then
+        a = 255
+      end
+      if "table" == type(r) then
+        self.data.color = r
+      else
+        self.data.color = r, g, b, a
+      end
+      return self
+    end
+  }
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   _class_0 = setmetatable({
@@ -18,6 +35,12 @@ do
       if self.data.type == "element" then
         self.data.type = "scrollbox"
       end
+      self.data.color = {
+        0,
+        0,
+        0,
+        255
+      }
     end,
     __base = _base_0,
     __name = "scrollbox",

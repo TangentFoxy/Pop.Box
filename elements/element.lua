@@ -6,7 +6,7 @@ do
   floor, max = _obj_0.floor, _obj_0.max
 end
 local inheritsFromElement
-inheritsFromElement = require(tostring((...):sub(1, -19)) .. "/util").inheritsFromElement
+inheritsFromElement = require(tostring((...):sub(1, -18)) .. "/util").inheritsFromElement
 local element
 do
   local _class_0
