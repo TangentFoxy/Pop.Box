@@ -51,8 +51,8 @@ love.load = ->
             })
         })
 
-    --old_method!
-    new_method!
+    old_method!
+    --new_method!
 
 love.update = (dt) ->
     pop.update dt

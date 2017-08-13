@@ -159,7 +159,7 @@ love.load = function()
       })
     })
   end
-  return new_method()
+  return old_method()
 end
 love.update = function(dt)
   return pop.update(dt)

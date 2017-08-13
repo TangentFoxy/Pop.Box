@@ -5,7 +5,7 @@
 
 import graphics from love
 import floor, max from math
-import inheritsFromElement from require "#{(...)\sub 1, -18}/util"
+import inheritsFromElement from require "#{(...)\sub 1, -19}/util"
 
 class element
     --- Constructor expects nothing, or a data table describing it.
