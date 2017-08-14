@@ -152,6 +152,7 @@ class window extends element
         @header.mousereleased = (x, y, button) =>
             if button == pop.constants.left_mouse
                 selected = false
+                pop.focused = false -- maybe it should check if it is focused first?
                 return true
             return false
 

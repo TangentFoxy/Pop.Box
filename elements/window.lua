@@ -325,6 +325,7 @@ do
       self.header.mousereleased = function(self, x, y, button)
         if button == pop.constants.left_mouse then
           selected = false
+          pop.focused = false
           return true
         end
         return false

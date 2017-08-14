@@ -300,17 +300,20 @@ pop.mousereleased = function(x, y, button, element)
     end
   else
     log("mousereleased", x, y, button)
-    if element == pop.focused then
-      if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
-        if element.clicked then
-          clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+    do
+      element = pop.focused
+      if element then
+        if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
+          if element.clicked then
+            clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+          end
         end
-      end
-      if element.mousereleased then
-        mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
-      end
-      if clickedHandled ~= false or mousereleasedHandled ~= false then
-        return clickedHandled, mousereleasedHandled
+        if element.mousereleased then
+          mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
+        end
+        if clickedHandled ~= false or mousereleasedHandled ~= false then
+          return clickedHandled, mousereleasedHandled
+        end
       end
     end
     pop.mousereleased(x, y, button, pop.screen)

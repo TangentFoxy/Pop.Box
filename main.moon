@@ -24,7 +24,7 @@ love.load = ->
         pop.box(centerBox)\align("left", "bottom")\setSize 5, 5
         pop.box(centerBox, {w: 25, h: 10})\align "center", "bottom"
         pop.text(centerBox, "Align me!")\align "right", "top"
-        pop.window(centerBox)\align "right", "bottom"
+        pop.window(centerBox, {closeable: true})\align "right", "bottom"
 
         centerBox\setPadding 5
 
@@ -36,6 +36,8 @@ love.load = ->
         pop.box(centerBox, {w: 25, h: 10, background: {0, 0, 255, 100}})\align "center", "bottom"
         pop.text(centerBox, {color: {0, 0, 255, 100}}, "Align me!")\align "right", "top"
         pop.window(centerBox, {titleColor: {0, 0, 0, 150}, titleBackground: {0, 0, 255, 100}, windowBackground: {200, 200, 255, 100}})\align "right", "bottom"
+        pop.window(centerBox, {containMethod: "title", w: 125}, "Title can't leave")
+        pop.window(centerBox, {containMethod: "body", w: 125}, "Body can't leave")
 
     new_method = ->
         partsGrid = pop.dynamicGrid!

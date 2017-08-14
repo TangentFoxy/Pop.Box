@@ -374,7 +374,7 @@ pop.mousereleased = (x, y, button, element) ->
             if element.mousereleased
                 mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
 
-            -- if we clicked, we're focused!
+            -- if we clicked (AND returned true), we're focused!
             if clickedHandled != false
                 log "   #{clickedHandled} (click handled)", "#{element} (#{element.data.type})"
             if clickedHandled
@@ -393,7 +393,7 @@ pop.mousereleased = (x, y, button, element) ->
     else
         log "mousereleased", x, y, button
 
-        if element == pop.focused
+        if element = pop.focused
             if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
                 if element.clicked
                     clickedHandled = element\clicked x - element.data.x, y - element.data.y, button

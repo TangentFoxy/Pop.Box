@@ -51,7 +51,9 @@ love.load = function()
       h = 10
     }):align("center", "bottom")
     pop.text(centerBox, "Align me!"):align("right", "top")
-    pop.window(centerBox):align("right", "bottom")
+    pop.window(centerBox, {
+      closeable = true
+    }):align("right", "bottom")
     centerBox:setPadding(5)
     pop.box(centerBox, {
       w = 10,
@@ -119,7 +121,7 @@ love.load = function()
         100
       }
     }, "Align me!"):align("right", "top")
-    return pop.window(centerBox, {
+    pop.window(centerBox, {
       titleColor = {
         0,
         0,
@@ -139,6 +141,14 @@ love.load = function()
         100
       }
     }):align("right", "bottom")
+    pop.window(centerBox, {
+      containMethod = "title",
+      w = 125
+    }, "Title can't leave")
+    return pop.window(centerBox, {
+      containMethod = "body",
+      w = 125
+    }, "Body can't leave")
   end
   local new_method
   new_method = function()
