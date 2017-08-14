@@ -1,5 +1,5 @@
 local Class
-Class = function(name, parent)
+Class = function(name)
   local newClass, base
   base = {
     __index = base,
@@ -16,5 +16,6 @@ Class = function(name, parent)
       return self
     end
   })
+  return newClass
 end
 return Class
