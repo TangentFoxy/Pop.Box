@@ -269,7 +269,7 @@ pop.draw = (element=pop.screen) ->
 pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
     local previously_hovered
     if element == pop.screen
-        previously_hovered = pop.hovered
+        previously_hovered = pop.hovered -- we save it because the loop below will change it
 
     -- first we find out if we're hovering over anything and set pop.hovered
     if element.data.draw and element.data.hoverable and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
@@ -279,17 +279,18 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
         for i = 1, #element.child
             pop.mousemoved x, y, dx, dy, element.child[i]
 
-    -- if we're hovering over something different, log it, and call handlers if relevant
-    if element == pop.screen and pop.hovered != previously_hovered
-        log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
-        if previously_hovered.hovered
-          previously_hovered\hovered false
-        if pop.hovered.hovered
-          pop.hovered\hovered true
+    -- check element == pop.screen so this is only called once at the end
+    if element == pop.screen
+        -- if we're hovering over something different, log it, and call handlers if relevant
+        if pop.hovered != previously_hovered
+            log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
+            if previously_hovered and previously_hovered.hovered -- previously_hovered can be a false boolean
+              previously_hovered\hovered false
+            if pop.hovered.hovered
+              pop.hovered\hovered true
 
-    -- checks element == pop.screen so this only gets called once at the end of recursion
-    if pop.focused and pop.focused.mousemoved and element == pop.screen
-        return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
+        if pop.focused and pop.focused.mousemoved
+            return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
 
     return false
 

@@ -229,11 +229,19 @@ pop.mousemoved = function(x, y, dx, dy, element)
       pop.mousemoved(x, y, dx, dy, element.child[i])
     end
   end
-  if element == pop.screen and pop.hovered ~= previously_hovered then
-    log("  pop.hovered: " .. tostring(pop.hovered) .. " (" .. tostring(pop.hovered.data.type) .. ")")
-  end
-  if pop.focused and pop.focused.mousemoved and element == pop.screen then
-    return pop.focused:mousemoved(x - pop.focused.data.x, y - pop.focused.data.y, dx, dy)
+  if element == pop.screen then
+    if pop.hovered ~= previously_hovered then
+      log("  pop.hovered: " .. tostring(pop.hovered) .. " (" .. tostring(pop.hovered.data.type) .. ")")
+      if previously_hovered and previously_hovered.hovered then
+        previously_hovered:hovered(false)
+      end
+      if pop.hovered.hovered then
+        pop.hovered:hovered(true)
+      end
+    end
+    if pop.focused and pop.focused.mousemoved then
+      return pop.focused:mousemoved(x - pop.focused.data.x, y - pop.focused.data.y, dx, dy)
+    end
   end
   return false
 end
