@@ -285,9 +285,9 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
         if pop.hovered != previously_hovered
             log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
             if previously_hovered and previously_hovered.hovered -- previously_hovered can be a false boolean
-              previously_hovered\hovered false
+                previously_hovered\hovered false
             if pop.hovered.hovered
-              pop.hovered\hovered true
+                pop.hovered\hovered true
 
         if pop.focused and pop.focused.mousemoved
             return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
