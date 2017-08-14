@@ -1,5 +1,5 @@
 local Class
-Class = function(name)
+Class = function(name, parent)
   local newClass, base
   base = {
     __index = base,
@@ -16,6 +16,23 @@ Class = function(name)
       return self
     end
   })
-  return newClass
+  if parent then
+    setmetable(base, {
+      __parent = parent.__base
+    })
+    newClass.__parent = parent
+    newClass.__index = function(cls, name)
+      local val = rawget(base, name)
+      if val == nil then
+        return parent[name]
+      else
+        return val
+      end
+    end
+    if parent.__inherited then
+      parent:__inherited(newClass)
+    end
+  end
+  return newClass, base
 end
 return Class
