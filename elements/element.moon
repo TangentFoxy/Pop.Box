@@ -3,11 +3,16 @@
 --- @copyright Paul Liverman III (2016)
 --- @license The MIT License (MIT)
 
+local pop
+
 import graphics from love
 import floor, max from math
 import inheritsFromElement from require "#{(...)\sub 1, -19}/util"
 
 class element
+    load: (pop_lib) ->
+        pop = pop_lib
+
     --- Constructor expects nothing, or a data table describing it.
     --- @tparam ?Element|false parent The parent element.
     --- @tparam table data[opt] The data (state) for this element.
@@ -253,6 +258,12 @@ class element
 
     --- Deletes references to this element and then deletes it.
     delete: =>
+        -- does not work for desired issue, element is still referenced and set as focused after this would be called
+        -- however, it is probably a good idea for anything being deleted to make sure it isn't focused
+        if @ == pop.hovered
+            pop.hovered = false
+            pop.log "#{@} (#{@type}) unfocused (deleted)"
+
         for i=#@child, 1, -1
             @child[i]\delete!
 

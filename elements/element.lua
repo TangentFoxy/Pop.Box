@@ -1,3 +1,4 @@
+local pop
 local graphics
 graphics = love.graphics
 local floor, max
@@ -11,6 +12,9 @@ local element
 do
   local _class_0
   local _base_0 = {
+    load = function(pop_lib)
+      pop = pop_lib
+    end,
     align = function(self, horizontal, vertical, toPixel)
       if toPixel == nil then
         toPixel = true
@@ -206,6 +210,10 @@ do
       return self
     end,
     delete = function(self)
+      if self == pop.hovered then
+        pop.hovered = false
+        pop.log(tostring(self) .. " (" .. tostring(self.type) .. ") unfocused (deleted)")
+      end
       for i = #self.child, 1, -1 do
         self.child[i]:delete()
       end

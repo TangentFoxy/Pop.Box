@@ -80,6 +80,8 @@ love.keypressed = (key) ->
         love.event.quit!
     elseif key == "d"
         debug = not debug
+    elseif key == "t"
+        print("pop.focused", pop.focused)
 
 love.keyreleased = (key) ->
     pop.keyreleased key

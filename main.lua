@@ -197,6 +197,8 @@ love.keypressed = function(key)
     return love.event.quit()
   elseif key == "d" then
     debug = not debug
+  elseif key == "t" then
+    return print("pop.focused", pop.focused)
   end
 end
 love.keyreleased = function(key)
