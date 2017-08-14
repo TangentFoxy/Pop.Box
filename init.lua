@@ -306,10 +306,16 @@ pop.mousereleased = function(x, y, button, element)
         if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h) then
           if element.clicked then
             clickedHandled = element:clicked(x - element.data.x, y - element.data.y, button)
+            if clickedHandled ~= false then
+              log("   " .. tostring(clickedHandled) .. " (click handled)", tostring(element) .. " (" .. tostring(element.data.type) .. ")")
+            end
           end
         end
         if element.mousereleased then
           mousereleasedHandled = element:mousereleased(x - element.data.x, y - element.data.y, button)
+          if mousereleasedHandled ~= false then
+            log("   " .. tostring(mousereleasedHandled) .. " (release handled)", tostring(element) .. " (" .. tostring(element.data.type) .. ")")
+          end
         end
         if clickedHandled ~= false or mousereleasedHandled ~= false then
           return clickedHandled, mousereleasedHandled

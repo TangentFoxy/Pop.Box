@@ -282,9 +282,10 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
     -- if we're hovering over something different, log it
     if element == pop.screen and pop.hovered != previously_hovered
         log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
+        -- @todo This is where we call previously_hovered\hovered false, and pop.hovered\hovered true
+        --       There may be an issue where we are trying only on the lowest object in the hierarchy and we need to check multiple...
 
-    --- @todo Implement a way for an element to attach itself to `love.mousemoved()` events?
-    -- checking element against pop.screen so that this only gets called once
+    -- checks element == pop.screen so this only gets called once at the end of recursion
     if pop.focused and pop.focused.mousemoved and element == pop.screen
         return pop.focused\mousemoved x - pop.focused.data.x, y - pop.focused.data.y, dx, dy
 
@@ -397,9 +398,13 @@ pop.mousereleased = (x, y, button, element) ->
             if element.data.draw and (x >= element.data.x) and (x <= element.data.x + element.data.w) and (y >= element.data.y) and (y <= element.data.y + element.data.h)
                 if element.clicked
                     clickedHandled = element\clicked x - element.data.x, y - element.data.y, button
+                    if clickedHandled != false
+                        log "   #{clickedHandled} (click handled)", "#{element} (#{element.data.type})"
             -- a focused element needs to know when it has been released no matter what!
             if element.mousereleased
                 mousereleasedHandled = element\mousereleased x - element.data.x, y - element.data.y, button
+                if mousereleasedHandled != false
+                    log "   #{mousereleasedHandled} (release handled)", "#{element} (#{element.data.type})"
             if clickedHandled != false or mousereleasedHandled != false
                 return clickedHandled, mousereleasedHandled
 

@@ -56,19 +56,21 @@ class window extends element
             @closeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\close!
+                    return true
             @data.header_width_reduction += buttonSize
         if @data.maximizeable
             @maximizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction, type: "box (window maximize button)"}, maximizeImage)\align "right"
             @maximizeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\maximize!
-                --return nil --probably not needed
+                    return true
             @data.header_width_reduction += buttonSize
         if @data.minimizeable
             @minimizeButton = pop.box(@, {w: buttonSize, h: buttonSize, horizontalMargin: @data.header_width_reduction, type: "box (window minimize button)"}, minimizeImage)\align "right"
             @minimizeButton.clicked = (x, y, button) =>
                 if button == pop.constants.left_mouse
                     @parent\minimize!
+                    return true
             @data.header_width_reduction += buttonSize
 
         height = @title\getHeight! + 1

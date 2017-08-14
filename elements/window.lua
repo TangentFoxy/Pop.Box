@@ -204,7 +204,8 @@ do
         }, closeImage):align("right")
         self.closeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then
-            return self.parent:close()
+            self.parent:close()
+            return true
           end
         end
         self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
@@ -218,7 +219,8 @@ do
         }, maximizeImage):align("right")
         self.maximizeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then
-            return self.parent:maximize()
+            self.parent:maximize()
+            return true
           end
         end
         self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
@@ -232,7 +234,8 @@ do
         }, minimizeImage):align("right")
         self.minimizeButton.clicked = function(self, x, y, button)
           if button == pop.constants.left_mouse then
-            return self.parent:minimize()
+            self.parent:minimize()
+            return true
           end
         end
         self.data.header_width_reduction = self.data.header_width_reduction + buttonSize
