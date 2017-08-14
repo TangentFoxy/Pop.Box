@@ -59,6 +59,8 @@ end
 pop.elements = { }
 pop.skins = { }
 pop.extensions = { }
+pop.states = { }
+pop.state = false
 pop.screen = false
 pop.focused = false
 pop.hovered = false
@@ -145,9 +147,42 @@ pop.load = function(load_path)
     end
   end
   if not (pop.screen) then
-    pop.screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
-    pop.screen.data.update = true
-    return log("Created \"pop.screen\"")
+    return pop.setState(pop.newState())
+  end
+end
+pop.newState = function(name)
+  local screen = pop.create("element", false):setSize(graphics.getWidth(), graphics.getHeight())
+  screen.data.update = true
+  if not (name) then
+    if pop.states.default then
+      name = #pop.states + 1
+    else
+      name = "default"
+    end
+  end
+  pop.states[name] = {
+    screen = screen,
+    focused = false,
+    hovered = false
+  }
+  log("Created state: \"" .. tostring(name) .. "\"")
+  return name
+end
+pop.setState = function(name)
+  if name == nil then
+    name = default
+  end
+  do
+    local state = pop.states[name]
+    if state then
+      pop.state = name
+      pop.screen = state.screen
+      pop.focused = state.focused
+      pop.hovered = state.hovered
+      return true
+    else
+      return error("Invalid state: \"" .. tostring(name) .. "\"")
+    end
   end
 end
 pop.create = function(element, parent, data, ...)

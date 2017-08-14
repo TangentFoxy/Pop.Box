@@ -76,6 +76,8 @@ else
 pop.elements = {}
 pop.skins = {}
 pop.extensions = {}
+pop.states = {}
+pop.state = false
 pop.screen = false
 pop.focused = false
 pop.hovered = false
@@ -166,9 +168,39 @@ pop.load = (load_path=path) ->
 
     -- Initialize pop.screen (top element, GUI area)
     unless pop.screen
-        pop.screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
-        pop.screen.data.update = true
-        log "Created \"pop.screen\""
+        pop.setState(pop.newState())
+
+
+
+pop.newState = (name) ->
+    screen = pop.create("element", false)\setSize(graphics.getWidth!, graphics.getHeight!)
+    screen.data.update = true
+    unless name
+        if pop.states.default
+            name = #pop.states + 1
+        else
+            name = "default"
+
+    pop.states[name] = {
+      screen: screen
+      focused: false
+      hovered: false
+    }
+
+    log "Created state: \"#{name}\""
+    return name
+
+
+
+pop.setState = (name=default) ->
+    if state = pop.states[name]
+        pop.state = name
+        pop.screen = state.screen
+        pop.focused = state.focused
+        pop.hovered = state.hovered
+        return true
+    else
+        error "Invalid state: \"#{name}\""
 
 
 
