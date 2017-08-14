@@ -143,7 +143,7 @@ class window extends element
             return false
 
         @header.mousepressed = (x, y, button) =>
-            if @data.moveable and button == pop.constants.left_mouse
+            if button == pop.constants.left_mouse and @parent.data.moveable
                 grandparent = @parent.parent
                 table.insert grandparent.child, table.remove(grandparent.child, grandparent\indexOf @parent)
                 selected = true

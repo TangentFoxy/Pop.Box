@@ -318,7 +318,7 @@ do
         return false
       end
       self.header.mousepressed = function(self, x, y, button)
-        if self.data.moveable and button == pop.constants.left_mouse then
+        if button == pop.constants.left_mouse and self.parent.data.moveable then
           local grandparent = self.parent.parent
           table.insert(grandparent.child, table.remove(grandparent.child, grandparent:indexOf(self.parent)))
           selected = true
