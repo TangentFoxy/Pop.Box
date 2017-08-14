@@ -155,6 +155,9 @@ do
       if self.data.titleBar == nil then
         self.data.titleBar = true
       end
+      if self.data.moveable == nil then
+        self.data.moveable = true
+      end
       if self.data.maximizeable == nil then
         self.data.maximizeable = false
       end
@@ -315,7 +318,7 @@ do
         return false
       end
       self.header.mousepressed = function(self, x, y, button)
-        if button == pop.constants.left_mouse then
+        if self.data.moveable and button == pop.constants.left_mouse then
           local grandparent = self.parent.parent
           table.insert(grandparent.child, table.remove(grandparent.child, grandparent:indexOf(self.parent)))
           selected = true
@@ -328,7 +331,9 @@ do
       self.header.mousereleased = function(self, x, y, button)
         if button == pop.constants.left_mouse then
           selected = false
-          pop.focused = false
+          if self == pop.focused then
+            pop.focused = false
+          end
           return true
         end
         return false

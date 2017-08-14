@@ -38,6 +38,7 @@ class window extends element
 
         @data.maximized = false
         @data.titleBar = true if @data.titleBar == nil
+        @data.moveable = true if @data.moveable == nil
         @data.maximizeable = false if @data.maximizeable == nil
         @data.minimizeable = false if @data.minimizeable == nil
         @data.closeable = false if @data.closeable == nil
@@ -86,7 +87,7 @@ class window extends element
           @window_area.data.w = @data.w - @data.padding*2
           @window_area.data.h = @data.h - @data.padding*2
 
-        -- window area steals mouse events to prevent propagation to elements under it
+        -- window area steals mouse events to prevent propagation to elements visibily underneath it (not within its hierarchy)
         @window_area.mousepressed = (x, y, button) =>
             if button == pop.constants.left_mouse
                 grandparent = @parent.parent
@@ -142,7 +143,7 @@ class window extends element
             return false
 
         @header.mousepressed = (x, y, button) =>
-            if button == pop.constants.left_mouse
+            if @data.moveable and button == pop.constants.left_mouse
                 grandparent = @parent.parent
                 table.insert grandparent.child, table.remove(grandparent.child, grandparent\indexOf @parent)
                 selected = true
@@ -154,7 +155,8 @@ class window extends element
         @header.mousereleased = (x, y, button) =>
             if button == pop.constants.left_mouse
                 selected = false
-                pop.focused = false -- maybe it should check if it is focused first?
+                if @ == pop.focused
+                    pop.focused = false
                 return true
             return false
 

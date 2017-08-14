@@ -14,6 +14,7 @@ love.load = ->
         print testWindow.window_area
 
         pop.window({maximizeable: true}, "Test Window #2")\align "center", "bottom"
+        pop.window({moveable: false}, "Immoveable!")
 
         -- alignment testing
         centerBox = pop.box({w: 200, h: 200}, {255, 255, 0, 120})\align "center", "center"

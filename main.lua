@@ -20,6 +20,9 @@ love.load = function()
     pop.window({
       maximizeable = true
     }, "Test Window #2"):align("center", "bottom")
+    pop.window({
+      moveable = false
+    }, "Immoveable!")
     local centerBox = pop.box({
       w = 200,
       h = 200
