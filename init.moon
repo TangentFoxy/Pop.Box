@@ -279,11 +279,13 @@ pop.mousemoved = (x, y, dx, dy, element=pop.screen) ->
         for i = 1, #element.child
             pop.mousemoved x, y, dx, dy, element.child[i]
 
-    -- if we're hovering over something different, log it
+    -- if we're hovering over something different, log it, and call handlers if relevant
     if element == pop.screen and pop.hovered != previously_hovered
         log "  pop.hovered: #{pop.hovered} (#{pop.hovered.data.type})"
-        -- @todo This is where we call previously_hovered\hovered false, and pop.hovered\hovered true
-        --       There may be an issue where we are trying only on the lowest object in the hierarchy and we need to check multiple...
+        if previously_hovered.hovered
+          previously_hovered\hovered false
+        if pop.hovered.hovered
+          pop.hovered\hovered true
 
     -- checks element == pop.screen so this only gets called once at the end of recursion
     if pop.focused and pop.focused.mousemoved and element == pop.screen
