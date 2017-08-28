@@ -10,51 +10,51 @@ import graphics from love
 element = require "#{(...)\sub 1, -4}/element"
 
 class box extends element
-    --- Constructor expects nothing, or a data table describing it.
-    new: (@parent, @data={}, background={255, 255, 255, 255}) =>
-        -- assume a data object with four values is actually the background
-        if #@data == 4
-            background = @data
-            @data = nil
+  --- Constructor expects nothing, or a data table describing it.
+  new: (@parent, @data={}, background={255, 255, 255, 255}) =>
+    -- assume a data object with four values is actually the background
+    if #@data == 4
+      background = @data
+      @data = nil
 
-        super @parent, @data
+    super @parent, @data
 
-        @data.type = "box" if @data.type == "element"
-        @data.background = background unless @data.background
+    @data.type = "box" if @data.type == "element"
+    @data.background = background unless @data.background
 
-    draw: =>
-        if "table" == type @data.background
-            graphics.setColor @data.background
-            graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
-        else
-            w, h = @data.background\getDimensions!
-            w = @data.w / w
-            h = @data.h / h
-            graphics.setColor 255, 255, 255, 255
-            graphics.draw @data.background, @data.x, @data.y, 0, w, h
+  draw: =>
+    if "table" == type @data.background
+      graphics.setColor @data.background
+      graphics.rectangle "fill", @data.x, @data.y, @data.w, @data.h
+    else
+      w, h = @data.background\getDimensions!
+      w = @data.w / w
+      h = @data.h / h
+      graphics.setColor 255, 255, 255, 255
+      graphics.draw @data.background, @data.x, @data.y, 0, w, h
 
-        return @
+    return @
 
-    setBackground: (background) =>
-        if background
-            @data.background = background
-        else
-            error "Background must be a table representing a color, or a drawable object."
-        return @
+  setBackground: (background) =>
+    if background
+      @data.background = background
+    else
+      error "Background must be a table representing a color, or a drawable object."
+    return @
 
-    getBackground: =>
-        return @data.background
+  getBackground: =>
+    return @data.background
 
-    setColor: (r, g, b, a=255) =>
-        if "table" == type r
-            @data.background = r
-        else
-            @data.background = {r, g, b, a}
+  setColor: (r, g, b, a=255) =>
+    if "table" == type r
+      @data.background = r
+    else
+      @data.background = {r, g, b, a}
 
-        return @
+    return @
 
-    getColor: =>
-        if "table" == type @data.background
-            return unpack @data.background
-        else
-            return 255, 255, 255, 255   -- if it is drawable, it is drawn with a white color
+  getColor: =>
+    if "table" == type @data.background
+      return unpack @data.background
+    else
+      return 255, 255, 255, 255   -- if it is drawable, it is drawn with a white color

@@ -2,77 +2,77 @@ lfs = require "lfs"
 
 expose "fake LOVE 0.10.1", ->
 
-    _G.love = require "spec/love"
+  _G.love = require "spec/love"
 
 describe "Pop.Box", ->
 
-    --it "errors when require'd wrong", ->
-    --    assert.error -> require "init"
+  --it "errors when require'd wrong", ->
+  --    assert.error -> require "init"
 
-    it "can be required by 'init'", ->
-        assert.has_no.errors -> require "init"
+  it "can be required by 'init'", ->
+    assert.has_no.errors -> require "init"
 
-    pending "errors if you use LOVE < 0.9.1", ->
+  pending "errors if you use LOVE < 0.9.1", ->
 
-    describe "pop.load", ->
+  describe "pop.load", ->
 
-        pending "loads all elements", ->
-            -- check they are in elements[name]
-            -- check specifics if able have used their load functions
-            -- if able, check that custom wraps have been called
+    pending "loads all elements", ->
+      -- check they are in elements[name]
+      -- check specifics if able have used their load functions
+      -- if able, check that custom wraps have been called
 
-        pending "loads all skins", ->
-            -- see checks for loading all elements
+    pending "loads all skins", ->
+      -- see checks for loading all elements
 
-        pending "loads all extensions", ->
-            -- see checks for loading all elements
+    pending "loads all extensions", ->
+      -- see checks for loading all elements
 
-        it "creates an element the size of the game window", ->
-            pop = require "init"
-            w, h = pop.screen\getSize!
-            assert.are.equal love.graphics.getWidth!, w
-            assert.are.equal love.graphics.getHeight!, h
+    it "creates an element the size of the game window", ->
+      pop = require "init"
+      w, h = pop.screen\getSize!
+      assert.are.equal love.graphics.getWidth!, w
+      assert.are.equal love.graphics.getHeight!, h
 
-    pending "check inherit checker", ->
+  pending "check inherit checker", ->
 
-    describe "pop.create", ->
-        -- these need to check parent/child relations and data relations
-        pending "creates elements with pop.screen by default", ->
-        pending "creates elements with no parent when you pass false", ->
-        pending "creates elements with specified parent when passed an element", ->
+  describe "pop.create", ->
+    -- these need to check parent/child relations and data relations
+    pending "creates elements with pop.screen by default", ->
+    pending "creates elements with no parent when you pass false", ->
+    pending "creates elements with specified parent when passed an element", ->
 
-    describe "pop.update", ->
-        pending "only updates when data.update is truthy", ->
-        pending "updates all children", ->
+  describe "pop.update", ->
+    pending "only updates when data.update is truthy", ->
+    pending "updates all children", ->
 
-    describe "pop.draw", ->
-        pending "draws elements only when data.draw is truthy", ->
-        pending "draws all children", ->
+  describe "pop.draw", ->
+    pending "draws elements only when data.draw is truthy", ->
+    pending "draws all children", ->
 
-    describe "pop.mousemoved", ->
-        pending "handles mousemoved events on a focused element", ->
-            --idk exactly how to make a unit test for this...
+  describe "pop.mousemoved", ->
+    pending "handles mousemoved events on a focused element", ->
+      --idk exactly how to make a unit test for this...
 
-    describe "pop.mousepressed", ->
-        pending "idk", ->
+  describe "pop.mousepressed", ->
+    pending "idk", ->
 
-    describe "pop.mousereleased", ->
+  describe "pop.mousereleased", ->
 
-        describe "click handling", ->
+    describe "click handling", ->
 
-        describe "mouserelease handling", ->
+    describe "mouserelease handling", ->
 
-    describe "pop.keypressed", ->
-        pending "idk", ->
+  describe "pop.keypressed", ->
+    pending "idk", ->
 
-    describe "pop.keyreleased", ->
-        pending "idk", ->
+  describe "pop.keyreleased", ->
+    pending "idk", ->
 
-    describe "pop.textinput", ->
-        pending "idk", ->
+  describe "pop.textinput", ->
+    pending "idk", ->
 
-    describe "pop.debugDraw", ->
-        pending "idk", ->
+  describe "pop.debugDraw", ->
+    pending "idk", ->
 
-    describe "pop.printElementTree", ->
-        pending "idk", ->
+  describe "pop.printElementTree", ->
+    pending "idk", ->

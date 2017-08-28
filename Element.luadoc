@@ -113,35 +113,35 @@
 -- @todo Document debugDraw method
 
 pop.keypressed = (key) ->
-    print "keypressed", key
+  print "keypressed", key
 
-    -- keypressed events must be on visible elements
-    element = pop.focused
-    if element and element.keypressed and element.data.draw
-        return element.keypressed key
+  -- keypressed events must be on visible elements
+  element = pop.focused
+  if element and element.keypressed and element.data.draw
+    return element.keypressed key
 
-    return false
+  return false
 
 pop.keyreleased = (key) ->
-    print "keyreleased", key
+  print "keyreleased", key
 
-    -- keyreleased events are always called
-    element = pop.focused
-    if element and element.keyreleased
-        return element.keyreleased key
+  -- keyreleased events are always called
+  element = pop.focused
+  if element and element.keyreleased
+    return element.keyreleased key
 
-    return false
+  return false
 
 pop.textinput = (text) ->
-    print "textinput", text
+  print "textinput", text
 
-    -- textinput events must be on visible elements
-    element = pop.focused
-    if element and element.textinput and element.data.draw
-        return element.textinput text
+  -- textinput events must be on visible elements
+  element = pop.focused
+  if element and element.textinput and element.data.draw
+    return element.textinput text
 
-    return false
+  return false
 
 pop.debugDraw = (element=pop.screen) ->
-    if element.debugDraw
-        element\debugDraw!
+  if element.debugDraw
+    element\debugDraw!
