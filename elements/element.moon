@@ -25,6 +25,11 @@ class element
         @data.child = {} unless @data.child
         @data.type = "element" unless @data.type
 
+        @data.update = true if @data.update == nil
+        @data.draw = true if @data.draw == nil
+        @data.hoverable = true if @data.hoverable == nil
+        -- @data.static = false if @data.static == nil
+
         unless @data.x
             if @parent
                 @data.x = @parent.data.x
@@ -38,10 +43,9 @@ class element
         @data.w = 0 unless @data.w
         @data.h = 0 unless @data.h
 
-        @data.update = true if @data.update == nil
-        @data.draw = true if @data.draw == nil
-        @data.hoverable = true if @data.hoverable == nil
-        --@data.static = false if @data.static == nil
+        @data.size = 0 unless @data.size
+        @data.verticalSize = 0 unless @data.verticalSize
+        @data.horizontalSize = 0 unless @data.horizontalSize
 
         @data.align = true if (@data.align == nil) and @parent
         @data.verticalAlign = "top" unless @data.verticalAlign
@@ -56,6 +60,12 @@ class element
         @data.verticalPadding = 0 unless @data.verticalPadding
 
         @child = {}
+
+        unless @__class.align -- this is so elements setting up their own alignment (such as window) won't break by alignment being called prematurely
+            if @data.size != 0 or @data.verticalSize != 0 or @data.horizontalSize != 0
+                @setSize @parent.data.w * (@data.size + @data.verticalSize), @parent.data.h * (@data.size + @data.horizontalSize)
+            elseif @data.align
+                @align!
 
     --- @todo doc me
     align: (horizontal, vertical, toPixel=true) =>
@@ -226,6 +236,14 @@ class element
 
     getPadding: =>
         return @data.padding
+
+    setMargin: (margin) =>
+        @data.margin = margin
+        @align!
+        return @
+
+    getMargin: =>
+        return @data.margin
 
     indexOf: (element) =>
         for i = 1, #@child

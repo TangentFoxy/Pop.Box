@@ -283,10 +283,12 @@ pop.update = (dt, element=pop.screen) ->
 pop.draw = (element=pop.screen) ->
     -- data.draw boolean controls an element and its children being drawn
     if element.data.draw
+        local drawChildren
         if element.draw
-            element\draw!
-        for i = 1, #element.child
-            pop.draw element.child[i]
+            drawChildren = element\draw!
+        if drawChildren != false
+            for i = 1, #element.child
+                pop.draw element.child[i]
 
 
 

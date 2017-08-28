@@ -242,11 +242,14 @@ pop.draw = function(element)
     element = pop.screen
   end
   if element.data.draw then
+    local drawChildren
     if element.draw then
-      element:draw()
+      drawChildren = element:draw()
     end
-    for i = 1, #element.child do
-      pop.draw(element.child[i])
+    if drawChildren ~= false then
+      for i = 1, #element.child do
+        pop.draw(element.child[i])
+      end
     end
   end
 end

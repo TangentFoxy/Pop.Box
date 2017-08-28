@@ -178,6 +178,14 @@ do
     getPadding = function(self)
       return self.data.padding
     end,
+    setMargin = function(self, margin)
+      self.data.margin = margin
+      self:align()
+      return self
+    end,
+    getMargin = function(self)
+      return self.data.margin
+    end,
     indexOf = function(self, element)
       for i = 1, #self.child do
         if self.child[i] == element then
@@ -267,6 +275,15 @@ do
       if not (self.data.type) then
         self.data.type = "element"
       end
+      if self.data.update == nil then
+        self.data.update = true
+      end
+      if self.data.draw == nil then
+        self.data.draw = true
+      end
+      if self.data.hoverable == nil then
+        self.data.hoverable = true
+      end
       if not (self.data.x) then
         if self.parent then
           self.data.x = self.parent.data.x
@@ -287,14 +304,14 @@ do
       if not (self.data.h) then
         self.data.h = 0
       end
-      if self.data.update == nil then
-        self.data.update = true
+      if not (self.data.size) then
+        self.data.size = 0
       end
-      if self.data.draw == nil then
-        self.data.draw = true
+      if not (self.data.verticalSize) then
+        self.data.verticalSize = 0
       end
-      if self.data.hoverable == nil then
-        self.data.hoverable = true
+      if not (self.data.horizontalSize) then
+        self.data.horizontalSize = 0
       end
       if (self.data.align == nil) and self.parent then
         self.data.align = true
@@ -324,6 +341,13 @@ do
         self.data.verticalPadding = 0
       end
       self.child = { }
+      if not (self.__class.align) then
+        if self.data.size ~= 0 or self.data.verticalSize ~= 0 or self.data.horizontalSize ~= 0 then
+          return self:setSize(self.parent.data.w * (self.data.size + self.data.verticalSize), self.parent.data.h * (self.data.size + self.data.horizontalSize))
+        elseif self.data.align then
+          return self:align()
+        end
+      end
     end,
     __base = _base_0,
     __name = "element"

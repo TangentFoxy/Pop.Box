@@ -160,7 +160,10 @@ class window extends element
                 return true
             return false
 
-        @align!
+        if @data.size != 0 or @data.verticalSize != 0 or @data.horizontalSize != 0
+            @setSize @parent.data.w * (@data.size + @data.verticalSize), @parent.data.h * (@data.size + @data.horizontalSize)
+        elseif @data.align
+            @align!
 
     align: (...) =>
         unless @data.align return @

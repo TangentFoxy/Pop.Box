@@ -350,7 +350,11 @@ do
         end
         return false
       end
-      return self:align()
+      if self.data.size ~= 0 or self.data.verticalSize ~= 0 or self.data.horizontalSize ~= 0 then
+        return self:setSize(self.parent.data.w * (self.data.size + self.data.verticalSize), self.parent.data.h * (self.data.size + self.data.horizontalSize))
+      elseif self.data.align then
+        return self:align()
+      end
     end,
     __base = _base_0,
     __name = "window",
