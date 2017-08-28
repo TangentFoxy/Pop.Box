@@ -3,8 +3,8 @@ graphics = love.graphics
 local pop = require("")
 local debug = false
 love.load = function()
-  local old_method
-  old_method = function()
+  local test_original
+  test_original = function()
     pop.text("Hello World!"):align("center", "center")
     local testWindow = pop.window({
       windowBackground = {
@@ -153,8 +153,8 @@ love.load = function()
       w = 125
     }, "Body can't leave")
   end
-  local new_method
-  new_method = function()
+  local test_obession
+  test_obession = function()
     local partsGrid = pop.dynamicGrid()
     return pop.window({
       w = graphics.getWidth() / 2,
@@ -172,7 +172,7 @@ love.load = function()
       })
     })
   end
-  return old_method()
+  return test_original()
 end
 love.update = function(dt)
   return pop.update(dt)

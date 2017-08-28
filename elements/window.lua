@@ -46,11 +46,17 @@ do
       local x = 0
       local y = 0
       if w then
-        local _exp_0 = self.data.horizontal
-        if "center" == _exp_0 then
+        local _exp_0 = self.data.horizontalAlign
+        if "left" == _exp_0 then
+          local _
+        elseif "center" == _exp_0 then
           x = x - ((w - self.data.w) / 2)
         elseif "right" == _exp_0 then
           x = x - (w - self.data.w)
+        else
+          if self.data.horizontalAlign < 0 then
+            x = x - (w - self.data.w)
+          end
         end
         self.header:setWidth(w - self.data.header_width_reduction)
         self.window_area:setWidth(w)
@@ -59,11 +65,17 @@ do
         self.title:align()
       end
       if h then
-        local _exp_0 = self.data.vertical
-        if "center" == _exp_0 then
+        local _exp_0 = self.data.verticalAlign
+        if "top" == _exp_0 then
+          local _
+        elseif "center" == _exp_0 then
           y = y - ((h - self.data.h) / 2)
-        elseif "right" == _exp_0 then
+        elseif "bottom" == _exp_0 then
           y = y - (h - self.data.h)
+        else
+          if self.data.horizontalAlign < 0 then
+            y = y - (h - self.data.h)
+          end
         end
         if self.data.titleBar then
           self.window_area:setHeight(h - self.header:getHeight())

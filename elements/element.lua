@@ -23,28 +23,38 @@ do
         return self
       end
       if horizontal then
-        self.data.horizontal = horizontal
+        self.data.horizontalAlign = horizontal
       end
       if vertical then
-        self.data.vertical = vertical
+        self.data.verticalAlign = vertical
       end
       self.data.x = self.parent.data.x
       self.data.y = self.parent.data.y
-      local _exp_0 = self.data.horizontal
+      local _exp_0 = self.data.horizontalAlign
       if "left" == _exp_0 then
         self.data.x = self.data.x + max(self.parent.data.padding + self.parent.data.horizontalPadding, self.data.margin + self.data.horizontalMargin)
       elseif "center" == _exp_0 then
         self.data.x = self.data.x + ((self.parent.data.w - self.data.w) / 2)
       elseif "right" == _exp_0 then
         self.data.x = self.data.x + (self.parent.data.w - self.data.w - max(self.parent.data.padding + self.parent.data.horizontalPadding, self.data.margin + self.data.horizontalMargin))
+      else
+        self.data.x = self.data.x + (self.parent.data.w * self.data.horizontalAlign)
+        if self.data.horizontalAlign < 0 then
+          self.data.x = self.data.x + self.parent.data.w
+        end
       end
-      local _exp_1 = self.data.vertical
+      local _exp_1 = self.data.verticalAlign
       if "top" == _exp_1 then
         self.data.y = self.data.y + (self.parent.data.padding + self.data.margin + self.data.verticalMargin)
       elseif "center" == _exp_1 then
         self.data.y = self.data.y + ((self.parent.data.h - self.data.h) / 2)
       elseif "bottom" == _exp_1 then
         self.data.y = self.data.y + (self.parent.data.h - self.data.h - max(self.parent.data.padding + self.parent.data.verticalPadding, self.data.margin + self.data.verticalMargin))
+      else
+        self.data.y = self.data.y + (self.parent.data.h * self.data.verticalAlign)
+        if self.data.verticalAlign < 0 then
+          self.data.y = self.data.y + self.parent.data.h
+        end
       end
       if toPixel then
         self.data.x = floor(self.data.x)
@@ -59,7 +69,7 @@ do
       local dx, dy = self.data.x, self.data.y
       if x then
         self.data.x = x
-        local _exp_0 = self.data.horizontal
+        local _exp_0 = self.data.horizontalAlign
         if "center" == _exp_0 then
           self.data.x = self.data.x - (self.data.w / 2)
         elseif "right" == _exp_0 then
@@ -68,7 +78,7 @@ do
       end
       if y then
         self.data.y = y
-        local _exp_0 = self.data.vertical
+        local _exp_0 = self.data.verticalAlign
         if "center" == _exp_0 then
           self.data.y = self.data.y - (self.data.h / 2)
         elseif "bottom" == _exp_0 then
@@ -90,13 +100,13 @@ do
     end,
     getPosition = function(self)
       local x, y = self.data.x, self.data.y
-      local _exp_0 = self.data.horizontal
+      local _exp_0 = self.data.horizontalAlign
       if "center" == _exp_0 then
         x = x + (self.data.w / 2)
       elseif "right" == _exp_0 then
         y = y + self.data.w
       end
-      local _exp_1 = self.data.vertical
+      local _exp_1 = self.data.verticalAlign
       if "center" == _exp_1 then
         y = y + (self.data.h / 2)
       elseif "bottom" == _exp_1 then
@@ -289,11 +299,11 @@ do
       if (self.data.align == nil) and self.parent then
         self.data.align = true
       end
-      if not (self.data.vertical) then
-        self.data.vertical = "top"
+      if not (self.data.verticalAlign) then
+        self.data.verticalAlign = "top"
       end
-      if not (self.data.horizontal) then
-        self.data.horizontal = "left"
+      if not (self.data.horizontalAlign) then
+        self.data.horizontalAlign = "left"
       end
       if not (self.data.margin) then
         self.data.margin = 0

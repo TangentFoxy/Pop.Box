@@ -44,8 +44,8 @@ class element
         --@data.static = false if @data.static == nil
 
         @data.align = true if (@data.align == nil) and @parent
-        @data.vertical = "top" unless @data.vertical
-        @data.horizontal = "left" unless @data.horizontal
+        @data.verticalAlign = "top" unless @data.verticalAlign
+        @data.horizontalAlign = "left" unless @data.horizontalAlign
 
         @data.margin = 0 unless @data.margin
         @data.horizontalMargin = 0 unless @data.horizontalMargin
@@ -61,27 +61,35 @@ class element
     align: (horizontal, vertical, toPixel=true) =>
         unless @data.align return @
 
-        @data.horizontal = horizontal if horizontal
-        @data.vertical = vertical if vertical
+        @data.horizontalAlign = horizontal if horizontal
+        @data.verticalAlign = vertical if vertical
 
         @data.x = @parent.data.x
         @data.y = @parent.data.y
 
-        switch @data.horizontal
+        switch @data.horizontalAlign
             when "left"
                 @data.x += max(@parent.data.padding + @parent.data.horizontalPadding, @data.margin + @data.horizontalMargin)
             when "center"
                 @data.x += (@parent.data.w - @data.w) / 2
             when "right"
                 @data.x += @parent.data.w - @data.w - max(@parent.data.padding + @parent.data.horizontalPadding, @data.margin + @data.horizontalMargin)
+            else
+                @data.x += @parent.data.w * @data.horizontalAlign
+                if @data.horizontalAlign < 0
+                    @data.x += @parent.data.w
 
-        switch @data.vertical
+        switch @data.verticalAlign
             when "top"
                 @data.y += @parent.data.padding + @data.margin + @data.verticalMargin
             when "center"
                 @data.y += (@parent.data.h - @data.h) / 2
             when "bottom"
                 @data.y += @parent.data.h - @data.h - max(@parent.data.padding + @parent.data.verticalPadding, @data.margin + @data.verticalMargin)
+            else
+                @data.y += @parent.data.h * @data.verticalAlign
+                if @data.verticalAlign < 0
+                    @data.y += @parent.data.h
 
         if toPixel
             @data.x = floor @data.x
@@ -95,7 +103,7 @@ class element
 
         if x
             @data.x = x
-            switch @data.horizontal
+            switch @data.horizontalAlign
                 when "center"
                     @data.x -= @data.w / 2
                 when "right"
@@ -103,7 +111,7 @@ class element
 
         if y
             @data.y = y
-            switch @data.vertical
+            switch @data.verticalAlign
                 when "center"
                     @data.y -= @data.h / 2
                 when "bottom"
@@ -125,13 +133,13 @@ class element
     getPosition: =>
         x, y = @data.x, @data.y
 
-        switch @data.horizontal
+        switch @data.horizontalAlign
             when "center"
                 x += @data.w / 2
             when "right"
                 y += @data.w
 
-        switch @data.vertical
+        switch @data.verticalAlign
             when "center"
                 y += @data.h / 2
             when "bottom"

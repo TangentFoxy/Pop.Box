@@ -186,11 +186,16 @@ class window extends element
         y = 0
 
         if w
-            switch @data.horizontal
+            switch @data.horizontalAlign
+                when "left"
+                    local _ -- do nothing
                 when "center"
                     x -= (w - @data.w) / 2
                 when "right"
                     x -= w - @data.w
+                else
+                    if @data.horizontalAlign < 0
+                        x -= w - @data.w
 
             @header\setWidth w - @data.header_width_reduction
             @window_area\setWidth w
@@ -200,11 +205,16 @@ class window extends element
             @title\align!
 
         if h
-            switch @data.vertical
+            switch @data.verticalAlign
+                when "top"
+                  local _ -- do nothing
                 when "center"
                     y -= (h - @data.h) / 2
-                when "right"
+                when "bottom"
                     y -= h - @data.h
+                else
+                    if @data.horizontalAlign < 0
+                        y -= h - @data.h
 
             if @data.titleBar
                 @window_area\setHeight h - @header\getHeight!

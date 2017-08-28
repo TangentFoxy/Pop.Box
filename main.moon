@@ -8,7 +8,7 @@ pop = require ""
 debug = false
 
 love.load = ->
-    old_method = ->
+    test_original = ->
         pop.text("Hello World!")\align "center", "center"
         testWindow = pop.window({windowBackground: {200, 200, 200}, closeable: true, maximizeable: true, minimizeable: true}, "Testing Window")\move(20, 20)\setSize(200, 100)\align "right", "top"
         print testWindow.window_area
@@ -40,7 +40,7 @@ love.load = ->
         pop.window(centerBox, {containMethod: "title", w: 125}, "Title can't leave")
         pop.window(centerBox, {containMethod: "body", w: 125}, "Body can't leave")
 
-    new_method = ->
+    test_obession = ->
         partsGrid = pop.dynamicGrid!
         pop.window({w: graphics.getWidth!/2, h: graphics.getHeight!, titleBar: false})\add({
             pop.box({h: 17}) -- temporary height
@@ -54,8 +54,8 @@ love.load = ->
             })
         })
 
-    old_method!
-    --new_method!
+    test_original!
+    -- test_obession!
 
 love.update = (dt) ->
     pop.update dt
