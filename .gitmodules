@@ -1,9 +1,0 @@
-[submodule "lib/bitser"]
-	path = lib/bitser
-	url = https://github.com/gvx/bitser
-[submodule "lib/middleclass"]
-	path = lib/middleclass
-	url = https://github.com/kikito/middleclass.git
-[submodule "lib/inspect"]
-	path = lib/inspect
-	url = https://github.com/kikito/inspect.lua.git
